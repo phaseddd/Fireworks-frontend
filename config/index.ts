@@ -16,7 +16,11 @@ export default defineConfig<'webpack5'>(async (merge) => {
     },
     sourceRoot: 'src',
     outputRoot: 'dist',
-    plugins: ['@tarojs/plugin-platform-weapp', '@tarojs/plugin-platform-h5'],
+    plugins: [
+      '@tarojs/plugin-platform-weapp',
+      '@tarojs/plugin-platform-h5',
+      '@tarojs/plugin-html'  // NutUI 必需
+    ],
     defineConstants: {
     },
     copy: {
@@ -26,7 +30,13 @@ export default defineConfig<'webpack5'>(async (merge) => {
       }
     },
     framework: 'react',
-    compiler: 'webpack5',
+    compiler: {
+      type: 'webpack5',
+      // 禁用 prebundle 解决 NutUI 图标样式加载问题
+      prebundle: {
+        enable: false
+      }
+    },
     cache: {
       enable: false // Webpack 持久化缓存配置，建议开启
     },

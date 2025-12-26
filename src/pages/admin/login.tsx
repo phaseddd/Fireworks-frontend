@@ -27,8 +27,10 @@ export default function AdminLogin() {
     const token = Taro.getStorageSync('adminToken')
     const expiry = Taro.getStorageSync('tokenExpiry')
     if (token && expiry && Date.now() < expiry) {
-      // 已登录，跳转到管理端首页
-      Taro.redirectTo({ url: '/pages/admin/products/list' })
+      // 已登录，延迟跳转避免导航冲突
+      setTimeout(() => {
+        Taro.redirectTo({ url: '/pages/admin/products/list' })
+      }, 300)
     }
   })
 
