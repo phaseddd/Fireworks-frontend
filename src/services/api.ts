@@ -19,8 +19,8 @@ async function request<T = any>(
 ): Promise<T> {
   const { method = 'GET', data, header = {} } = options
 
-  // 获取 token
-  const token = Taro.getStorageSync('token')
+  // 获取 token (管理端使用 adminToken)
+  const token = Taro.getStorageSync('adminToken')
   if (token) {
     header['Authorization'] = `Bearer ${token}`
   }
