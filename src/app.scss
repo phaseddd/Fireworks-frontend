@@ -1,0 +1,59 @@
+// 全局样式
+// NutUI 样式会在组件使用时自动引入
+
+// 自定义 CSS 变量
+:root {
+  // 主题色 - 烟花风格
+  --color-primary: #ff6b35;
+  --color-secondary: #ffd700;
+  --color-background: #1a1a2e;
+  --color-surface: #16213e;
+  --color-text: #eee;
+  --color-text-secondary: #aaa;
+
+  // 安全区域
+  --safe-area-inset-bottom: env(safe-area-inset-bottom);
+}
+
+// 页面基础样式
+page {
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica,
+    Segoe UI, Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei',
+    sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+// 通用工具类
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}

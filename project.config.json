@@ -1,0 +1,16 @@
+{
+  "miniprogramRoot": "./dist",
+  "projectname": "fireworks-frontend",
+  "description": "Fireworks 烟花商品展示小程序",
+  "appid": "",
+  "setting": {
+    "urlCheck": true,
+    "es6": false,
+    "enhance": false,
+    "compileHotReLoad": false,
+    "postcss": false,
+    "minified": false,
+    "bigPackageSizeSupport": true
+  },
+  "compileType": "miniprogram"
+}
