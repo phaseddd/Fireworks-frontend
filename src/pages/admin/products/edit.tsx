@@ -1,10 +1,25 @@
 import { View, Text } from '@tarojs/components'
-import { useLoad } from '@tarojs/taro'
+import { useDidShow } from '@tarojs/taro'
+import useAuth from '../../../hooks/useAuth'
 
 export default function AdminProductEdit() {
-  useLoad(() => {
-    console.log('Admin product edit page loaded')
+  const { isAuthenticated, loading, requireAuth } = useAuth()
+
+  useDidShow(() => {
+    requireAuth()
   })
+
+  if (loading) {
+    return (
+      <View style={{ padding: '20px' }}>
+        <Text>加载中...</Text>
+      </View>
+    )
+  }
+
+  if (!isAuthenticated) {
+    return <View />
+  }
 
   return (
     <View style={{ padding: '20px' }}>

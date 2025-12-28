@@ -1,5 +1,5 @@
 import Taro from '@tarojs/taro'
-import type { ApiResponse } from '../types'
+import type { ApiResponse, LoginRequest, LoginResponse } from '../types'
 
 // API 基础路径
 const BASE_URL = process.env.NODE_ENV === 'development'
@@ -85,8 +85,8 @@ export const api = {
 
   // 认证相关
   auth: {
-    login: (data: { username: string; password: string }) =>
-      request('/api/v1/auth/login', { method: 'POST', data }),
+    login: (data: LoginRequest) =>
+      request<LoginResponse>('/api/v1/auth/login', { method: 'POST', data }),
   },
 
   // 商品相关
