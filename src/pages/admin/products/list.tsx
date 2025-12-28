@@ -1,12 +1,14 @@
 import { View, Text, Image } from '@tarojs/components'
-import { useDidShow } from '@tarojs/taro'
+import { useDidShow, useReachBottom } from '@tarojs/taro'
 import Taro from '@tarojs/taro'
-import { useState, useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { Button, Empty, Dialog, PullToRefresh } from '@nutui/nutui-react-taro'
 import useAuth from '../../../hooks/useAuth'
 import { api } from '../../../services/api'
 import type { Product, ProductStatus } from '../../../types'
 import './list.scss'
+
+const PAGE_SIZE = 20
 
 // 状态筛选选项
 const STATUS_OPTIONS: Array<{ label: string; value: ProductStatus | '' }> = [
@@ -37,7 +39,7 @@ export default function AdminProductList() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(false)
   const [currentStatus, setCurrentStatus] = useState<ProductStatus | ''>('')
-  const [_page, setPage] = useState(1)
+  const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
   const [total, setTotal] = useState(0)
 
@@ -53,7 +55,7 @@ export default function AdminProductList() {
     try {
       const params: { page: number; size: number; status?: ProductStatus } = {
         page: pageNum,
-        size: 20,
+        size: PAGE_SIZE,
       }
       if (status) {
         params.status = status
@@ -68,7 +70,7 @@ export default function AdminProductList() {
       }
 
       setTotal(result.total)
-      setHasMore(result.items.length >= 20)
+      setHasMore(pageNum * PAGE_SIZE < result.total)
       setPage(pageNum)
     } catch (error) {
       console.error('加载商品列表失败:', error)
@@ -83,6 +85,15 @@ export default function AdminProductList() {
       loadProducts(1, currentStatus, true)
     }
   })
+
+  const handleReachBottom = useCallback(() => {
+    if (authLoading || !isAuthenticated) return
+    if (loading || !hasMore) return
+    loadProducts(page + 1, currentStatus)
+  }, [authLoading, currentStatus, hasMore, isAuthenticated, loadProducts, loading, page])
+
+  // 触底加载更多
+  useReachBottom(handleReachBottom)
 
   // 下拉刷新
   const handleRefresh = async () => {

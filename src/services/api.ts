@@ -1,4 +1,5 @@
 import Taro from '@tarojs/taro'
+import { authUtils } from '../hooks/useAuth'
 import type { ApiResponse, LoginRequest, LoginResponse, PageResult, Product, ProductStatus } from '../types'
 
 // API 基础路径
@@ -19,8 +20,8 @@ async function request<T = any>(
 ): Promise<T> {
   const { method = 'GET', data, header = {} } = options
 
-  // 获取 token (管理端使用 adminToken)
-  const token = Taro.getStorageSync('adminToken')
+  // 获取 token (管理端使用 adminToken)，仅在未过期时注入
+  const token = authUtils.getToken()
   if (token) {
     header['Authorization'] = `Bearer ${token}`
   }
