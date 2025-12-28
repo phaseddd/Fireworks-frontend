@@ -19,11 +19,10 @@ export interface PageParams {
  * 分页响应数据
  */
 export interface PageResult<T> {
-  records: T[]
+  items: T[]
   total: number
   page: number
   size: number
-  pages: number
 }
 
 /**
@@ -34,27 +33,23 @@ export interface Product {
   name: string
   description: string
   price: number
-  originalPrice?: number
-  categoryId: number
-  categoryName?: string
-  mainImage: string
-  detailImage?: string
-  qrcodeImage?: string
+  category: ProductCategory
+  images: string[]
   stock: number
   status: ProductStatus
-  sortOrder: number
   createdAt: string
   updatedAt: string
 }
 
 /**
+ * 商品分类
+ */
+export type ProductCategory = 'GIFT' | 'FIREWORK' | 'FIRECRACKER' | 'COMBO' | 'OTHER'
+
+/**
  * 商品状态
  */
-export enum ProductStatus {
-  OFF_SHELF = 0,   // 下架
-  ON_SHELF = 1,    // 上架
-  OUT_OF_STOCK = 2 // 缺货
-}
+export type ProductStatus = 'ON_SHELF' | 'OFF_SHELF'
 
 /**
  * 代理商实体

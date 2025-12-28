@@ -1,0 +1,268 @@
+/**
+ * 商品列表页面样式 - 适老化设计
+ * 遵循 UX Spec 中的管理端适老化设计要求
+ */
+
+.admin-product-list {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 20px;
+
+  // 顶部标题栏
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background-color: #fff;
+    border-bottom: 1px solid #e8e8e8;
+
+    .title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #000;
+    }
+
+    .add-btn {
+      min-width: 100px;
+      height: 44px;
+      font-size: 16px;
+      border-radius: 8px;
+    }
+  }
+
+  // 状态筛选栏
+  .filter-bar {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background-color: #fff;
+    margin-bottom: 12px;
+    gap: 12px;
+
+    .filter-item {
+      padding: 8px 16px;
+      border-radius: 20px;
+      background-color: #f0f0f0;
+      transition: all 0.2s;
+
+      &.active {
+        background-color: #1890ff;
+
+        .filter-text {
+          color: #fff;
+        }
+      }
+
+      .filter-text {
+        font-size: 14px;
+        color: #666;
+      }
+    }
+
+    .total-count {
+      margin-left: auto;
+
+      .count-text {
+        font-size: 14px;
+        color: #999;
+      }
+    }
+  }
+
+  // 加载状态
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 0;
+
+    .loading-text {
+      font-size: 16px;
+      color: #999;
+    }
+  }
+
+  // 商品列表
+  .product-list {
+    padding: 0 16px;
+
+    // 空状态
+    .nut-empty {
+      padding: 60px 0;
+    }
+  }
+
+  // 商品卡片 - 适老化大卡片设计
+  .product-card {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+    // 商品图片区域
+    .product-image-wrapper {
+      position: relative;
+      width: 100%;
+      height: 180px;
+      background-color: #f5f5f5;
+
+      .product-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .product-image-placeholder {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        background-color: #e8e8e8;
+
+        .placeholder-text {
+          font-size: 14px;
+          color: #999;
+        }
+      }
+
+      // 状态标签
+      .status-tag {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        padding: 4px 12px;
+        border-radius: 4px;
+
+        &.on_shelf {
+          background-color: #52c41a;
+        }
+
+        &.off_shelf {
+          background-color: #999;
+        }
+
+        .status-text {
+          font-size: 12px;
+          color: #fff;
+          font-weight: 500;
+        }
+      }
+    }
+
+    // 商品信息区域
+    .product-info {
+      padding: 16px;
+
+      .product-name {
+        font-size: 18px;
+        font-weight: 500;
+        color: #000;
+        line-height: 1.4;
+        margin-bottom: 8px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .product-meta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 8px;
+
+        .product-category {
+          font-size: 14px;
+          color: #1890ff;
+          background-color: #e6f7ff;
+          padding: 2px 8px;
+          border-radius: 4px;
+        }
+
+        .product-stock {
+          font-size: 14px;
+          color: #666;
+        }
+      }
+
+      .product-price {
+        font-size: 20px;
+        font-weight: 700;
+        color: #ff4d4f;
+      }
+    }
+
+    // 操作按钮区域 - 适老化大按钮
+    .product-actions {
+      display: flex;
+      gap: 12px;
+      padding: 0 16px 16px;
+
+      .action-btn {
+        flex: 1;
+        height: 44px;
+        font-size: 16px;
+        border-radius: 8px;
+        font-weight: 500;
+
+        &.edit-btn {
+          background-color: #1890ff;
+          color: #fff;
+          border: none;
+        }
+
+        &.delete-btn {
+          background-color: #fff;
+          color: #ff4d4f;
+          border: 1px solid #ff4d4f;
+        }
+      }
+    }
+  }
+
+  // 加载更多
+  .loading-more {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+
+    .loading-text {
+      font-size: 14px;
+      color: #999;
+    }
+  }
+
+  // 没有更多
+  .no-more {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+
+    .no-more-text {
+      font-size: 14px;
+      color: #ccc;
+    }
+  }
+
+  // 删除确认弹窗
+  .delete-dialog-content {
+    text-align: center;
+    padding: 10px 0;
+
+    .delete-warning {
+      font-size: 16px;
+      color: #333;
+    }
+
+    .delete-product-name {
+      font-size: 16px;
+      color: #ff4d4f;
+      font-weight: 500;
+    }
+  }
+}

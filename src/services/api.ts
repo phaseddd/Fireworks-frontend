@@ -1,5 +1,5 @@
 import Taro from '@tarojs/taro'
-import type { ApiResponse, LoginRequest, LoginResponse } from '../types'
+import type { ApiResponse, LoginRequest, LoginResponse, PageResult, Product, ProductStatus } from '../types'
 
 // API 基础路径
 const BASE_URL = process.env.NODE_ENV === 'development'
@@ -91,18 +91,16 @@ export const api = {
 
   // 商品相关
   products: {
-    list: (params?: { page?: number; size?: number; categoryId?: number; status?: number }) =>
-      request('/api/v1/products', { data: params }),
+    list: (params?: { page?: number; size?: number; status?: ProductStatus }) =>
+      request<PageResult<Product>>('/api/v1/products', { data: params }),
     detail: (id: number) =>
-      request(`/api/v1/products/${id}`),
+      request<Product>(`/api/v1/products/${id}`),
     create: (data: any) =>
       request('/api/v1/products', { method: 'POST', data }),
     update: (id: number, data: any) =>
       request(`/api/v1/products/${id}`, { method: 'PUT', data }),
     delete: (id: number) =>
-      request(`/api/v1/products/${id}`, { method: 'DELETE' }),
-    updateStatus: (id: number, status: number) =>
-      request(`/api/v1/products/${id}/status`, { method: 'PUT', data: { status } }),
+      request<void>(`/api/v1/products/${id}`, { method: 'DELETE' }),
   },
 
   // 代理商相关
