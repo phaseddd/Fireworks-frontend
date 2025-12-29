@@ -71,9 +71,10 @@ export default function AdminProductAdd() {
   }
 
   // Handle category select
-  const handleCategoryConfirm = (_options: any[], values: (string | number)[]) => {
-    if (values && values.length > 0) {
-      setFormData(prev => ({ ...prev, category: values[0] as ProductCategory }))
+  const handleCategoryConfirm = (_options: unknown[], values: Array<string | number>) => {
+    const selectedValue = values?.[0]
+    if (typeof selectedValue === 'string') {
+      setFormData(prev => ({ ...prev, category: selectedValue as ProductCategory }))
     }
     setPickerVisible(false)
   }
