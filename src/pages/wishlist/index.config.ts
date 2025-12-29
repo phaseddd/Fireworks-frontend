@@ -1,5 +1,5 @@
 export default definePageConfig({
-  navigationBarTitleText: '南澳烟花',
+  navigationBarTitleText: '我的',
   navigationBarBackgroundColor: '#0a0a0a',
   navigationBarTextStyle: 'white',
   backgroundColor: '#0a0a0a'

@@ -1,9 +1,10 @@
-import { View, Text } from '@tarojs/components'
+import { View, Text, Image } from '@tarojs/components'
 import { useLoad } from '@tarojs/taro'
 import { Button } from '@nutui/nutui-react-taro'
 import Taro from '@tarojs/taro'
 import { useRef } from 'react'
 import { authUtils } from '../../hooks/useAuth'
+import logoImg from '../../assets/images/logo.png'
 import './index.scss'
 
 const FIREWORKS_EMOJI = String.fromCodePoint(0x1F386)
@@ -13,15 +14,17 @@ export default function Index() {
   const navigatingRef = useRef(false)
 
   useLoad(() => {
-    console.log(`${FIREWORKS_EMOJI} Index page loaded`)
+    console.log(`${FIREWORKS_EMOJI} 南澳烟花首页加载完成`)
   })
 
-  const handleViewProducts = () => {
-    Taro.navigateTo({
-      url: '/pages/products/list'
+  // 跳转到商品列表 (TabBar 页面，使用 switchTab)
+  const handleStartBrowsing = () => {
+    Taro.switchTab({
+      url: '/pages/products/list/index'
     })
   }
 
+  // 店主入口 - 需要预加载分包
   const handleAdminLogin = () => {
     if (navigatingRef.current) return
     navigatingRef.current = true
@@ -30,9 +33,13 @@ export default function Index() {
       ? '/pages/admin/products/list'
       : '/pages/admin/login'
 
-    const loadSubPackage = (Taro as any).loadSubPackage as
-      | ((options: { name: string; success?: () => void; fail?: (err: any) => void }) => void)
-      | undefined
+    const loadSubPackage = (Taro as unknown as {
+      loadSubPackage?: (options: {
+        name: string
+        success?: () => void
+        fail?: (err: unknown) => void
+      }) => void
+    }).loadSubPackage
 
     if (typeof loadSubPackage === 'function') {
       Taro.showLoading({ title: '加载中...' })
@@ -66,44 +73,41 @@ export default function Index() {
   }
 
   return (
-    <View className='index'>
-      {/* 背景动效区域（Three.js/Lottie 预留） */}
-      <View className='background-effect'>
-        {/* TODO: 添加粒子效果 */}
-      </View>
-
+    <View className='index-page'>
       {/* 主内容区 */}
       <View className='content'>
-        {/* Logo 和标题 */}
-        <View className='hero'>
-          <Text className='title'>{FIREWORKS_EMOJI} Fireworks</Text>
-          <Text className='subtitle'>南澳县烟花商品展示</Text>
+        {/* Logo */}
+        <View className='logo-wrapper'>
+          <Image
+            className='logo'
+            src={logoImg}
+            mode='aspectFit'
+          />
         </View>
 
-        {/* 操作按钮 */}
-        <View className='actions'>
-          <Button
-            type='primary'
-            size='large'
-            className='btn-primary'
-            onClick={handleViewProducts}
-          >
-            浏览商品
-          </Button>
-          <Button
-            type='default'
-            size='large'
-            className='btn-secondary'
-            onClick={handleAdminLogin}
-          >
-            店主入口
-          </Button>
-        </View>
+        {/* 店铺名称 */}
+        <Text className='store-name'>南澳烟花</Text>
 
-        {/* 底部信息 */}
-        <View className='footer'>
-          <Text className='copyright'>{COPYRIGHT_SIGN} 2025 Fireworks</Text>
+        {/* 口号 */}
+        <Text className='slogan'>绚烂烟火，点亮美好时刻</Text>
+
+        {/* 开始浏览按钮 */}
+        <Button
+          className='btn-start'
+          onClick={handleStartBrowsing}
+        >
+          开始浏览
+        </Button>
+
+        {/* 店主入口 - 小字链接样式 */}
+        <View className='admin-entry' onClick={handleAdminLogin}>
+          <Text className='admin-text'>店主入口</Text>
         </View>
+      </View>
+
+      {/* 底部版权信息 */}
+      <View className='footer'>
+        <Text className='copyright'>{COPYRIGHT_SIGN} 2025 南澳烟花</Text>
       </View>
     </View>
   )
