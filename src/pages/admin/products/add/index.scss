@@ -1,0 +1,179 @@
+/**
+ * 商品添加页面样式 - 适老化设计
+ * 遵循 UX Spec 中的管理端适老化设计要求
+ * - 大字体 (≥18px)
+ * - 大输入框 (≥48px 高度)
+ * - 大按钮 (≥44px)
+ * - 充足的间距
+ */
+
+.admin-product-add {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 40px;
+
+  // 顶部标题栏
+  .header {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    background-color: #fff;
+    border-bottom: 1px solid #e8e8e8;
+
+    .title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #000;
+    }
+  }
+
+  // 加载状态
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 0;
+
+    .loading-text {
+      font-size: 16px;
+      color: #999;
+    }
+  }
+
+  // 表单容器
+  .add-form {
+    padding: 20px;
+    background-color: #fff;
+    margin: 12px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+    // 表单项
+    .form-item {
+      margin-bottom: 24px;
+
+      // 标签
+      .label {
+        display: block;
+        font-size: 18px;
+        font-weight: 500;
+        color: #1a1a1a;
+        margin-bottom: 10px;
+
+        .required {
+          color: #ff4d4f;
+          margin-left: 4px;
+        }
+      }
+
+      // 输入框 - 适老化大尺寸
+      .input {
+        width: 100%;
+        height: 48px;
+        font-size: 18px;
+        padding: 0 16px;
+        border: 2px solid #d9d9d9;
+        border-radius: 8px;
+        background-color: #fff;
+        box-sizing: border-box;
+        transition: border-color 0.2s;
+
+        &:focus {
+          border-color: #1890ff;
+        }
+
+        &.input-error {
+          border-color: #ff4d4f;
+        }
+      }
+
+      // 多行文本框
+      .textarea {
+        width: 100%;
+        min-height: 120px;
+        font-size: 18px;
+        padding: 16px;
+        border: 2px solid #d9d9d9;
+        border-radius: 8px;
+        background-color: #fff;
+        box-sizing: border-box;
+        line-height: 1.5;
+        transition: border-color 0.2s;
+
+        &:focus {
+          border-color: #1890ff;
+        }
+      }
+
+      // 错误提示
+      .error-text {
+        display: block;
+        font-size: 14px;
+        color: #ff4d4f;
+        margin-top: 8px;
+      }
+
+      // 分类选择器触发器
+      .picker-trigger {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        height: 48px;
+        padding: 0 16px;
+        border: 2px solid #d9d9d9;
+        border-radius: 8px;
+        background-color: #fff;
+        box-sizing: border-box;
+
+        .picker-text {
+          font-size: 18px;
+          color: #1a1a1a;
+        }
+
+        .picker-arrow {
+          font-size: 12px;
+          color: #999;
+        }
+      }
+
+      // 图片上传提示区域
+      .image-hint {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100px;
+        border: 2px dashed #d9d9d9;
+        border-radius: 8px;
+        background-color: #fafafa;
+
+        .hint-text {
+          font-size: 16px;
+          color: #999;
+        }
+      }
+    }
+
+    // 提交按钮 - 适老化大按钮
+    .submit-btn {
+      width: 100%;
+      height: 50px;
+      font-size: 18px;
+      font-weight: 500;
+      background-color: #1890ff;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      margin-top: 20px;
+
+      &:active {
+        background-color: #096dd9;
+      }
+
+      &[disabled] {
+        background-color: #d9d9d9;
+        color: #999;
+      }
+    }
+  }
+}

@@ -109,7 +109,7 @@ export default function AdminProductList() {
 
   // 跳转到添加商品页面
   const handleAddProduct = () => {
-    Taro.navigateTo({ url: '/pages/admin/products/edit' })
+    Taro.navigateTo({ url: '/pages/admin/products/add/index' })
   }
 
   // 跳转到编辑商品页面

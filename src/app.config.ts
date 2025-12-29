@@ -12,6 +12,7 @@ export default defineAppConfig({
         'login',
         'dashboard',
         'products/list',
+        'products/add/index',
         'products/edit',
       ]
     }

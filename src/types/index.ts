@@ -135,3 +135,14 @@ export interface LoginResponse {
   token: string
   expiresIn: number
 }
+
+/**
+ * 创建商品请求
+ */
+export interface CreateProductRequest {
+  name: string
+  price: number
+  category?: ProductCategory
+  stock?: number
+  description?: string
+}
