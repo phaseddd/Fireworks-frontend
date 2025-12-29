@@ -147,3 +147,16 @@ export interface CreateProductRequest {
   description?: string
   images?: string[]  // [外观图, 细节图, 二维码图]
 }
+
+/**
+ * 更新商品请求
+ */
+export interface UpdateProductRequest {
+  name: string
+  price: number
+  category?: ProductCategory
+  stock?: number
+  description?: string
+  status?: ProductStatus
+  images: string[]  // [外观图, 细节图, 二维码图]
+}

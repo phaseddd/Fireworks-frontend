@@ -114,7 +114,7 @@ export default function AdminProductList() {
 
   // 跳转到编辑商品页面
   const handleEditProduct = (product: Product) => {
-    Taro.navigateTo({ url: `/pages/admin/products/edit?id=${product.id}` })
+    Taro.navigateTo({ url: `/pages/admin/products/edit/index?id=${product.id}` })
   }
 
   // 显示删除确认弹窗

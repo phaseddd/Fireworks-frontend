@@ -1,6 +1,6 @@
 import Taro from '@tarojs/taro'
 import { authUtils } from '../hooks/useAuth'
-import type { ApiResponse, CreateProductRequest, LoginRequest, LoginResponse, PageResult, Product, ProductStatus } from '../types'
+import type { ApiResponse, CreateProductRequest, LoginRequest, LoginResponse, PageResult, Product, ProductStatus, UpdateProductRequest } from '../types'
 
 // API 基础路径
 const BASE_URL = process.env.NODE_ENV === 'development'
@@ -98,7 +98,7 @@ export const api = {
       request<Product>(`/api/v1/products/${id}`),
     create: (data: CreateProductRequest) =>
       request<Product>('/api/v1/products', { method: 'POST', data }),
-    update: (id: number, data: Partial<CreateProductRequest>) =>
+    update: (id: number, data: UpdateProductRequest) =>
       request<Product>(`/api/v1/products/${id}`, { method: 'PUT', data }),
     delete: (id: number) =>
       request<void>(`/api/v1/products/${id}`, { method: 'DELETE' }),

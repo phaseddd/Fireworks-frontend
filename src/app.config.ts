@@ -13,7 +13,7 @@ export default defineAppConfig({
         'dashboard',
         'products/list',
         'products/add/index',
-        'products/edit',
+        'products/edit/index',
       ]
     }
   ],
