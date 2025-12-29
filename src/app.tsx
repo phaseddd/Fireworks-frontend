@@ -5,20 +5,27 @@ import './app.scss'
 function ensureDomGlobals() {
   const globalObject = globalThis as unknown as Record<string, unknown>
 
+  const createSafeDomConstructor = () => {
+    const SafeConstructor = function () {}
+    Object.defineProperty(SafeConstructor, Symbol.hasInstance, {
+      value: () => false,
+    })
+    return SafeConstructor
+  }
+
   if (typeof globalObject.Element === 'undefined') {
-    globalObject.Element = function Element() {}
+    globalObject.Element = createSafeDomConstructor()
   }
+
   if (typeof globalObject.HTMLElement === 'undefined') {
-    globalObject.HTMLElement = function HTMLElement() {}
-  }
-  if (typeof globalObject.Node === 'undefined') {
-    globalObject.Node = function Node() {}
+    globalObject.HTMLElement = createSafeDomConstructor()
   }
 }
 
+ensureDomGlobals()
+
 function App({ children }: PropsWithChildren<any>) {
   useLaunch(() => {
-    ensureDomGlobals()
     console.log('🎆 Fireworks App launched!')
   })
 
