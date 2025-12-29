@@ -1,3 +1,4 @@
+import path from 'path'
 import { defineConfig, type UserConfigExport } from '@tarojs/cli'
 import devConfig from './dev'
 import prodConfig from './prod'
@@ -8,6 +9,9 @@ export default defineConfig<'webpack5'>(async (merge) => {
     projectName: 'fireworks-frontend',
     date: '2025-12-26',
     designWidth: 375,
+    alias: {
+      '@': path.resolve(__dirname, '..', 'src')
+    },
     deviceRatio: {
       640: 2.34 / 2,
       750: 1,

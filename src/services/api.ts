@@ -92,10 +92,14 @@ export const api = {
 
   // 商品相关
   products: {
-    list: (params?: { page?: number; size?: number; status?: ProductStatus }) =>
+    list: (params?: { page?: number; size?: number; status?: ProductStatus; sort?: string }) =>
       request<PageResult<Product>>('/api/v1/products', { data: params }),
+    publicList: (params?: { page?: number; size?: number; sort?: string }) =>
+      request<PageResult<Product>>('/api/v1/products/public', { data: params }),
     detail: (id: number) =>
       request<Product>(`/api/v1/products/${id}`),
+    publicDetail: (id: number) =>
+      request<Product>(`/api/v1/products/public/${id}`),
     create: (data: CreateProductRequest) =>
       request<Product>('/api/v1/products', { method: 'POST', data }),
     update: (id: number, data: UpdateProductRequest) =>

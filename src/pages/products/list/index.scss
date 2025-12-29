@@ -1,33 +1,35 @@
-// 商品列表页面样式 - 占位
-.product-list-page {
+// 商品列表页面样式
+.products-page {
   min-height: 100vh;
-  background-color: #0a0a0a;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: #0a0a0a;
+  padding: 16px;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
 
-  .placeholder {
+  .product-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .loading-more {
     text-align: center;
-    padding: 40px;
+    padding: 20px;
+    color: rgba(255, 255, 255, 0.5);
+  }
 
-    .icon {
-      display: block;
-      font-size: 64px;
-      margin-bottom: 24px;
-    }
+  .no-more {
+    text-align: center;
+    padding: 20px;
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 14px;
+  }
 
-    .title {
-      display: block;
-      font-size: 24px;
-      font-weight: bold;
-      color: #ffffff;
-      margin-bottom: 12px;
-    }
-
-    .desc {
-      display: block;
-      font-size: 16px;
-      color: #666666;
-    }
+  .empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 16px;
   }
 }
