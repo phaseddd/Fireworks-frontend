@@ -145,4 +145,5 @@ export interface CreateProductRequest {
   category?: ProductCategory
   stock?: number
   description?: string
+  images?: string[]  // [外观图, 细节图, 二维码图]
 }

@@ -6,6 +6,10 @@ import { Button, Picker } from '@nutui/nutui-react-taro'
 import useAuth from '../../../../hooks/useAuth'
 import { api } from '../../../../services/api'
 import type { ProductCategory } from '../../../../types'
+import ProductImageUploader, {
+  validateProductImages,
+  type ProductImages
+} from '../../../../components/admin/ProductImageUploader'
 import './index.scss'
 
 // Category options
@@ -32,6 +36,12 @@ interface FormErrors {
   price?: string
 }
 
+// Image errors interface
+interface ImageErrors {
+  main?: string
+  qrcode?: string
+}
+
 // Initial form data
 const initialFormData: FormData = {
   name: '',
@@ -39,6 +49,13 @@ const initialFormData: FormData = {
   category: 'GIFT',
   stock: '0',
   description: '',
+}
+
+// Initial images
+const initialImages: ProductImages = {
+  main: '',
+  detail: '',
+  qrcode: '',
 }
 
 export default function AdminProductAdd() {
@@ -49,6 +66,10 @@ export default function AdminProductAdd() {
   const [errors, setErrors] = useState<FormErrors>({})
   const [submitting, setSubmitting] = useState(false)
   const [pickerVisible, setPickerVisible] = useState(false)
+
+  // Images state
+  const [images, setImages] = useState<ProductImages>(initialImages)
+  const [imageErrors, setImageErrors] = useState<ImageErrors>({})
 
   // Page show hook - check auth
   useDidShow(() => {
@@ -79,23 +100,41 @@ export default function AdminProductAdd() {
     setPickerVisible(false)
   }
 
+  // Handle images change
+  const handleImagesChange = (newImages: ProductImages) => {
+    setImages(newImages)
+    // Clear image errors when user uploads
+    setImageErrors({})
+  }
+
   // Validate form
   const validateForm = (): boolean => {
+    let isValid = true
     const newErrors: FormErrors = {}
 
     // Name validation
     if (!formData.name || formData.name.trim() === '') {
       newErrors.name = '请输入商品名称'
+      isValid = false
     }
 
     // Price validation
     const priceNum = parseFloat(formData.price)
     if (!formData.price || isNaN(priceNum) || priceNum <= 0) {
       newErrors.price = '请输入有效价格'
+      isValid = false
     }
 
     setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
+
+    // Image validation
+    const imageValidation = validateProductImages(images)
+    if (!imageValidation.valid) {
+      setImageErrors(imageValidation.errors)
+      isValid = false
+    }
+
+    return isValid
   }
 
   // Handle submit
@@ -106,12 +145,20 @@ export default function AdminProductAdd() {
 
     setSubmitting(true)
     try {
+      // 构建 images 数组: [外观图, 细节图, 二维码图]
+      const imagesArray = [
+        images.main,
+        images.detail || '',
+        images.qrcode
+      ]
+
       const requestData = {
         name: formData.name.trim(),
         price: parseFloat(formData.price),
         category: formData.category,
         stock: parseInt(formData.stock, 10) || 0,
         description: formData.description.trim(),
+        images: imagesArray,
       }
 
       await api.products.create(requestData)
@@ -221,12 +268,15 @@ export default function AdminProductAdd() {
           />
         </View>
 
-        {/* Image upload hint */}
+        {/* Image upload */}
         <View className='form-item'>
           <Text className='label'>商品图片</Text>
-          <View className='image-hint'>
-            <Text className='hint-text'>图片上传功能将在后续版本中提供</Text>
-          </View>
+          <ProductImageUploader
+            images={images}
+            onChange={handleImagesChange}
+            errors={imageErrors}
+            disabled={submitting}
+          />
         </View>
 
         {/* Submit button */}

@@ -1,0 +1,165 @@
+/**
+ * 商品图片上传组件样式 - 适老化设计
+ */
+.product-image-uploader {
+  padding: 16px 0;
+
+  .image-slot {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #F0F0F0;
+
+    &:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    .slot-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+
+      .slot-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #1A1A1A;
+      }
+
+      .required-mark {
+        color: #FF4D4F;
+        font-size: 18px;
+        margin-left: 4px;
+      }
+    }
+
+    .slot-hint {
+      font-size: 14px;
+      color: #666666;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .image-preview,
+    .upload-btn {
+      width: 120px;
+      height: 120px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .image-preview {
+      position: relative;
+
+      .preview-img {
+        width: 100%;
+        height: 100%;
+      }
+
+      .delete-btn {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 28px;
+        height: 28px;
+        background: rgba(0, 0, 0, 0.6);
+        color: #FFFFFF;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        line-height: 1;
+      }
+    }
+
+    .upload-btn {
+      border: 2px dashed #D9D9D9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #FAFAFA;
+
+      .uploading {
+        width: 100%;
+        padding: 0 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .uploading-text {
+        font-size: 14px;
+        color: #666666;
+        margin-bottom: 10px;
+        line-height: 1;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: #EDEDED;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      .progress-inner {
+        height: 100%;
+        background: #1890FF;
+        border-radius: 4px;
+        width: 0;
+        transition: width 120ms linear;
+      }
+
+      .plus {
+        font-size: 32px;
+        color: #999999;
+        line-height: 1;
+      }
+
+      .upload-text {
+        font-size: 14px;
+        color: #999999;
+        margin-top: 8px;
+      }
+
+      &:active {
+        border-color: #1890FF;
+        background: #E6F7FF;
+      }
+    }
+
+    .error-text {
+      display: block;
+      margin-top: 8px;
+      font-size: 14px;
+      color: #FF4D4F;
+    }
+
+    .retry-btn {
+      margin-top: 10px;
+      width: 120px;
+      height: 36px;
+      border-radius: 6px;
+      border: 1px solid #FF4D4F;
+      color: #FF4D4F;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      background: #FFF2F0;
+
+      &:active {
+        opacity: 0.85;
+      }
+    }
+
+    // 验证错误状态
+    &.error {
+      .upload-btn {
+        border-color: #FF4D4F;
+        background: #FFF2F0;
+      }
+    }
+  }
+}
