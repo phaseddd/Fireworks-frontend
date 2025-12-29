@@ -2,11 +2,18 @@ import { View, Text } from '@tarojs/components'
 import { useLoad } from '@tarojs/taro'
 import { Button } from '@nutui/nutui-react-taro'
 import Taro from '@tarojs/taro'
+import { useRef } from 'react'
+import { authUtils } from '../../hooks/useAuth'
 import './index.scss'
 
+const FIREWORKS_EMOJI = String.fromCodePoint(0x1F386)
+const COPYRIGHT_SIGN = String.fromCodePoint(0x00A9)
+
 export default function Index() {
+  const navigatingRef = useRef(false)
+
   useLoad(() => {
-    console.log('🎆 Index page loaded')
+    console.log(`${FIREWORKS_EMOJI} Index page loaded`)
   })
 
   const handleViewProducts = () => {
@@ -16,8 +23,45 @@ export default function Index() {
   }
 
   const handleAdminLogin = () => {
+    if (navigatingRef.current) return
+    navigatingRef.current = true
+
+    const url = authUtils.isLoggedIn()
+      ? '/pages/admin/products/list'
+      : '/pages/admin/login'
+
+    const loadSubPackage = (Taro as any).loadSubPackage as
+      | ((options: { name: string; success?: () => void; fail?: (err: any) => void }) => void)
+      | undefined
+
+    if (typeof loadSubPackage === 'function') {
+      Taro.showLoading({ title: '加载中...' })
+      loadSubPackage({
+        name: 'pages/admin',
+        success: () => {
+          Taro.hideLoading()
+          Taro.navigateTo({
+            url,
+            complete: () => {
+              navigatingRef.current = false
+            },
+          })
+        },
+        fail: (err) => {
+          console.error('loadSubPackage failed:', err)
+          Taro.hideLoading()
+          Taro.showToast({ title: '加载失败，请重试', icon: 'none' })
+          navigatingRef.current = false
+        }
+      })
+      return
+    }
+
     Taro.navigateTo({
-      url: '/pages/admin/login'
+      url,
+      complete: () => {
+        navigatingRef.current = false
+      },
     })
   }
 
@@ -32,7 +76,7 @@ export default function Index() {
       <View className='content'>
         {/* Logo 和标题 */}
         <View className='hero'>
-          <Text className='title'>🎆 Fireworks</Text>
+          <Text className='title'>{FIREWORKS_EMOJI} Fireworks</Text>
           <Text className='subtitle'>南澳县烟花商品展示</Text>
         </View>
 
@@ -58,7 +102,7 @@ export default function Index() {
 
         {/* 底部信息 */}
         <View className='footer'>
-          <Text className='copyright'>© 2025 Fireworks</Text>
+          <Text className='copyright'>{COPYRIGHT_SIGN} 2025 Fireworks</Text>
         </View>
       </View>
     </View>

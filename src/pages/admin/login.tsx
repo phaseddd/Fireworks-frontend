@@ -1,7 +1,7 @@
 import { View, Text, Input, Image } from '@tarojs/components'
-import { useLoad } from '@tarojs/taro'
+import { useDidShow, useLoad } from '@tarojs/taro'
 import { Button } from '@nutui/nutui-react-taro'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Taro from '@tarojs/taro'
 import { api } from '../../services/api'
 import './login.scss'
@@ -15,17 +15,28 @@ export default function AdminLogin() {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  const redirectedRef = useRef(false)
 
   useLoad(() => {
     console.log('Admin login page loaded')
-    // 检查是否已登录
+  })
+
+  useDidShow(() => {
+    if (redirectedRef.current) return
+
+    // 检查是否已登录（在页面已展示后再跳转，避免导航冲突/超时）
     const token = Taro.getStorageSync('adminToken')
     const expiry = Taro.getStorageSync('tokenExpiry')
     if (token && expiry && Date.now() < expiry) {
-      // 已登录，延迟跳转避免导航冲突
+      redirectedRef.current = true
       setTimeout(() => {
-        Taro.redirectTo({ url: '/pages/admin/products/list' })
-      }, 300)
+        Taro.redirectTo({
+          url: '/pages/admin/products/list',
+          fail: () => {
+            Taro.reLaunch({ url: '/pages/admin/products/list' })
+          }
+        })
+      }, 0)
     }
   })
 
