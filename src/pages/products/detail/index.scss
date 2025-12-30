@@ -1,40 +1,322 @@
-// 商品详情页面样式 - 占位
-.product-detail-page {
-  min-height: 100vh;
-  background-color: #0a0a0a;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+// 商品详情页面样式 - 深色主题 + 毛玻璃效果
+// Story 2.3 - 与首页烟花暖色调统一
 
-  .placeholder {
-    text-align: center;
+// ==================== 毛玻璃效果 Mixins ====================
+
+// 基础毛玻璃效果
+@mixin glassmorphism($blur: 20px, $opacity: 0.15) {
+  background: rgba(255, 255, 255, $opacity);
+  backdrop-filter: blur($blur);
+  -webkit-backdrop-filter: blur($blur);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+// 带橙色光晕的毛玻璃（与烟花主题呼应）
+@mixin glassmorphism-warm($blur: 20px) {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 72, 0, 0.12) 0%,
+    rgba(255, 140, 0, 0.06) 50%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  backdrop-filter: blur($blur);
+  -webkit-backdrop-filter: blur($blur);
+  border: 1px solid rgba(255, 140, 0, 0.2);
+  box-shadow: 0 8px 32px rgba(255, 72, 0, 0.12);
+}
+
+// ==================== 页面主体 ====================
+
+.detail-page {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 50% 25%, rgba(255, 72, 0, 0.12) 0%, rgba(10, 10, 10, 0) 50%),
+    radial-gradient(circle at 20% 80%, rgba(255, 140, 0, 0.08) 0%, rgba(10, 10, 10, 0) 45%),
+    radial-gradient(circle at 80% 70%, rgba(255, 72, 0, 0.06) 0%, rgba(10, 10, 10, 0) 40%),
+    linear-gradient(180deg, #0a0a0a 0%, #0f0f12 50%, #0a0a0a 100%);
+  padding-bottom: 120px;
+  position: relative;
+
+  // ==================== 加载/错误状态 ====================
+
+  .loading-state,
+  .error-state {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     padding: 40px;
 
-    .icon {
-      display: block;
+    .loading-icon,
+    .error-icon {
       font-size: 64px;
       margin-bottom: 24px;
     }
 
-    .title {
+    .loading-text,
+    .error-text {
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.7);
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .retry-btn {
+      width: 160px;
+      height: 44px;
+      background: linear-gradient(135deg, #ff4800 0%, #ff8c00 100%);
+      border: none;
+      border-radius: 22px;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: bold;
+    }
+  }
+
+  // ==================== 图片轮播区域 ====================
+
+  .image-section {
+    position: relative;
+    width: 100%;
+    height: 56vh;
+    min-height: 320px;
+    max-height: 520px;
+    overflow: hidden;
+
+    .image-swiper {
+      width: 100%;
+      height: 100%;
+
+      .swiper-item {
+        width: 100%;
+        height: 100%;
+
+        .product-image {
+          width: 100%;
+          height: 100%;
+          display: block;
+        }
+      }
+    }
+
+    // 无图片占位
+    .no-image {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+
+      .no-image-icon {
+        font-size: 64px;
+        margin-bottom: 16px;
+      }
+
+      .no-image-text {
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.5);
+      }
+    }
+
+    // 图片指示器 - 毛玻璃胶囊
+    .image-indicator {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      padding: 6px 14px;
+      border-radius: 14px;
+      z-index: 10;
+
+      @include glassmorphism(10px, 0.35);
+
+      .indicator-text {
+        font-size: 13px;
+        color: #ffffff;
+        font-weight: 500;
+      }
+    }
+
+    // 二维码提示
+    .qrcode-hint {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      right: 80px;
+      display: flex;
+      align-items: center;
+      padding: 10px 14px;
+      border-radius: 12px;
+      z-index: 10;
+
+      @include glassmorphism(10px, 0.35);
+
+      .hint-icon {
+        font-size: 16px;
+        margin-right: 8px;
+      }
+
+      .hint-text {
+        font-size: 14px;
+        font-weight: 600;
+        color: #ff8c00;
+        flex: 1;
+      }
+    }
+
+    // 返回按钮 - 左上角毛玻璃圆形
+    .back-button {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+
+      @include glassmorphism(12px, 0.4);
+
+      &:active {
+        transform: scale(0.95);
+        background: rgba(255, 255, 255, 0.5);
+      }
+
+      .back-icon {
+        font-size: 20px;
+        color: #ffffff;
+        font-weight: bold;
+      }
+    }
+  }
+
+  // ==================== 商品信息卡片 - 毛玻璃效果 ====================
+
+  .product-info-card {
+    margin: 12px 16px 20px;
+    padding: 24px 20px;
+    border-radius: 20px;
+    position: relative;
+    z-index: 10;
+
+    // 暖色调毛玻璃效果
+    @include glassmorphism-warm(24px);
+
+    // 商品名称
+    .product-name {
       display: block;
       font-size: 24px;
       font-weight: bold;
       color: #ffffff;
-      margin-bottom: 12px;
+      line-height: 1.3;
+      margin-bottom: 16px;
     }
 
-    .desc {
-      display: block;
-      font-size: 16px;
-      color: #ff4800;
-      margin-bottom: 8px;
+    // 价格区域
+    .price-row {
+      margin-bottom: 16px;
+
+      .product-price {
+        font-size: 32px;
+        font-weight: bold;
+        color: #ff4800;
+        text-shadow: 0 0 20px rgba(255, 72, 0, 0.35);
+
+        &::before {
+          content: '¥';
+          font-size: 20px;
+          margin-right: 2px;
+        }
+      }
     }
 
-    .tip {
-      display: block;
-      font-size: 14px;
-      color: #666666;
+    // 分类标签
+    .category-tag {
+      display: inline-block;
+      background: rgba(255, 72, 0, 0.2);
+      border: 1px solid rgba(255, 72, 0, 0.35);
+      padding: 8px 16px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+
+      .category-text {
+        font-size: 14px;
+        color: #ff8c00;
+        font-weight: 500;
+      }
+    }
+
+    // 描述区域
+    .description-section {
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+      .section-title {
+        display: block;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.5);
+        margin-bottom: 12px;
+        font-weight: 500;
+      }
+
+      .product-desc {
+        display: block;
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.7;
+        white-space: pre-wrap;
+      }
+    }
+  }
+
+  // ==================== 底部操作栏 - 毛玻璃效果 ====================
+
+  .bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px 20px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+    z-index: 100;
+
+    // 深色毛玻璃背景
+    background: rgba(26, 26, 26, 0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+    .add-btn {
+      width: 100%;
+      height: 52px;
+      background: linear-gradient(135deg, #ff4800 0%, #ff8c00 100%);
+      border: none;
+      border-radius: 26px;
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      box-shadow: 0 6px 24px rgba(255, 72, 0, 0.45);
+
+      &:active {
+        transform: scale(0.98);
+        box-shadow: 0 4px 16px rgba(255, 72, 0, 0.35);
+      }
+
+      // 禁用状态
+      &.disabled {
+        opacity: 0.55;
+        box-shadow: none;
+        cursor: not-allowed;
+
+        &:active {
+          transform: none;
+        }
+      }
     }
   }
 }

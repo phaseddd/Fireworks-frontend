@@ -52,6 +52,17 @@ export type ProductCategory = 'GIFT' | 'FIREWORK' | 'FIRECRACKER' | 'COMBO' | 'O
 export type ProductStatus = 'ON_SHELF' | 'OFF_SHELF'
 
 /**
+ * 商品分类中文映射
+ */
+export const categoryMap: Record<ProductCategory, string> = {
+  'GIFT': '礼花类',
+  'FIREWORK': '烟花类',
+  'FIRECRACKER': '鞭炮类',
+  'COMBO': '组合类',
+  'OTHER': '其他'
+}
+
+/**
  * 代理商实体
  */
 export interface Agent {
