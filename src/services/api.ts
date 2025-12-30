@@ -94,7 +94,7 @@ export const api = {
   products: {
     list: (params?: { page?: number; size?: number; status?: ProductStatus; sort?: string }) =>
       request<PageResult<Product>>('/api/v1/products', { data: params }),
-    publicList: (params?: { page?: number; size?: number; sort?: string }) =>
+    publicList: (params?: { page?: number; size?: number; sort?: string; category?: string; minPrice?: number; maxPrice?: number }) =>
       request<PageResult<Product>>('/api/v1/products/public', { data: params }),
     detail: (id: number) =>
       request<Product>(`/api/v1/products/${id}`),

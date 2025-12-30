@@ -141,7 +141,6 @@ export default function ProductDetail() {
             circular
             indicatorDots={false}
             current={currentImageIndex}
-            touchable
             onChange={handleSwiperChange}
           >
             {images.map((img, index) => (
