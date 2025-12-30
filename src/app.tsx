@@ -1,5 +1,5 @@
 import { PropsWithChildren } from 'react'
-import { useLaunch } from '@tarojs/taro'
+import Taro, { useLaunch } from '@tarojs/taro'
 import './app.scss'
 
 function ensureDomGlobals() {
@@ -26,7 +26,16 @@ ensureDomGlobals()
 
 function App({ children }: PropsWithChildren<any>) {
   useLaunch(() => {
-    console.log('🎆 Fireworks App launched!')
+    console.log('Fireworks App launched!')
+
+    if (process.env.TARO_ENV === 'weapp') {
+      const cloudEnv = process.env.TARO_APP_CLOUD_ENV
+      if (cloudEnv) {
+        Taro.cloud.init({ env: cloudEnv })
+      } else {
+        console.warn('[cloud] Missing TARO_APP_CLOUD_ENV, cloud APIs may fail in production')
+      }
+    }
   })
 
   // children 是将要会渲染的页面

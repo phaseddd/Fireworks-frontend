@@ -1,0 +1,35 @@
+.hot-keywords {
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+
+  .hot-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+
+    .title {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 500;
+    }
+  }
+
+  .keyword-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    .keyword-tag {
+      padding: 6px 12px;
+      background: rgba(255, 72, 0, 0.15);
+      border-radius: 16px;
+      font-size: 13px;
+      color: #ff4800;
+
+      &:active {
+        background: rgba(255, 72, 0, 0.25);
+      }
+    }
+  }
+}

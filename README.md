@@ -73,7 +73,7 @@ npm run build:h5
 ## 微信开发者工具
 
 1. 打开微信开发者工具
-2. 导入项目，选择 `dist` 目录
+2. 导入项目，选择 `Fireworks-frontend` 目录（`project.config.json` 已配置 `miniprogramRoot: ./dist`）
 3. 填入小程序 AppID（或使用测试号）
 
 ## 页面路由

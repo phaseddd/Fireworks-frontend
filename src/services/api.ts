@@ -2,6 +2,9 @@ import Taro from '@tarojs/taro'
 import { authUtils } from '../hooks/useAuth'
 import type { ApiResponse, CreateProductRequest, LoginRequest, LoginResponse, PageResult, Product, ProductStatus, UpdateProductRequest } from '../types'
 
+const CLOUD_ENV = process.env.TARO_APP_CLOUD_ENV || ''
+const SERVICE_NAME = process.env.TARO_APP_SERVICE_NAME || 'fireworks-backend'
+
 // API 基础路径
 const BASE_URL = process.env.NODE_ENV === 'development'
   ? 'http://localhost:8080'
@@ -47,15 +50,18 @@ async function request<T = any>(
     }
 
     // 生产环境使用云调用
+    if (!CLOUD_ENV) {
+      throw new Error('缺少云托管环境 ID，请配置 TARO_APP_CLOUD_ENV')
+    }
     const res = await Taro.cloud.callContainer({
       config: {
-        env: '' // TODO: 填入云环境 ID
+        env: CLOUD_ENV
       },
       path: url,
       method,
       data,
       header: {
-        'X-WX-SERVICE': 'fireworks-backend',
+        'X-WX-SERVICE': SERVICE_NAME,
         'Content-Type': 'application/json',
         ...header
       }
@@ -94,8 +100,10 @@ export const api = {
   products: {
     list: (params?: { page?: number; size?: number; status?: ProductStatus; sort?: string }) =>
       request<PageResult<Product>>('/api/v1/products', { data: params }),
-    publicList: (params?: { page?: number; size?: number; sort?: string; category?: string; minPrice?: number; maxPrice?: number }) =>
+    publicList: (params?: { page?: number; size?: number; sort?: string; category?: string; minPrice?: number; maxPrice?: number; keyword?: string }) =>
       request<PageResult<Product>>('/api/v1/products/public', { data: params }),
+    hotKeywords: () =>
+      request<string[]>('/api/v1/products/public/hot-keywords'),
     detail: (id: number) =>
       request<Product>(`/api/v1/products/${id}`),
     publicDetail: (id: number) =>

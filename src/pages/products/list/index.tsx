@@ -1,9 +1,15 @@
 import { View, Text } from '@tarojs/components'
 import Taro, { useDidShow, usePullDownRefresh, useReachBottom } from '@tarojs/taro'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import ProductCard from '@/components/customer/ProductCard'
 import CategoryTabs from '@/components/customer/CategoryTabs'
 import PriceTabs, { type PriceRange } from '@/components/customer/PriceTabs'
+import SearchBar from '@/components/customer/SearchBar'
+import EmptyResult from '@/components/customer/SearchBar/EmptyResult'
+import SearchHistory from '@/components/customer/SearchBar/SearchHistory'
+import HotKeywords from '@/components/customer/SearchBar/HotKeywords'
+import { useDebounce } from '@/hooks/useDebounce'
+import { useSearchHistory } from '@/hooks/useSearchHistory'
 import { api } from '@/services/api'
 import type { Product } from '@/types'
 import './index.scss'
@@ -12,6 +18,7 @@ import './index.scss'
  * 商品列表页面 - TabBar 页面
  * Story 2.2: 商品列表页面
  * Story 2.4: 商品分类筛选功能（含价格区间筛选）
+ * Story 2.5: 商品搜索功能
  */
 const ProductList: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([])
@@ -20,14 +27,27 @@ const ProductList: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [category, setCategory] = useState('')  // 分类筛选状态
   const [priceRange, setPriceRange] = useState<PriceRange>({ value: '' })  // 价格区间筛选状态
+  const [keyword, setKeyword] = useState('')  // 搜索关键词状态
+  const [showSearchPanel, setShowSearchPanel] = useState(false)  // 是否显示搜索面板
+  const [hotKeywords, setHotKeywords] = useState<string[]>([])  // 热门搜索关键词
+  const debouncedKeyword = useDebounce(keyword, 300)  // 防抖处理
+  const { history, addHistory, clearHistory } = useSearchHistory()  // 搜索历史
   const pageSize = 20
 
-  type Filters = { category: string; minPrice?: number; maxPrice?: number }
+  type Filters = { category: string; minPrice?: number; maxPrice?: number; keyword?: string }
 
   // 使用 ref 保存最新的筛选条件，避免闭包问题
   const filtersRef = useRef<Filters>({ category: '' })
   const loadingRef = useRef(false)
   const pendingRef = useRef<{ pageNum: number; refresh: boolean; filters: Filters } | null>(null)
+  const initialLoadDone = useRef(false)
+
+  // 加载热门搜索关键词
+  useEffect(() => {
+    api.products.hotKeywords()
+      .then(keywords => setHotKeywords(keywords))
+      .catch(err => console.error('加载热门搜索失败:', err))
+  }, [])
 
   // 加载商品列表
   const loadProducts = async (
@@ -45,7 +65,7 @@ const ProductList: React.FC = () => {
     try {
       // 使用传入的 filters 或 ref 中的值
       const currentFilters = filters || filtersRef.current
-      const params: { page: number; size: number; sort: string; category?: string; minPrice?: number; maxPrice?: number } = {
+      const params: { page: number; size: number; sort: string; category?: string; minPrice?: number; maxPrice?: number; keyword?: string } = {
         page: pageNum,
         size: pageSize,
         sort: 'updatedAt,desc',
@@ -58,6 +78,9 @@ const ProductList: React.FC = () => {
       }
       if (Number.isFinite(currentFilters.maxPrice)) {
         params.maxPrice = currentFilters.maxPrice
+      }
+      if (currentFilters.keyword) {
+        params.keyword = currentFilters.keyword
       }
 
       const res = await api.products.publicList(params)
@@ -84,6 +107,21 @@ const ProductList: React.FC = () => {
     }
   }
 
+  // 监听防抖后的关键词变化
+  useEffect(() => {
+    if (!initialLoadDone.current) return  // 跳过初始加载
+    filtersRef.current = { ...filtersRef.current, keyword: debouncedKeyword || undefined }
+    setPage(1)
+    if (!loadingRef.current) setProducts([])
+    loadProducts(1, true, filtersRef.current)
+
+    // 添加到搜索历史（仅当有实际搜索时）
+    if (debouncedKeyword) {
+      addHistory(debouncedKeyword)
+      setShowSearchPanel(false)  // 搜索时关闭面板
+    }
+  }, [debouncedKeyword, addHistory])
+
   // 分类变化处理
   const handleCategoryChange = (newCategory: string) => {
     if (newCategory === category) return
@@ -104,10 +142,27 @@ const ProductList: React.FC = () => {
     loadProducts(1, true, filtersRef.current)
   }
 
+  // 清除搜索关键词
+  const handleClearKeyword = () => {
+    setKeyword('')
+  }
+
+  // 选择搜索历史/热门关键词
+  const handleSelectKeyword = (selectedKeyword: string) => {
+    setKeyword(selectedKeyword)
+    setShowSearchPanel(false)
+  }
+
+  // 搜索框获取焦点
+  const handleSearchFocus = () => {
+    setShowSearchPanel(true)
+  }
+
   // 初始加载
   useDidShow(() => {
     if (products.length === 0) {
       loadProducts(1, true)
+      initialLoadDone.current = true
     }
   })
 
@@ -124,37 +179,67 @@ const ProductList: React.FC = () => {
     }
   })
 
+  // 是否显示搜索无结果
+  const showEmptyResult = !loading && products.length === 0 && keyword && !showSearchPanel
+  // 是否显示搜索面板（历史+热门）
+  const showPanel = showSearchPanel && !keyword
+
   return (
     <View className='products-page'>
-      <View className='filters-sticky'>
-        {/* 分类筛选栏 */}
-        <CategoryTabs value={category} onChange={handleCategoryChange} />
-        {/* 价格区间筛选栏 */}
-        <PriceTabs value={priceRange.value} onChange={handlePriceChange} />
-      </View>
+      {/* 搜索栏 - Story 2.5 */}
+      <SearchBar
+        value={keyword}
+        onChange={setKeyword}
+        onFocus={handleSearchFocus}
+      />
 
-      <View className='product-grid'>
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </View>
-
-      {loading && (
-        <View className='loading-more'>
-          <Text>加载中...</Text>
+      {showPanel ? (
+        // 搜索面板：显示历史和热门
+        <View className='search-panel'>
+          <HotKeywords keywords={hotKeywords} onSelect={handleSelectKeyword} />
+          <SearchHistory
+            history={history}
+            onSelect={handleSelectKeyword}
+            onClear={clearHistory}
+          />
         </View>
-      )}
+      ) : (
+        <>
+          <View className='filters-sticky'>
+            {/* 分类筛选栏 */}
+            <CategoryTabs value={category} onChange={handleCategoryChange} />
+            {/* 价格区间筛选栏 */}
+            <PriceTabs value={priceRange.value} onChange={handlePriceChange} />
+          </View>
 
-      {!hasMore && products.length > 0 && (
-        <View className='no-more'>
-          <Text>没有更多商品了</Text>
-        </View>
-      )}
+          {showEmptyResult ? (
+            <EmptyResult keyword={keyword} onClear={handleClearKeyword} />
+          ) : (
+            <View className='product-grid'>
+              {products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </View>
+          )}
 
-      {!loading && products.length === 0 && (
-        <View className='empty-state'>
-          <Text>暂无商品</Text>
-        </View>
+          {loading && (
+            <View className='loading-more'>
+              <Text>加载中...</Text>
+            </View>
+          )}
+
+          {!hasMore && products.length > 0 && (
+            <View className='no-more'>
+              <Text>没有更多商品了</Text>
+            </View>
+          )}
+
+          {!loading && products.length === 0 && !keyword && (
+            <View className='empty-state'>
+              <Text>暂无商品</Text>
+            </View>
+          )}
+        </>
       )}
     </View>
   )
