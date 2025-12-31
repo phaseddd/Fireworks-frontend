@@ -44,7 +44,14 @@ export async function compressImage(filePath: string, quality: number = 80): Pro
 
 async function getFileSize(filePath: string): Promise<number | null> {
   try {
-    const res: any = await (Taro as any).getFileInfo({ filePath })
+    const fs = Taro.getFileSystemManager()
+    const res = await new Promise<{ size: number }>((resolve, reject) => {
+      fs.getFileInfo({
+        filePath,
+        success: resolve,
+        fail: reject
+      })
+    })
     return typeof res?.size === 'number' ? res.size : null
   } catch (error) {
     console.warn('Get file size failed:', error)
