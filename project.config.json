@@ -2,7 +2,7 @@
   "miniprogramRoot": "dist/",
   "projectname": "fireworks-frontend",
   "description": "Fireworks 烟花商品展示小程序",
-  "appid": "wx3728feaa88ba1b85",
+  "appid": "touristappid",
   "setting": {
     "urlCheck": true,
     "es6": false,
