@@ -59,8 +59,11 @@ async function getFileSize(filePath: string): Promise<number | null> {
   }
 }
 
-async function compressToUnderLimit(filePath: string): Promise<string> {
-  const qualities = [80, 60, 40]
+async function compressToUnderLimit(filePath: string, slot: ImageSlot): Promise<string> {
+  // 二维码图对清晰度更敏感：尽量少做有损压缩，降低“长按识别/扫码”失败概率
+  const qualities = slot === 'qrcode'
+    ? [100, 95, 90, 85]
+    : [80, 60, 40]
 
   for (const quality of qualities) {
     const compressed = await compressImage(filePath, quality)
@@ -171,7 +174,7 @@ export async function uploadImage(
 
   try {
     // 先压缩图片并校验大小 <= 2MB
-    const compressed = await compressToUnderLimit(filePath)
+    const compressed = await compressToUnderLimit(filePath, slot)
 
     let result: string
 
@@ -211,7 +214,7 @@ export async function chooseAndUploadImage(
 ): Promise<string> {
   const res = await Taro.chooseImage({
     count: 1,
-    sizeType: ['compressed'],
+    sizeType: slot === 'qrcode' ? ['original', 'compressed'] : ['compressed'],
     sourceType: ['album', 'camera']
   })
 

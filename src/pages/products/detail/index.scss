@@ -166,6 +166,77 @@
       }
     }
 
+    // 二维码大图遮罩（用于长按识别二维码）
+    .qrcode-viewer-mask {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 999;
+      padding: 24px 16px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.75);
+    }
+
+    .qrcode-viewer {
+      width: 100%;
+      max-width: 560px;
+      max-height: calc(100vh - 48px);
+      overflow: auto;
+      border-radius: 16px;
+
+      @include glassmorphism(18px, 0.18);
+
+      .qrcode-viewer-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 14px;
+      }
+
+      .qrcode-viewer-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #ffffff;
+      }
+
+      .qrcode-viewer-close {
+        width: 32px;
+        height: 32px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:active {
+          transform: scale(0.96);
+          background: rgba(255, 255, 255, 0.12);
+        }
+
+        .qrcode-viewer-close-icon {
+          font-size: 22px;
+          color: rgba(255, 255, 255, 0.9);
+          line-height: 1;
+        }
+      }
+
+      .qrcode-viewer-img {
+        width: 100%;
+        display: block;
+      }
+
+      .qrcode-viewer-tip {
+        padding: 12px 14px 16px;
+        font-size: 14px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.9);
+      }
+    }
+
     // 返回按钮 - 左上角毛玻璃圆形
     .back-button {
       position: absolute;
@@ -317,6 +388,61 @@
           transform: none;
         }
       }
+    }
+  }
+}
+
+// 视频播放区域（追加样式）
+.detail-page .product-info-card .video-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+  .section-title {
+    display: block;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+
+  .video-player {
+    width: 100%;
+    height: 200px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #000000;
+  }
+
+  .video-placeholder {
+    width: 100%;
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(255, 72, 0, 0.15);
+    border: 2px dashed rgba(255, 72, 0, 0.4);
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:active {
+      transform: scale(0.98);
+      background: rgba(255, 72, 0, 0.25);
+    }
+
+    .play-icon {
+      font-size: 36px;
+      color: #ff4800;
+      margin-bottom: 8px;
+      text-shadow: 0 0 12px rgba(255, 72, 0, 0.5);
+    }
+
+    .play-text {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 500;
     }
   }
 }

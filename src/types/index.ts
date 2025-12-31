@@ -35,6 +35,7 @@ export interface Product {
   price: number
   category: ProductCategory
   images: string[]
+  videoUrl?: string  // 燃放效果视频URL
   stock: number
   status: ProductStatus
   createdAt: string

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { View, Text, Swiper, SwiperItem, Image } from '@tarojs/components'
+import { View, Text, Swiper, SwiperItem, Image, Video } from '@tarojs/components'
 import { useRouter } from '@tarojs/taro'
 import { Button } from '@nutui/nutui-react-taro'
 import Taro from '@tarojs/taro'
@@ -21,6 +21,8 @@ export default function ProductDetail() {
   const [error, setError] = useState<string | null>(null)
   const [product, setProduct] = useState<Product | null>(null)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [qrcodeViewerUrl, setQrcodeViewerUrl] = useState<string | null>(null)
+  const [showVideoPlayer, setShowVideoPlayer] = useState(false)
 
   // 加载商品数据
   useEffect(() => {
@@ -52,23 +54,18 @@ export default function ProductDetail() {
   }
 
   // 处理图片预览
-  const handlePreviewImage = (index: number, options?: { showMenu?: boolean }) => {
+  const handlePreviewImage = (index: number) => {
     if (!product?.images?.length) return
 
     Taro.previewImage({
       current: product.images[index],
       urls: product.images,
-      // 微信小程序：预览页右上角菜单（用于“识别图中二维码”等）
-      showmenu: options?.showMenu ?? false
+      showmenu: false
     } as any)
   }
 
-  // 处理长按（第三张图提示二维码）
-  const handleLongPress = (index: number) => {
-    if (index === 2 && product?.images?.[2]) {
-      handlePreviewImage(index, { showMenu: true })
-    }
-  }
+  const openQrcodeViewer = (url: string) => setQrcodeViewerUrl(url)
+  const closeQrcodeViewer = () => setQrcodeViewerUrl(null)
 
   // 添加到意向清单（暂时禁用）
   const handleAddToWishlist = () => {
@@ -148,9 +145,9 @@ export default function ProductDetail() {
                 <Image
                   className='product-image'
                   src={img}
-                  mode='aspectFill'
-                  onClick={() => handlePreviewImage(index, { showMenu: index === 2 })}
-                  onLongPress={index === 2 ? () => handleLongPress(index) : undefined}
+                  mode={index === 2 ? 'aspectFit' : 'aspectFill'}
+                  showMenuByLongpress={index === 2}
+                  onClick={() => (index === 2 ? openQrcodeViewer(img) : handlePreviewImage(index))}
                 />
               </SwiperItem>
             ))}
@@ -175,7 +172,28 @@ export default function ProductDetail() {
         {currentImageIndex === 2 && images.length > 2 && (
           <View className='qrcode-hint'>
             <Text className='hint-icon'>💡</Text>
-            <Text className='hint-text'>预览后长按识别二维码查看燃放效果</Text>
+            <Text className='hint-text'>点击放大后长按；若无入口，可转发到自己微信后识别</Text>
+          </View>
+        )}
+
+        {/* 二维码大图（使用 Image 长按菜单能力，避免 wx.previewImage 行为差异） */}
+        {qrcodeViewerUrl && (
+          <View className='qrcode-viewer-mask' onClick={closeQrcodeViewer}>
+            <View className='qrcode-viewer' onClick={(e) => e.stopPropagation()}>
+              <View className='qrcode-viewer-header'>
+                <Text className='qrcode-viewer-title'>二维码</Text>
+                <View className='qrcode-viewer-close' onClick={closeQrcodeViewer}>
+                  <Text className='qrcode-viewer-close-icon'>×</Text>
+                </View>
+              </View>
+              <Image
+                className='qrcode-viewer-img'
+                src={qrcodeViewerUrl}
+                mode='widthFix'
+                showMenuByLongpress
+              />
+              <Text className='qrcode-viewer-tip'>长按识别；若无入口，可转发到自己微信聊天后长按识别</Text>
+            </View>
           </View>
         )}
 
@@ -207,6 +225,30 @@ export default function ProductDetail() {
           <View className='description-section'>
             <Text className='section-title'>商品描述</Text>
             <Text className='product-desc'>{product.description}</Text>
+          </View>
+        )}
+
+        {/* 燃放效果视频 */}
+        {product.videoUrl && (
+          <View className='video-section'>
+            <Text className='section-title'>燃放效果预览</Text>
+            {showVideoPlayer ? (
+              <Video
+                className='video-player'
+                src={product.videoUrl}
+                controls
+                autoplay
+                showFullscreenBtn
+                showPlayBtn
+                showCenterPlayBtn
+                objectFit='contain'
+              />
+            ) : (
+              <View className='video-placeholder' onClick={() => setShowVideoPlayer(true)}>
+                <Text className='play-icon'>▶</Text>
+                <Text className='play-text'>点击播放燃放效果视频</Text>
+              </View>
+            )}
           </View>
         )}
       </View>
