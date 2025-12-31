@@ -23,6 +23,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     onChange(e.detail.value)
   }
 
+  // 清空输入内容
   const handleClear = () => {
     onChange('')
   }
@@ -39,9 +40,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
           onInput={handleInput}
           onFocus={onFocus}
         />
+        {/* 只在有输入内容时显示清空按钮 */}
         {value && (
           <View className='clear-btn' onClick={handleClear}>
-            <IconFont name='circle-close' size='18' color='rgba(255,255,255,0.5)' />
+            <View className='clear-icon'>×</View>
           </View>
         )}
       </View>

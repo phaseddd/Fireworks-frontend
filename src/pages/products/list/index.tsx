@@ -158,6 +158,11 @@ const ProductList: React.FC = () => {
     setShowSearchPanel(true)
   }
 
+  // 关闭搜索面板
+  const handleCloseSearchPanel = () => {
+    setShowSearchPanel(false)
+  }
+
   // 初始加载
   useDidShow(() => {
     if (products.length === 0) {
@@ -181,8 +186,8 @@ const ProductList: React.FC = () => {
 
   // 是否显示搜索无结果
   const showEmptyResult = !loading && products.length === 0 && keyword && !showSearchPanel
-  // 是否显示搜索面板（历史+热门）
-  const showPanel = showSearchPanel && !keyword
+  // 是否显示搜索面板（历史+热门）- 只要 showSearchPanel 为 true 就显示
+  const showPanel = showSearchPanel
 
   return (
     <View className='products-page'>
@@ -195,14 +200,18 @@ const ProductList: React.FC = () => {
 
       {showPanel ? (
         // 搜索面板：显示历史和热门
-        <View className='search-panel'>
-          <HotKeywords keywords={hotKeywords} onSelect={handleSelectKeyword} />
-          <SearchHistory
-            history={history}
-            onSelect={handleSelectKeyword}
-            onClear={clearHistory}
-          />
-        </View>
+        <>
+          <View className='search-panel'>
+            <HotKeywords keywords={hotKeywords} onSelect={handleSelectKeyword} />
+            <SearchHistory
+              history={history}
+              onSelect={handleSelectKeyword}
+              onClear={clearHistory}
+            />
+          </View>
+          {/* 遮罩层：点击关闭搜索面板 */}
+          <View className='search-overlay' onClick={handleCloseSearchPanel} />
+        </>
       ) : (
         <>
           <View className='filters-sticky'>

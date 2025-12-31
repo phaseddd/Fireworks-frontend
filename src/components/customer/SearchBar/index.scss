@@ -1,4 +1,6 @@
 .search-bar {
+  position: relative;
+  z-index: 20;  // 确保搜索栏在遮罩层之上
   padding: 12px 16px;
   background: rgba(255, 255, 255, 0.05);
 
@@ -28,6 +30,18 @@
       align-items: center;
       justify-content: center;
       padding: 4px;
+
+      .clear-icon {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        color: #0a0a0a;
+        font-size: 14px;
+        line-height: 18px;
+        text-align: center;
+        font-weight: bold;
+      }
 
       &:active {
         opacity: 0.7;

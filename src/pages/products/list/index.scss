@@ -47,4 +47,22 @@
     color: rgba(255, 255, 255, 0.5);
     font-size: 16px;
   }
+
+  // 搜索面板相关样式
+  .search-panel {
+    position: relative;
+    z-index: 20;  // 确保面板在遮罩层之上
+    background: #0a0a0a;
+  }
+
+  // 遮罩层：覆盖面板下方的区域，点击可关闭面板
+  .search-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 15;  // 在面板之下，但在其他内容之上
+    background: rgba(0, 0, 0, 0.5);
+  }
 }
