@@ -28,7 +28,8 @@ function App({ children }: PropsWithChildren<any>) {
   useLaunch(() => {
     console.log('Fireworks App launched!')
 
-    if (process.env.TARO_ENV === 'weapp') {
+    // 只在生产环境的微信小程序中初始化云调用
+    if (process.env.TARO_ENV === 'weapp' && process.env.NODE_ENV === 'production') {
       const cloudEnv = process.env.TARO_APP_CLOUD_ENV
       if (cloudEnv) {
         Taro.cloud.init({ env: cloudEnv })
