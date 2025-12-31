@@ -370,6 +370,7 @@ export default function AdminProductEdit() {
           <ProductImageUploader
             images={images}
             onChange={handleImagesChange}
+            productId={productId ? Number(productId) : undefined}
             errors={imageErrors}
             disabled={submitting}
           />

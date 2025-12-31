@@ -50,6 +50,12 @@ const SLOT_CONFIGS: SlotConfig[] = [
 interface ProductImageUploaderProps {
   images: ProductImages
   onChange: (images: ProductImages) => void
+  /**
+   * 商品 ID（可选）
+   * - 编辑页已存在商品：传入 productId，文件存储到 products/{productId}/...
+   * - 新增页未创建商品：不传，文件存储到 products/temp/...
+   */
+  productId?: number
   errors?: {
     main?: string
     qrcode?: string
@@ -60,6 +66,7 @@ interface ProductImageUploaderProps {
 export default function ProductImageUploader({
   images,
   onChange,
+  productId,
   errors = {},
   disabled = false
 }: ProductImageUploaderProps) {
@@ -113,7 +120,7 @@ export default function ProductImageUploader({
       setSlotProgress(slot, 0)
       setSlotUploading(slot, true)
 
-      const url = await chooseAndUploadImage(slot, undefined, {
+      const url = await chooseAndUploadImage(slot, productId, {
         onProgress: (p) => setSlotProgress(slot, p),
       })
       onChange({ ...images, [slot]: url })
