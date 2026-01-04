@@ -125,8 +125,17 @@ export default function ProductDetail() {
 
   const images = product.images || []
   const hasImages = images.length > 0
+  const hasQrCodeImage = images.length > 2
+  const hasVideo = Boolean(product.videoUrl)
   const priceNumber = Number(product.price)
   const priceText = Number.isFinite(priceNumber) ? priceNumber.toFixed(2) : String(product.price ?? '')
+  const qrHintText = hasVideo
+    ? '视频在下方可直接播放；二维码用于跳转厂家页面'
+    : '暂未获取燃放视频，可点开二维码长按识别'
+  const qrViewerTipTitle = hasVideo ? '视频已在详情页提供播放' : '暂无法获取燃放视频'
+  const qrViewerTipDesc = hasVideo
+    ? '此二维码用于跳转厂家页面/小程序，长按即可识别'
+    : '请长按识别二维码；若无识别入口，可转发到微信聊天后长按识别'
 
   return (
     <View className='detail-page'>
@@ -169,10 +178,10 @@ export default function ProductDetail() {
         )}
 
         {/* 二维码提示 */}
-        {currentImageIndex === 2 && images.length > 2 && (
+        {currentImageIndex === 2 && hasQrCodeImage && (
           <View className='qrcode-hint'>
-            <Text className='hint-icon'>💡</Text>
-            <Text className='hint-text'>点击放大后长按；若无入口，可转发到自己微信后识别</Text>
+            <View className='hint-icon'>i</View>
+            <Text className='hint-text'>{qrHintText}</Text>
           </View>
         )}
 
@@ -192,7 +201,13 @@ export default function ProductDetail() {
                 mode='widthFix'
                 showMenuByLongpress
               />
-              <Text className='qrcode-viewer-tip'>长按识别；若无入口，可转发到自己微信聊天后长按识别</Text>
+              <View className='qrcode-viewer-tip'>
+                <View className='tip-icon'>i</View>
+                <View className='tip-content'>
+                  <View className='tip-title'>{qrViewerTipTitle}</View>
+                  <View className='tip-desc'>{qrViewerTipDesc}</View>
+                </View>
+              </View>
             </View>
           </View>
         )}
@@ -220,14 +235,6 @@ export default function ProductDetail() {
           </Text>
         </View>
 
-        {/* 商品描述 */}
-        {product.description && (
-          <View className='description-section'>
-            <Text className='section-title'>商品描述</Text>
-            <Text className='product-desc'>{product.description}</Text>
-          </View>
-        )}
-
         {/* 燃放效果视频 */}
         {product.videoUrl && (
           <View className='video-section'>
@@ -249,6 +256,14 @@ export default function ProductDetail() {
                 <Text className='play-text'>点击播放燃放效果视频</Text>
               </View>
             )}
+          </View>
+        )}
+
+        {/* 商品描述 */}
+        {product.description && (
+          <View className='description-section'>
+            <Text className='section-title'>商品描述</Text>
+            <Text className='product-desc'>{product.description}</Text>
           </View>
         )}
       </View>
