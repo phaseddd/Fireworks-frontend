@@ -30,7 +30,12 @@ export default function AdminInquiryList() {
     if (loading) return
     setLoading(true)
     try {
-      const res = await api.inquiries.list({ page: pageNum, size: PAGE_SIZE, agentCode: code || undefined })
+      // 仅在有实际值时才传 agentCode，避免传递 undefined 被序列化成字符串 "undefined"
+      const params: { page: number; size: number; agentCode?: string } = { page: pageNum, size: PAGE_SIZE }
+      if (code) {
+        params.agentCode = code
+      }
+      const res = await api.inquiries.list(params)
       setTotal(res.total)
       setHasMore(pageNum * PAGE_SIZE < res.total)
       setPage(pageNum)
