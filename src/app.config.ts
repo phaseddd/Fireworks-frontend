@@ -4,6 +4,10 @@ export default defineAppConfig({
     'pages/products/list/index',   // 商品列表 (TabBar)
     'pages/products/detail/index', // 商品详情
     'pages/wishlist/index',        // 我的/意向清单 (TabBar)
+    'pages/inquiry/create/index',  // 生成询价单
+    'pages/inquiry/share/index',   // 询价生成成功
+    'pages/inquiry/detail/index',  // 询价分享详情
+    'pages/agent/bind/index',      // 代理商绑定
   ],
   // 管理端分包
   subPackages: [
@@ -15,6 +19,12 @@ export default defineAppConfig({
         'products/list',
         'products/add/index',
         'products/edit/index',
+        'agents/list/index',
+        'agents/add/index',
+        'agents/edit/index',
+        'agents/detail/index',
+        'inquiries/list/index',
+        'inquiries/detail/index',
       ]
     }
   ],

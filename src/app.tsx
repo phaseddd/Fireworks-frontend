@@ -24,9 +24,31 @@ function ensureDomGlobals() {
 
 ensureDomGlobals()
 
+function extractAgentCodeFromScene(scene: string): string | null {
+  const decoded = decodeURIComponent(scene)
+  const match = decoded.match(/(?:^|&)a=([A-Z]\d{3})(?:&|$)/)
+  return match?.[1] || null
+}
+
 function App({ children }: PropsWithChildren<any>) {
   useLaunch(() => {
     console.log('Fireworks App launched!')
+
+    const handleScene = (options: any) => {
+      const rawScene = options?.scene
+      if (!rawScene) return
+
+      const agentCode = extractAgentCodeFromScene(String(rawScene))
+      if (agentCode) {
+        // 永久有效（直到再次扫码覆盖或用户清除缓存）
+        Taro.setStorageSync('agentCode', agentCode)
+      }
+    }
+
+    // 冷启动解析（扫码进入会携带 scene）
+    handleScene(Taro.getLaunchOptionsSync())
+    // 热启动解析（从后台回到前台也可能携带 scene）
+    Taro.onAppShow(handleScene)
 
     // 只在生产环境的微信小程序中初始化云调用
     if (process.env.TARO_ENV === 'weapp' && process.env.NODE_ENV === 'production') {

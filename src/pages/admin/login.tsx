@@ -28,12 +28,17 @@ export default function AdminLogin() {
     const token = Taro.getStorageSync('adminToken')
     const expiry = Taro.getStorageSync('tokenExpiry')
     if (token && expiry && Date.now() < expiry) {
+      const redirectUrl = Taro.getStorageSync('postLoginRedirect')
+      if (redirectUrl) {
+        Taro.removeStorageSync('postLoginRedirect')
+      }
       redirectedRef.current = true
       setTimeout(() => {
+        const target = redirectUrl || '/pages/admin/products/list'
         Taro.redirectTo({
-          url: '/pages/admin/products/list',
+          url: target,
           fail: () => {
-            Taro.reLaunch({ url: '/pages/admin/products/list' })
+            Taro.reLaunch({ url: target })
           }
         })
       }, 0)
@@ -81,7 +86,11 @@ export default function AdminLogin() {
 
       // 延迟跳转，让用户看到成功提示
       setTimeout(() => {
-        Taro.redirectTo({ url: '/pages/admin/products/list' })
+        const redirectUrl = Taro.getStorageSync('postLoginRedirect')
+        if (redirectUrl) {
+          Taro.removeStorageSync('postLoginRedirect')
+        }
+        Taro.redirectTo({ url: redirectUrl || '/pages/admin/products/list' })
       }, 1500)
 
     } catch (error: any) {

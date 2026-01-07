@@ -1,6 +1,23 @@
 import Taro from '@tarojs/taro'
 import { authUtils } from '../hooks/useAuth'
-import type { ApiResponse, CreateProductRequest, LoginRequest, LoginResponse, PageResult, Product, ProductStatus, UpdateProductRequest } from '../types'
+import type {
+  Agent,
+  AgentBindCode,
+  AgentBindResult,
+  AgentStats,
+  ApiResponse,
+  CreateProductRequest,
+  Inquiry,
+  InquiryCreateResult,
+  InquiryListItem,
+  InquiryShareDetail,
+  LoginRequest,
+  LoginResponse,
+  PageResult,
+  Product,
+  ProductStatus,
+  UpdateProductRequest
+} from '../types'
 
 const CLOUD_ENV = process.env.TARO_APP_CLOUD_ENV || ''
 const SERVICE_NAME = process.env.TARO_APP_SERVICE_NAME || 'fireworks-backend'
@@ -19,14 +36,23 @@ async function request<T = any>(
     method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
     data?: any
     header?: Record<string, string>
+    silent?: boolean
   } = {}
 ): Promise<T> {
-  const { method = 'GET', data, header = {} } = options
+  const { method = 'GET', data, header = {}, silent = false } = options
 
   // 获取 token (管理端使用 adminToken)，仅在未过期时注入
   const token = authUtils.getToken()
   if (token) {
     header['Authorization'] = `Bearer ${token}`
+  }
+
+  // 本地开发：允许通过 storage 注入 mockOpenid，方便调试无需 JWT 的 OpenID 接口
+  if (process.env.NODE_ENV === 'development' && !header['Authorization']) {
+    const mockOpenid = Taro.getStorageSync('mockOpenid')
+    if (mockOpenid && !header['X-WX-OPENID'] && !header['X-OPENID']) {
+      header['X-OPENID'] = String(mockOpenid)
+    }
   }
 
   try {
@@ -43,7 +69,9 @@ async function request<T = any>(
       })
 
       if (res.data.code !== 200) {
-        throw new Error(res.data.message || '请求失败')
+        const err: any = new Error(res.data.message || '请求失败')
+        err.code = res.data.code
+        throw err
       }
 
       return res.data.data
@@ -69,16 +97,20 @@ async function request<T = any>(
 
     const result = res.data as ApiResponse<T>
     if (result.code !== 200) {
-      throw new Error(result.message || '请求失败')
+      const err: any = new Error(result.message || '请求失败')
+      err.code = result.code
+      throw err
     }
 
     return result.data
   } catch (error: any) {
     console.error('Request error:', error)
-    Taro.showToast({
-      title: error.message || '网络错误',
-      icon: 'none'
-    })
+    if (!silent) {
+      Taro.showToast({
+        title: error.message || '网络错误',
+        icon: 'none'
+      })
+    }
     throw error
   }
 }
@@ -118,21 +150,34 @@ export const api = {
 
   // 代理商相关
   agents: {
-    list: () => request('/api/v1/agents'),
-    detail: (id: number) => request(`/api/v1/agents/${id}`),
+    list: (params?: { page?: number; size?: number }) =>
+      request<PageResult<Agent>>('/api/v1/agents', { data: params }),
+    detail: (code: string) => request<Agent>(`/api/v1/agents/${encodeURIComponent(code)}`),
     create: (data: { name: string; phone?: string }) =>
-      request('/api/v1/agents', { method: 'POST', data }),
-    generateQrcode: (id: number) =>
-      request(`/api/v1/agents/${id}/qrcode`, { method: 'POST' }),
+      request<Agent>('/api/v1/agents', { method: 'POST', data }),
+    update: (code: string, data: { name?: string; phone?: string; status?: string }) =>
+      request<Agent>(`/api/v1/agents/${encodeURIComponent(code)}`, { method: 'PUT', data }),
+    generateQrcode: (code: string) =>
+      request<{ qrcodeUrl: string }>(`/api/v1/agents/${encodeURIComponent(code)}/qrcode`, { method: 'POST' }),
+    generateBindCode: (code: string) =>
+      request<AgentBindCode>(`/api/v1/agents/${encodeURIComponent(code)}/bind-code`, { method: 'POST' }),
+    bind: (data: { bindCode: string }) =>
+      request<AgentBindResult>('/api/v1/agents/bind', { method: 'POST', data }),
+    unbind: (code: string) =>
+      request<void>(`/api/v1/agents/${encodeURIComponent(code)}/unbind`, { method: 'PUT' }),
+    stats: (code: string, range: 'week' | 'month' | 'all') =>
+      request<AgentStats>(`/api/v1/agents/${encodeURIComponent(code)}/stats`, { data: { range } }),
   },
 
   // 询价相关
   inquiries: {
-    create: (data: { items: Array<{ productId: number; quantity: number }> }) =>
-      request('/api/v1/inquiries', { method: 'POST', data }),
-    detail: (id: number) => request(`/api/v1/inquiries/${id}`),
-    list: (params?: { page?: number; size?: number; status?: number }) =>
-      request('/api/v1/inquiries', { data: params }),
+    create: (data: { agentCode?: string | null; phone: string; wechat?: string; items: Array<{ productId: number; quantity: number }> }) =>
+      request<InquiryCreateResult>('/api/v1/inquiries', { method: 'POST', data }),
+    list: (params?: { page?: number; size?: number; agentCode?: string }) =>
+      request<PageResult<InquiryListItem>>('/api/v1/inquiries', { data: params }),
+    detail: (id: number) => request<Inquiry>(`/api/v1/inquiries/${id}`),
+    shareDetail: (shareCode: string) =>
+      request<InquiryShareDetail>(`/api/v1/inquiries/share/${encodeURIComponent(shareCode)}`, { silent: true }),
   },
 }
 

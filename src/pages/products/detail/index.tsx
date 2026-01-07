@@ -6,6 +6,7 @@ import Taro from '@tarojs/taro'
 import { api } from '@/services/api'
 import { categoryMap } from '@/types'
 import type { Product } from '@/types'
+import { useWishlist } from '@/hooks/useWishlist'
 import './index.scss'
 
 /**
@@ -15,6 +16,7 @@ import './index.scss'
 export default function ProductDetail() {
   const router = useRouter()
   const { id } = router.params
+  const { addItem } = useWishlist()
 
   // 状态管理
   const [loading, setLoading] = useState(true)
@@ -67,13 +69,10 @@ export default function ProductDetail() {
   const openQrcodeViewer = (url: string) => setQrcodeViewerUrl(url)
   const closeQrcodeViewer = () => setQrcodeViewerUrl(null)
 
-  // 添加到意向清单（暂时禁用）
+  // 添加到意向清单
   const handleAddToWishlist = () => {
-    Taro.showToast({
-      title: '功能开发中，敬请期待',
-      icon: 'none',
-      duration: 2000
-    })
+    if (!product) return
+    addItem(product)
   }
 
   // 返回上一页
@@ -271,7 +270,7 @@ export default function ProductDetail() {
       {/* 底部操作栏 - 毛玻璃效果 */}
       <View className='bottom-bar'>
         <Button
-          className='add-btn disabled'
+          className='add-btn'
           onClick={handleAddToWishlist}
         >
           加入意向清单

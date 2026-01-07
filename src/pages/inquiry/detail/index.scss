@@ -1,0 +1,113 @@
+.inquiry-detail {
+  min-height: 100vh;
+  background: #0a0a0a;
+  padding: 16px;
+
+  .card {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 16px;
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 14px;
+
+      .title {
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .time {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 12px;
+      }
+    }
+
+    .section {
+      margin-bottom: 14px;
+
+      .section-title {
+        display: block;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 13px;
+        margin-bottom: 10px;
+      }
+
+      .items {
+        .item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 10px 0;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          .name {
+            color: #ffffff;
+            font-size: 14px;
+            max-width: 80%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          .qty {
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 13px;
+          }
+        }
+      }
+
+      .contact {
+        display: block;
+        color: #ffffff;
+        font-size: 16px;
+        margin-bottom: 6px;
+      }
+
+      .hint {
+        display: block;
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 12px;
+      }
+    }
+  }
+
+  .state {
+    padding: 80px 24px;
+    text-align: center;
+
+    .state-title {
+      display: block;
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .state-desc {
+      display: block;
+      color: rgba(255, 255, 255, 0.65);
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    .state-btn {
+      width: 200px;
+      height: 44px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ff4800, #ff7a00);
+      border: none;
+      color: #fff;
+      font-weight: bold;
+    }
+  }
+}
+

@@ -1,9 +1,11 @@
 import { View, Text } from '@tarojs/components'
-import { useDidShow } from '@tarojs/taro'
+import Taro, { useDidShow } from '@tarojs/taro'
+import { Button } from '@nutui/nutui-react-taro'
 import useAuth from '../../hooks/useAuth'
+import './dashboard.scss'
 
 export default function AdminDashboard() {
-  const { isAuthenticated, loading, requireAuth } = useAuth()
+  const { isAuthenticated, loading, requireAuth, logout } = useAuth()
 
   useDidShow(() => {
     requireAuth()
@@ -11,8 +13,10 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <View style={{ padding: '20px' }}>
-        <Text>加载中...</Text>
+      <View className='admin-dashboard'>
+        <View className='loading'>
+          <Text>加载中...</Text>
+        </View>
       </View>
     )
   }
@@ -22,8 +26,29 @@ export default function AdminDashboard() {
   }
 
   return (
-    <View style={{ padding: '20px' }}>
-      <Text>管理后台 - 待实现</Text>
+    <View className='admin-dashboard'>
+      <View className='header'>
+        <Text className='title'>管理后台</Text>
+        <Text className='subtitle'>选择功能开始操作</Text>
+      </View>
+
+      <View className='menu'>
+        <Button className='menu-btn' type='primary' onClick={() => Taro.navigateTo({ url: '/pages/admin/products/list' })}>
+          商品管理
+        </Button>
+        <Button className='menu-btn' type='primary' onClick={() => Taro.navigateTo({ url: '/pages/admin/agents/list/index' })}>
+          代理商管理
+        </Button>
+        <Button className='menu-btn' type='primary' onClick={() => Taro.navigateTo({ url: '/pages/admin/inquiries/list/index' })}>
+          询价记录
+        </Button>
+      </View>
+
+      <View className='footer'>
+        <Button className='logout-btn' onClick={logout}>
+          退出登录
+        </Button>
+      </View>
     </View>
   )
 }

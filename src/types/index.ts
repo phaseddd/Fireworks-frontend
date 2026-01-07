@@ -71,9 +71,40 @@ export interface Agent {
   code: string
   name: string
   phone?: string
+  status: AgentStatus
   qrcodeUrl?: string
-  viewCount: number
   createdAt: string
+  updatedAt: string
+  openidBound?: boolean
+}
+
+export type AgentStatus = 'ACTIVE' | 'DISABLED'
+
+/**
+ * 生成代理商绑定码响应
+ */
+export interface AgentBindCode {
+  bindCode: string
+  expiresAt: string
+}
+
+/**
+ * 代理商绑定结果
+ */
+export interface AgentBindResult {
+  agentCode: string
+  agentName: string
+}
+
+/**
+ * 代理商业绩统计
+ */
+export interface AgentStats {
+  agentCode: string
+  agentName: string
+  range: 'week' | 'month' | 'all'
+  customerCount: number
+  inquiryCount: number
 }
 
 /**
@@ -81,13 +112,47 @@ export interface Agent {
  */
 export interface Inquiry {
   id: number
-  inquiryNo: string
-  customerOpenId: string
-  agentId?: number
   agentCode?: string
+  shareCode?: string
+  phone: string
+  wechat?: string
+  openid?: string
   items: InquiryItem[]
-  totalAmount: number
-  status: InquiryStatus
+  createdAt: string
+}
+
+/**
+ * 询价列表项（管理端）
+ */
+export interface InquiryListItem {
+  id: number
+  phone: string
+  wechat?: string
+  productCount: number
+  agentCode?: string
+  agentName?: string
+  createdAt: string
+}
+
+/**
+ * 创建询价响应
+ */
+export interface InquiryCreateResult {
+  id: number
+  shareCode: string
+  sharePath: string
+}
+
+/**
+ * 询价分享详情（受控访问 + 联系方式脱敏）
+ */
+export interface InquiryShareDetail {
+  shareCode: string
+  agentCode?: string
+  agentName?: string
+  phoneMasked: string
+  wechatMasked?: string
+  items: Array<Pick<InquiryItem, 'productId' | 'productName' | 'quantity'>>
   createdAt: string
 }
 
@@ -96,21 +161,10 @@ export interface Inquiry {
  */
 export interface InquiryItem {
   productId: number
-  productName: string
-  productImage: string
-  price: number
+  productName?: string
+  price?: number
+  image?: string
   quantity: number
-  subtotal: number
-}
-
-/**
- * 询价单状态
- */
-export enum InquiryStatus {
-  PENDING = 0,    // 待处理
-  CONTACTED = 1,  // 已联系
-  COMPLETED = 2,  // 已完成
-  CANCELLED = 3   // 已取消
 }
 
 /**
