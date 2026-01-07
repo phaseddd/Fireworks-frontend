@@ -7,6 +7,20 @@
     padding: 20px;
   }
 
+  .top-bar {
+    margin-bottom: 8px;
+
+    .back-btn {
+      height: 36px;
+      padding: 0 14px;
+      font-size: 14px;
+      border-radius: 8px;
+      background-color: #fff;
+      color: #666;
+      border: 1px solid #e8e8e8;
+    }
+  }
+
   .header {
     padding: 18px 6px 16px;
 

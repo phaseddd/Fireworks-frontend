@@ -177,7 +177,12 @@ export default function AdminAgentList() {
   return (
     <View className='admin-agents'>
       <View className='header'>
-        <Text className='title'>代理商管理</Text>
+        <View className='header-left'>
+          <Button size='small' className='back-btn' onClick={() => Taro.navigateBack()}>
+            ← 返回
+          </Button>
+          <Text className='title'>代理商管理</Text>
+        </View>
         <Button size='small' type='primary' className='add-btn' onClick={handleAdd}>
           ➕ 添加代理商
         </Button>

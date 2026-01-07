@@ -27,6 +27,12 @@ export default function AdminDashboard() {
 
   return (
     <View className='admin-dashboard'>
+      <View className='top-bar'>
+        <Button className='back-btn' onClick={() => Taro.navigateBack()}>
+          ← 返回首页
+        </Button>
+      </View>
+
       <View className='header'>
         <Text className='title'>管理后台</Text>
         <Text className='subtitle'>选择功能开始操作</Text>

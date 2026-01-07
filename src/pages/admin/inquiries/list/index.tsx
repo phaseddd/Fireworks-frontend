@@ -1,7 +1,7 @@
 import { View, Text, Picker } from '@tarojs/components'
 import Taro, { useDidShow, useReachBottom } from '@tarojs/taro'
 import { useCallback, useMemo, useState } from 'react'
-import { Empty, PullToRefresh } from '@nutui/nutui-react-taro'
+import { Button, Empty, PullToRefresh } from '@nutui/nutui-react-taro'
 import useAuth from '@/hooks/useAuth'
 import { api } from '@/services/api'
 import type { Agent, InquiryListItem } from '@/types'
@@ -90,6 +90,15 @@ export default function AdminInquiryList() {
 
   return (
     <View className='admin-inquiries'>
+      <View className='header'>
+        <View className='header-left'>
+          <Button size='small' className='back-btn' onClick={() => Taro.navigateBack()}>
+            ← 返回
+          </Button>
+          <Text className='title'>询价记录</Text>
+        </View>
+      </View>
+
       <View className='filter'>
         <Picker mode='selector' range={pickerRange} onChange={handlePickerChange}>
           <View className='filter-picker'>

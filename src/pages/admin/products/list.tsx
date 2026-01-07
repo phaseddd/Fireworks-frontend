@@ -163,7 +163,16 @@ export default function AdminProductList() {
     <View className='admin-product-list'>
       {/* 顶部标题栏 */}
       <View className='header'>
-        <Text className='title'>商品管理</Text>
+        <View className='header-left'>
+          <Button
+            size='small'
+            className='back-btn'
+            onClick={() => Taro.navigateBack()}
+          >
+            ← 返回
+          </Button>
+          <Text className='title'>商品管理</Text>
+        </View>
         <Button
           type='primary'
           size='small'

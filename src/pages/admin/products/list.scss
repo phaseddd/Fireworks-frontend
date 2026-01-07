@@ -17,6 +17,22 @@
     background-color: #fff;
     border-bottom: 1px solid #e8e8e8;
 
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-btn {
+      height: 36px;
+      padding: 0 12px;
+      font-size: 14px;
+      border-radius: 6px;
+      background-color: #f5f5f5;
+      color: #666;
+      border: none;
+    }
+
     .title {
       font-size: 20px;
       font-weight: 600;

@@ -34,7 +34,7 @@ export default function AdminLogin() {
       }
       redirectedRef.current = true
       setTimeout(() => {
-        const target = redirectUrl || '/pages/admin/products/list'
+        const target = redirectUrl || '/pages/admin/dashboard'
         Taro.redirectTo({
           url: target,
           fail: () => {
@@ -90,7 +90,7 @@ export default function AdminLogin() {
         if (redirectUrl) {
           Taro.removeStorageSync('postLoginRedirect')
         }
-        Taro.redirectTo({ url: redirectUrl || '/pages/admin/products/list' })
+        Taro.redirectTo({ url: redirectUrl || '/pages/admin/dashboard' })
       }, 1500)
 
     } catch (error: any) {

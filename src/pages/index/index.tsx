@@ -30,7 +30,7 @@ export default function Index() {
     navigatingRef.current = true
 
     const url = authUtils.isLoggedIn()
-      ? '/pages/admin/products/list'
+      ? '/pages/admin/dashboard'
       : '/pages/admin/login'
 
     const loadSubPackage = (Taro as unknown as {
