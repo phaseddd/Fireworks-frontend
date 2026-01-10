@@ -130,7 +130,7 @@ export default function ProductDetail() {
   const priceText = Number.isFinite(priceNumber) ? priceNumber.toFixed(2) : String(product.price ?? '')
   const qrHintText = hasVideo
     ? '视频在下方可直接播放；二维码用于跳转厂家页面'
-    : '暂未获取燃放视频，可点开二维码长按识别'
+    : '暂未获取燃放视频，可点开二维码后在弹窗内长按识别'
   const qrViewerTipTitle = hasVideo ? '视频已在详情页提供播放' : '暂无法获取燃放视频'
   const qrViewerTipDesc = hasVideo
     ? '此二维码用于跳转厂家页面/小程序，长按即可识别'
@@ -154,7 +154,6 @@ export default function ProductDetail() {
                   className='product-image'
                   src={img}
                   mode={index === 2 ? 'aspectFit' : 'aspectFill'}
-                  showMenuByLongpress={index === 2}
                   onClick={() => (index === 2 ? openQrcodeViewer(img) : handlePreviewImage(index))}
                 />
               </SwiperItem>
