@@ -1,14 +1,37 @@
 import { View, Text, Input } from '@tarojs/components'
-import Taro from '@tarojs/taro'
-import { useState } from 'react'
+import Taro, { useRouter } from '@tarojs/taro'
+import { useEffect, useState } from 'react'
 import { Button } from '@nutui/nutui-react-taro'
 import { api } from '@/services/api'
 import './index.scss'
 
+function extractBindCodeFromScene(scene: string): string | null {
+  const decoded = decodeURIComponent(scene || '')
+  const match = decoded.match(/(?:^|&)b=([^&]+)(?:&|$)/)
+  if (match?.[1]) return match[1]
+  if (/^FW-AGENT-[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{6}$/.test(decoded)) return decoded
+  return null
+}
+
 export default function AgentBind() {
+  const router = useRouter()
   const [bindCode, setBindCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<{ agentCode: string; agentName: string } | null>(null)
+
+  useEffect(() => {
+    const fromQuery = String(router.params?.bindCode || '').trim()
+    if (fromQuery) {
+      setBindCode(fromQuery)
+      return
+    }
+
+    const scene = String(router.params?.scene || '')
+    const extracted = extractBindCodeFromScene(scene)
+    if (extracted) {
+      setBindCode(extracted)
+    }
+  }, [])
 
   const handleSubmit = async () => {
     const code = bindCode.trim()

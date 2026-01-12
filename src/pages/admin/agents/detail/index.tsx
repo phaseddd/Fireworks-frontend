@@ -16,7 +16,7 @@ export default function AdminAgentDetail() {
   const [stats, setStats] = useState<AgentStats | null>(null)
   const [range, setRange] = useState<'week' | 'month' | 'all'>('week')
   const [bindDialogVisible, setBindDialogVisible] = useState(false)
-  const [bindCode, setBindCode] = useState<{ code: string; expiresAt: string } | null>(null)
+  const [bindCode, setBindCode] = useState<{ code: string; qrcodeUrl?: string; expiresAt: string } | null>(null)
   const [qrcodeDialogVisible, setQrcodeDialogVisible] = useState(false)
 
   const loadAgent = async () => {
@@ -44,7 +44,7 @@ export default function AdminAgentDetail() {
   const handleGenerateBindCode = async () => {
     if (!agent) return
     const res = await api.agents.generateBindCode(agent.code)
-    setBindCode({ code: res.bindCode, expiresAt: res.expiresAt })
+    setBindCode({ code: res.bindCode, qrcodeUrl: res.bindQrcodeUrl, expiresAt: res.expiresAt })
     setBindDialogVisible(true)
   }
 
@@ -78,15 +78,24 @@ export default function AdminAgentDetail() {
     setQrcodeDialogVisible(true)
   }
 
-  const handleSaveQr = async () => {
-    if (!agent?.qrcodeUrl) return
+  const saveImageToAlbum = async (url: string) => {
     try {
-      const res = await Taro.downloadFile({ url: agent.qrcodeUrl })
+      const res = await Taro.downloadFile({ url })
       await Taro.saveImageToPhotosAlbum({ filePath: (res as any).tempFilePath })
       Taro.showToast({ title: '已保存到相册', icon: 'success' })
     } catch {
       Taro.showToast({ title: '保存失败', icon: 'none' })
     }
+  }
+
+  const handleSaveQr = async () => {
+    if (!agent?.qrcodeUrl) return
+    await saveImageToAlbum(agent.qrcodeUrl)
+  }
+
+  const handleSaveBindQr = async () => {
+    if (!bindCode?.qrcodeUrl) return
+    await saveImageToAlbum(bindCode.qrcodeUrl)
   }
 
   if (!agent) {
@@ -160,6 +169,14 @@ export default function AdminAgentDetail() {
       >
         <View className='dialog-content'>
           <Text className='bind-code'>{bindCode?.code}</Text>
+          {bindCode?.qrcodeUrl && (
+            <View className='qrcode-dialog'>
+              <Image className='qrcode-img' src={bindCode.qrcodeUrl} mode='aspectFit' />
+              <Button size='small' className='dialog-btn' onClick={handleSaveBindQr}>
+                保存绑定二维码
+              </Button>
+            </View>
+          )}
           <Text className='bind-expire'>有效期至：{bindCode?.expiresAt}</Text>
           <Button size='small' className='dialog-btn' onClick={handleCopyBindCode}>
             复制绑定码

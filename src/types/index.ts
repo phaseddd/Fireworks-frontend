@@ -85,6 +85,7 @@ export type AgentStatus = 'ACTIVE' | 'DISABLED'
  */
 export interface AgentBindCode {
   bindCode: string
+  bindQrcodeUrl?: string
   expiresAt: string
 }
 
