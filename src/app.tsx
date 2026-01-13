@@ -30,6 +30,14 @@ function extractAgentCodeFromScene(scene: string): string | null {
   return match?.[1] || null
 }
 
+function extractBindCodeFromScene(scene: string): string | null {
+  const decoded = decodeURIComponent(scene || '')
+  const match = decoded.match(/(?:^|&)b=([^&]+)(?:&|$)/)
+  if (match?.[1]) return match[1]
+  if (/^FW-AGENT-[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{6}$/.test(decoded)) return decoded
+  return null
+}
+
 function App({ children }: PropsWithChildren<any>) {
   useLaunch(() => {
     console.log('Fireworks App launched!')
@@ -38,10 +46,18 @@ function App({ children }: PropsWithChildren<any>) {
       const rawScene = options?.scene
       if (!rawScene) return
 
-      const agentCode = extractAgentCodeFromScene(String(rawScene))
+      const scene = String(rawScene)
+
+      const agentCode = extractAgentCodeFromScene(scene)
       if (agentCode) {
         // 永久有效（直到再次扫码覆盖或用户清除缓存）
         Taro.setStorageSync('agentCode', agentCode)
+      }
+
+      const bindCode = extractBindCodeFromScene(scene)
+      if (bindCode) {
+        // 临时态：用于代理商扫码绑定二维码进入时触发绑定流程
+        Taro.setStorageSync('pendingBindCode', bindCode)
       }
     }
 

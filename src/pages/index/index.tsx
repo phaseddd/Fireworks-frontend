@@ -1,8 +1,9 @@
 import { View, Text, Image } from '@tarojs/components'
-import { useLoad } from '@tarojs/taro'
+import { useDidShow, useLoad } from '@tarojs/taro'
 import { Button } from '@nutui/nutui-react-taro'
 import Taro from '@tarojs/taro'
 import { useRef } from 'react'
+import { api } from '@/services/api'
 import { authUtils } from '../../hooks/useAuth'
 import logoImg from '../../assets/images/logo.png'
 import './index.scss'
@@ -12,9 +13,48 @@ const COPYRIGHT_SIGN = String.fromCodePoint(0x00A9)
 
 export default function Index() {
   const navigatingRef = useRef(false)
+  const bindingRef = useRef(false)
 
   useLoad(() => {
     console.log(`${FIREWORKS_EMOJI} 南澳烟花首页加载完成`)
+  })
+
+  useDidShow(() => {
+    const raw = Taro.getStorageSync('pendingBindCode')
+    const pendingBindCode = raw ? String(raw).trim() : ''
+    if (!pendingBindCode) return
+    if (bindingRef.current) return
+
+    bindingRef.current = true
+
+    ;(async () => {
+      try {
+        const res = await Taro.showModal({
+          title: '代理商绑定',
+          content: '检测到绑定码，是否绑定到当前微信账号？',
+          confirmText: '确认绑定',
+          cancelText: '暂不',
+        })
+
+        if (!res.confirm) {
+          Taro.removeStorageSync('pendingBindCode')
+          return
+        }
+
+        Taro.showLoading({ title: '绑定中...' })
+        try {
+          await api.agents.bind({ bindCode: pendingBindCode })
+          Taro.removeStorageSync('pendingBindCode')
+          Taro.showToast({ title: '绑定成功', icon: 'success' })
+        } finally {
+          Taro.hideLoading()
+        }
+      } catch {
+        // 用户关闭弹窗/系统异常时不打扰
+      } finally {
+        bindingRef.current = false
+      }
+    })()
   })
 
   // 跳转到商品列表 (TabBar 页面，使用 switchTab)

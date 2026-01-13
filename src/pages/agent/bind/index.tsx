@@ -44,6 +44,7 @@ export default function AgentBind() {
     try {
       const res = await api.agents.bind({ bindCode: code })
       setResult(res)
+      Taro.removeStorageSync('pendingBindCode')
       Taro.showToast({ title: '绑定成功', icon: 'success' })
     } catch (e) {
       // toast 已在 api.ts 处理
