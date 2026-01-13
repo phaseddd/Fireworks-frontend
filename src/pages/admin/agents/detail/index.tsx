@@ -1,4 +1,4 @@
-import { View, Text, Image } from '@tarojs/components'
+import { View, Text, Image, ScrollView } from '@tarojs/components'
 import Taro, { useDidShow, useRouter } from '@tarojs/taro'
 import { useEffect, useState } from 'react'
 import { Button, Dialog } from '@nutui/nutui-react-taro'
@@ -167,21 +167,23 @@ export default function AdminAgentDetail() {
         onConfirm={() => setBindDialogVisible(false)}
         onCancel={() => setBindDialogVisible(false)}
       >
-        <View className='dialog-content'>
-          <Text className='bind-code'>{bindCode?.code}</Text>
-          {bindCode?.qrcodeUrl && (
-            <View className='qrcode-dialog'>
-              <Image className='qrcode-img' src={bindCode.qrcodeUrl} mode='aspectFit' />
-              <Button size='small' className='dialog-btn' onClick={handleSaveBindQr}>
-                保存绑定二维码
-              </Button>
-            </View>
-          )}
-          <Text className='bind-expire'>有效期至：{bindCode?.expiresAt}</Text>
-          <Button size='small' className='dialog-btn' onClick={handleCopyBindCode}>
-            复制绑定码
-          </Button>
-        </View>
+        <ScrollView scrollY className='dialog-scroll'>
+          <View className='dialog-content'>
+            <Text className='bind-code'>{bindCode?.code}</Text>
+            {bindCode?.qrcodeUrl && (
+              <View className='qrcode-dialog'>
+                <Image className='qrcode-img' src={bindCode.qrcodeUrl} mode='aspectFit' />
+                <Button size='small' className='dialog-btn' onClick={handleSaveBindQr}>
+                  保存绑定二维码
+                </Button>
+              </View>
+            )}
+            <Text className='bind-expire'>有效期至：{bindCode?.expiresAt}</Text>
+            <Button size='small' className='dialog-btn' onClick={handleCopyBindCode}>
+              复制绑定码
+            </Button>
+          </View>
+        </ScrollView>
       </Dialog>
 
       <Dialog

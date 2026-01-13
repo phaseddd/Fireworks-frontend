@@ -1,4 +1,4 @@
-import { View, Text, Image } from '@tarojs/components'
+import { View, Text, Image, ScrollView } from '@tarojs/components'
 import Taro, { useDidShow, useReachBottom } from '@tarojs/taro'
 import { useCallback, useMemo, useState } from 'react'
 import { Button, Dialog, Empty, PullToRefresh } from '@nutui/nutui-react-taro'
@@ -24,7 +24,7 @@ export default function AdminAgentList() {
   const [total, setTotal] = useState(0)
 
   const [bindDialogVisible, setBindDialogVisible] = useState(false)
-  const [bindCode, setBindCode] = useState<{ code: string; expiresAt: string } | null>(null)
+  const [bindCode, setBindCode] = useState<{ code: string; qrcodeUrl?: string; expiresAt: string } | null>(null)
 
   const [confirmVisible, setConfirmVisible] = useState(false)
   const [confirmTitle, setConfirmTitle] = useState('确认操作')
@@ -97,7 +97,7 @@ export default function AdminAgentList() {
       `为“${agent.name}（${agent.code}）”生成一次性绑定码？`,
       async () => {
         const res = await api.agents.generateBindCode(agent.code)
-        setBindCode({ code: res.bindCode, expiresAt: res.expiresAt })
+        setBindCode({ code: res.bindCode, qrcodeUrl: res.bindQrcodeUrl, expiresAt: res.expiresAt })
         setBindDialogVisible(true)
       }
     )
@@ -137,10 +137,9 @@ export default function AdminAgentList() {
     })
   }
 
-  const handleSaveQr = async () => {
-    if (!qrcodeTarget?.url) return
+  const saveImageToAlbum = async (url: string) => {
     try {
-      const res = await Taro.downloadFile({ url: qrcodeTarget.url })
+      const res = await Taro.downloadFile({ url })
       await Taro.saveImageToPhotosAlbum({ filePath: (res as any).tempFilePath })
       Taro.showToast({ title: '已保存到相册', icon: 'success' })
     } catch (e: any) {
@@ -158,6 +157,16 @@ export default function AdminAgentList() {
         Taro.showToast({ title: '保存失败', icon: 'none' })
       }
     }
+  }
+
+  const handleSaveQr = async () => {
+    if (!qrcodeTarget?.url) return
+    await saveImageToAlbum(qrcodeTarget.url)
+  }
+
+  const handleSaveBindQr = async () => {
+    if (!bindCode?.qrcodeUrl) return
+    await saveImageToAlbum(bindCode.qrcodeUrl)
   }
 
   const totalText = useMemo(() => `共 ${total} 个`, [total])
@@ -262,13 +271,23 @@ export default function AdminAgentList() {
         onConfirm={() => setBindDialogVisible(false)}
         onCancel={() => setBindDialogVisible(false)}
       >
-        <View className='dialog-content'>
-          <Text className='bind-code'>{bindCode?.code}</Text>
-          <Text className='bind-expire'>有效期至：{bindCode?.expiresAt}</Text>
-          <Button size='small' className='dialog-btn' onClick={handleCopyBindCode}>
-            复制绑定码
-          </Button>
-        </View>
+        <ScrollView scrollY className='dialog-scroll'>
+          <View className='dialog-content'>
+            <Text className='bind-code'>{bindCode?.code}</Text>
+            {bindCode?.qrcodeUrl && (
+              <View className='qrcode-dialog'>
+                <Image className='qrcode-img' src={bindCode.qrcodeUrl} mode='aspectFit' />
+                <Button size='small' className='dialog-btn' onClick={handleSaveBindQr}>
+                  保存绑定二维码
+                </Button>
+              </View>
+            )}
+            <Text className='bind-expire'>有效期至：{bindCode?.expiresAt}</Text>
+            <Button size='small' className='dialog-btn' onClick={handleCopyBindCode}>
+              复制绑定码
+            </Button>
+          </View>
+        </ScrollView>
       </Dialog>
 
       <Dialog

@@ -157,6 +157,10 @@
     }
   }
 
+  .dialog-scroll {
+    max-height: 60vh;
+  }
+
   .qrcode-dialog {
     display: flex;
     flex-direction: column;
@@ -164,8 +168,8 @@
     padding: 8px 0;
 
     .qrcode-img {
-      width: 280px;
-      height: 280px;
+      width: 520rpx;
+      height: 520rpx;
     }
 
     .dialog-btn {
