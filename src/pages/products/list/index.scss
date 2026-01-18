@@ -1,42 +1,47 @@
 // 商品列表页面样式
+@import "../../../styles/theme.scss";
+
 .products-page {
   min-height: 100vh;
-  background: #0a0a0a;
-  padding: 16px;
-  padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  // background: #0a0a0a; // Handled by global theme
+  padding: 32rpx;
+  padding-bottom: calc(32rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
 
   .filters-sticky {
     position: sticky;
     top: 0;
     z-index: 10;
 
-    margin: 0 -16px 8px;
-    padding: 10px 16px 6px;
+    margin: 0 -32rpx 16rpx;
+    padding: 20rpx 32rpx 12rpx;
 
-    background: rgba(10, 10, 10, 0.86);
+    background: var(--c-bg-glass-heavy);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
 
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+    // box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35); // Optional: keep or remove
+    border-bottom: 1px solid var(--c-border-glass);
   }
 
   .product-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 32rpx;
   }
 
   .loading-more {
     text-align: center;
-    padding: 20px;
-    color: rgba(255, 255, 255, 0.5);
+    padding: 40rpx;
+    color: var(--c-text-secondary);
+    font-size: 24rpx;
   }
 
   .no-more {
     text-align: center;
-    padding: 20px;
-    color: rgba(255, 255, 255, 0.3);
-    font-size: 14px;
+    padding: 40rpx;
+    color: var(--c-text-tertiary);
+    font-size: 24rpx;
   }
 
   .empty-state {
@@ -44,15 +49,20 @@
     align-items: center;
     justify-content: center;
     min-height: 60vh;
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 16px;
+    color: var(--c-text-secondary);
+    font-size: 28rpx;
   }
 
   // 搜索面板相关样式
   .search-panel {
-    position: relative;
-    z-index: 20;  // 确保面板在遮罩层之上
-    background: #0a0a0a;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    // top set via inline style
+    z-index: 20;
+    background: var(--c-bg-page);
+    padding: 32rpx;
   }
 
   // 遮罩层：覆盖面板下方的区域，点击可关闭面板
@@ -62,7 +72,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 15;  // 在面板之下，但在其他内容之上
+    z-index: 15;
     background: rgba(0, 0, 0, 0.5);
   }
 }

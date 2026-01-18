@@ -1,7 +1,9 @@
 import { View, Text, Button as TaroButton } from '@tarojs/components'
 import Taro, { useRouter, useShareAppMessage } from '@tarojs/taro'
-import { useMemo } from 'react'
-import { Button } from '@nutui/nutui-react-taro'
+import { useMemo, useState, useEffect } from 'react'
+import GlassCard from '@/components/ui/GlassCard'
+import GlassButton from '@/components/ui/GlassButton'
+import PageHeader from '@/components/ui/PageHeader'
 import './index.scss'
 
 type Snapshot = {
@@ -27,6 +29,14 @@ function buildSummary(snapshot: Snapshot) {
 export default function InquiryShare() {
   const router = useRouter()
   const shareCode = String(router.params?.shareCode || '')
+  
+  // Header height logic
+  const [headerHeight, setHeaderHeight] = useState(0)
+  useEffect(() => {
+    const info = Taro.getSystemInfoSync()
+    const sbHeight = info.statusBarHeight || 20
+    setHeaderHeight(sbHeight + 44)
+  }, [])
 
   useShareAppMessage(() => ({
     title: '我的烟花询价单',
@@ -58,29 +68,32 @@ export default function InquiryShare() {
   }
 
   return (
-    <View className='inquiry-share'>
-      <View className='card'>
+    <View className='inquiry-share' style={{ paddingTop: `${headerHeight + 24}px` }}>
+      <PageHeader title="询价单已生成" />
+      
+      <GlassCard className='card'>
         <Text className='title'>询价单已生成</Text>
         <Text className='desc'>你可以分享给店主，或复制摘要粘贴发送</Text>
 
         <View className='actions'>
-          <TaroButton className='share-btn' openType='share'>
+          {/* TaroButton is needed for openType='share', style it manually to match GlassButton or wrap it */}
+          <TaroButton className='share-btn glass-button-style' openType='share'>
             分享给店主
           </TaroButton>
 
-          <Button className='copy-btn' onClick={handleCopy}>
+          <GlassButton className='copy-btn' onClick={handleCopy}>
             复制询价摘要
-          </Button>
+          </GlassButton>
 
-          <Button className='detail-btn' onClick={handleViewDetail}>
+          <GlassButton className='detail-btn' onClick={handleViewDetail} variant='ghost'>
             查看分享页
-          </Button>
+          </GlassButton>
         </View>
 
         <View className='meta'>
           <Text className='meta-text'>shareCode：{shareCode}</Text>
         </View>
-      </View>
+      </GlassCard>
     </View>
   )
 }

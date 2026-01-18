@@ -37,6 +37,7 @@
   "dependencies": {
     "@babel/preset-react": "^7.28.5",
     "@babel/runtime": "^7.24.0",
+    "@nutui/icons-react-taro": "^3.0.2-cpp.3.beta.4",
     "@nutui/nutui-react-taro": "^2.6.0",
     "@tarojs/components": "4.1.9",
     "@tarojs/helper": "4.1.9",

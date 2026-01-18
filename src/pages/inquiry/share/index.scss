@@ -1,78 +1,76 @@
+// 询价单分享页面样式
+@import "../../../styles/theme.scss";
+
 .inquiry-share {
   min-height: 100vh;
-  background: #0a0a0a;
-  padding: 24px 16px;
+  // background: #0a0a0a; // Handled by theme
+  padding: 48rpx 32rpx;
+  box-sizing: border-box;
 
   .card {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-    padding: 22px 16px;
+    // GlassCard styles apply
+    padding: 64rpx 48rpx;
     text-align: center;
 
     .title {
       display: block;
-      color: #ffffff;
-      font-size: 22px;
+      color: var(--c-text-primary);
+      font-size: 32rpx;
       font-weight: bold;
-      margin-bottom: 10px;
+      margin-bottom: 32rpx;
     }
 
     .desc {
       display: block;
-      color: rgba(255, 255, 255, 0.65);
-      font-size: 13px;
-      margin-bottom: 18px;
+      color: var(--c-text-secondary);
+      font-size: 28rpx;
+      margin-bottom: 64rpx;
     }
 
     .actions {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 32rpx;
 
       .share-btn {
         width: 100%;
-        height: 46px;
-        border-radius: 12px;
-        background: linear-gradient(135deg, #ff4800, #ff7a00);
+        height: 88rpx;
+        border-radius: 44rpx;
+        background: linear-gradient(90deg, rgba(255, 72, 0, 0.8) 0%, rgba(255, 120, 0, 0.8) 100%);
         border: none;
-        color: #ffffff;
-        font-size: 16px;
-        font-weight: bold;
-        line-height: 46px;
+        box-shadow: 0 8rpx 24rpx rgba(255, 72, 0, 0.3);
+        color: var(--c-text-primary);
+        font-size: 28rpx;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        &::after {
+          border: none;
+        }
       }
 
       .copy-btn {
         width: 100%;
-        height: 46px;
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        color: rgba(255, 255, 255, 0.9);
-        font-size: 16px;
+        // GlassButton handles styles
       }
 
       .detail-btn {
         width: 100%;
-        height: 46px;
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.06);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        color: rgba(255, 255, 255, 0.75);
-        font-size: 15px;
+        // GlassButton handles styles
       }
     }
 
     .meta {
-      margin-top: 16px;
-      padding-top: 14px;
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      margin-top: 64rpx;
+      padding-top: 48rpx;
+      border-top: 1px solid var(--c-border-glass);
 
       .meta-text {
-        color: rgba(255, 255, 255, 0.5);
-        font-size: 12px;
+        color: var(--c-text-tertiary);
+        font-size: 24rpx;
       }
     }
   }
 }
-

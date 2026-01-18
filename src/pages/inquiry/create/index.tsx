@@ -1,10 +1,12 @@
 import { View, Text, Input, Image } from '@tarojs/components'
 import Taro from '@tarojs/taro'
-import { useMemo, useState } from 'react'
-import { Button } from '@nutui/nutui-react-taro'
+import { useMemo, useState, useEffect } from 'react'
 import useWishlist from '@/hooks/useWishlist'
 import useAgentCode from '@/hooks/useAgentCode'
 import { api } from '@/services/api'
+import GlassCard from '@/components/ui/GlassCard'
+import GlassButton from '@/components/ui/GlassButton'
+import PageHeader from '@/components/ui/PageHeader'
 import './index.scss'
 
 const phonePattern = /^1\d{10}$/
@@ -16,6 +18,14 @@ export default function InquiryCreate() {
   const [phone, setPhone] = useState('')
   const [wechat, setWechat] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  
+  // Header height logic
+  const [headerHeight, setHeaderHeight] = useState(0)
+  useEffect(() => {
+    const info = Taro.getSystemInfoSync()
+    const sbHeight = info.statusBarHeight || 20
+    setHeaderHeight(sbHeight + 44)
+  }, [])
 
   const itemCount = useMemo(() => items.reduce((sum, i) => sum + i.quantity, 0), [items])
 
@@ -63,8 +73,10 @@ export default function InquiryCreate() {
   }
 
   return (
-    <View className='inquiry-create'>
-      <View className='section'>
+    <View className='inquiry-create' style={{ paddingTop: `${headerHeight + 16}px` }}>
+      <PageHeader title="生成询价单" />
+      
+      <GlassCard className='section'>
         <View className='section-header'>
           <Text className='section-title'>已选商品</Text>
           <Text className='section-subtitle'>{itemCount} 件</Text>
@@ -72,9 +84,9 @@ export default function InquiryCreate() {
         {items.length === 0 ? (
           <View className='empty'>
             <Text className='empty-text'>意向清单为空</Text>
-            <Button type='primary' onClick={() => Taro.switchTab({ url: '/pages/wishlist/index' })}>
+            <GlassButton variant='primary' onClick={() => Taro.switchTab({ url: '/pages/wishlist/index' })}>
               返回意向清单
-            </Button>
+            </GlassButton>
           </View>
         ) : (
           <View className='items'>
@@ -93,9 +105,9 @@ export default function InquiryCreate() {
           <Text className='total-label'>预估总价</Text>
           <Text className='total-value'>¥{total.toFixed(2)}</Text>
         </View>
-      </View>
+      </GlassCard>
 
-      <View className='section'>
+      <GlassCard className='section'>
         <View className='section-header'>
           <Text className='section-title'>联系方式</Text>
           <Text className='section-subtitle'>用于店主联系你</Text>
@@ -108,6 +120,7 @@ export default function InquiryCreate() {
               className='input'
               type='number'
               placeholder='请输入手机号'
+              placeholderClass='input-placeholder'
               value={phone}
               onInput={(e) => setPhone(e.detail.value)}
             />
@@ -118,23 +131,22 @@ export default function InquiryCreate() {
               className='input'
               type='text'
               placeholder='请输入微信号'
+              placeholderClass='input-placeholder'
               value={wechat}
               onInput={(e) => setWechat(e.detail.value)}
             />
           </View>
         </View>
-      </View>
+      </GlassCard>
 
-      <View className='bottom'>
-        <Button
-          type='primary'
+      <View className='bottom-bar'>
+        <GlassButton
+          variant='primary'
           className='submit-btn'
-          loading={submitting}
-          disabled={submitting || items.length === 0}
           onClick={handleSubmit}
         >
           {submitting ? '生成中...' : '生成询价单'}
-        </Button>
+        </GlassButton>
       </View>
     </View>
   )

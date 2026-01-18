@@ -1,11 +1,13 @@
 // 我的/意向清单页面样式
+@import "../../styles/theme.scss";
+
 .wishlist-page {
   min-height: 100vh;
-  background: #0a0a0a;
-  padding-bottom: 120px;
+  // background: #0a0a0a; // Handled by theme
+  padding-bottom: 240rpx;
 
-  .header {
-    padding: 20px 16px 12px;
+  .header-stats {
+    padding: 32rpx 32rpx 24rpx;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -13,19 +15,19 @@
     .title-row {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 20rpx;
 
       .title {
-        font-size: 20px;
+        font-size: 32rpx;
         font-weight: bold;
-        color: #ffffff;
+        color: var(--c-text-primary);
       }
 
       .badge {
-        min-width: 24px;
-        height: 20px;
-        padding: 0 8px;
-        border-radius: 999px;
+        min-width: 32rpx;
+        height: 32rpx;
+        padding: 0 12rpx;
+        border-radius: 16rpx;
         background: rgba(255, 72, 0, 0.18);
         border: 1px solid rgba(255, 72, 0, 0.35);
         display: flex;
@@ -33,74 +35,64 @@
         justify-content: center;
 
         .badge-text {
-          font-size: 12px;
-          color: #ff4800;
+          font-size: 20rpx;
+          color: var(--c-brand-orange);
         }
       }
     }
-
-    .header-actions {
-      .clear-btn {
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        color: rgba(255, 255, 255, 0.85);
-      }
-    }
+    
+    // Clear button styles handled by GlassButton props and style prop
   }
 
   .empty {
-    padding: 64px 24px;
+    padding: 128rpx 48rpx;
     text-align: center;
 
     .empty-icon {
       display: block;
-      font-size: 56px;
-      margin-bottom: 18px;
+      font-size: 128rpx;
+      margin-bottom: 32rpx;
     }
 
     .empty-title {
       display: block;
-      font-size: 20px;
+      font-size: 32rpx;
       font-weight: bold;
-      color: #ffffff;
-      margin-bottom: 10px;
+      color: var(--c-text-primary);
+      margin-bottom: 16rpx;
     }
 
     .empty-desc {
       display: block;
-      font-size: 14px;
-      color: rgba(255, 255, 255, 0.6);
-      margin-bottom: 22px;
+      font-size: 28rpx;
+      color: var(--c-text-secondary);
+      margin-bottom: 48rpx;
     }
 
     .go-btn {
-      width: 180px;
-      height: 44px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #ff4800, #ff7a00);
-      border: none;
-      color: #fff;
-      font-weight: bold;
+      width: 320rpx;
+      height: 80rpx;
     }
   }
 
   .list {
-    padding: 0 16px;
+    padding: 0 32rpx;
 
     .item {
-      display: flex;
-      align-items: center;
-      padding: 14px;
-      margin-bottom: 12px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 24rpx;
+      // GlassCard styles apply
+
+      .item-content {
+        display: flex;
+        align-items: center;
+        padding: 24rpx;
+      }
 
       .item-image {
-        width: 72px;
-        height: 72px;
-        border-radius: 10px;
-        margin-right: 14px;
+        width: 140rpx;
+        height: 140rpx;
+        border-radius: 20rpx;
+        margin-right: 24rpx;
         background: rgba(255, 255, 255, 0.08);
       }
 
@@ -110,9 +102,9 @@
 
         .item-name {
           display: block;
-          font-size: 16px;
-          color: #ffffff;
-          margin-bottom: 8px;
+          font-size: 28rpx;
+          color: var(--c-text-primary);
+          margin-bottom: 12rpx;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -120,9 +112,9 @@
 
         .item-price {
           display: block;
-          font-size: 18px;
+          font-size: 30rpx;
           font-weight: bold;
-          color: #ff4800;
+          color: var(--c-brand-orange);
         }
       }
 
@@ -131,42 +123,46 @@
         flex-direction: column;
         align-items: flex-end;
         justify-content: space-between;
-        gap: 10px;
+        gap: 24rpx;
 
         .delete {
-          padding: 4px 6px;
+          padding: 8rpx 12rpx;
 
           .delete-text {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.6);
+            font-size: 24rpx;
+            color: var(--c-text-secondary);
           }
         }
 
         .qty {
           display: flex;
           align-items: center;
-          gap: 10px;
+          gap: 20rpx;
 
           .qty-btn {
-            width: 28px;
-            height: 28px;
-            border-radius: 999px;
+            width: 56rpx;
+            height: 56rpx;
+            border-radius: 28rpx;
             background: rgba(255, 255, 255, 0.12);
             display: flex;
             align-items: center;
             justify-content: center;
 
             .qty-btn-text {
-              color: #ffffff;
-              font-size: 18px;
+              color: var(--c-text-primary);
+              font-size: 32rpx;
               line-height: 1;
+            }
+            
+            &:active {
+              background: rgba(255, 255, 255, 0.2);
             }
           }
 
           .qty-value {
-            color: #ffffff;
-            font-size: 14px;
-            min-width: 18px;
+            color: var(--c-text-primary);
+            font-size: 28rpx;
+            min-width: 40rpx;
             text-align: center;
           }
         }
@@ -174,48 +170,47 @@
     }
   }
 
-  .bottom {
+  .bottom-bar {
     position: fixed;
     left: 0;
     right: 0;
     bottom: 0;
-    padding: 12px 16px 18px;
-    background: rgba(10, 10, 10, 0.92);
-    backdrop-filter: blur(10px);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 24rpx 32rpx;
+    padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+    background: var(--c-bg-glass-heavy);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--c-border-glass);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
     .summary {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-
+      flex-direction: column;
+      
       .summary-text {
-        color: rgba(255, 255, 255, 0.75);
-        font-size: 13px;
+        color: var(--c-text-secondary);
+        font-size: 24rpx;
+        margin-bottom: 8rpx;
       }
 
       .summary-total {
-        color: #ffffff;
+        color: var(--c-text-primary);
         font-weight: bold;
-        font-size: 14px;
+        font-size: 30rpx;
       }
     }
 
     .create-btn {
-      width: 100%;
-      height: 46px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #ff4800, #ff7a00);
-      border: none;
-      color: #ffffff;
-      font-size: 16px;
-      font-weight: bold;
+      width: 300rpx;
+      height: 88rpx;
     }
   }
 
   .dialog-content {
-    padding: 8px 0;
-    color: #333;
+    padding: 32rpx 0;
+    color: #333; // Dialog usually has white bg
+    font-size: 32rpx;
   }
 }

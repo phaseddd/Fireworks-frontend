@@ -1,31 +1,32 @@
+// 生成询价单页面样式
+@import "../../../styles/theme.scss";
+
 .inquiry-create {
   min-height: 100vh;
-  background: #0a0a0a;
-  padding: 16px;
-  padding-bottom: 110px;
+  // background: #0a0a0a; // Handled by theme
+  padding: 32rpx;
+  padding-bottom: 160rpx;
+  box-sizing: border-box;
 
   .section {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 14px;
-    padding: 14px;
-    margin-bottom: 12px;
+    margin-bottom: 24rpx;
+    // GlassCard styles apply
 
     .section-header {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      margin-bottom: 12px;
+      margin-bottom: 24rpx;
 
       .section-title {
-        font-size: 16px;
+        font-size: 32rpx;
         font-weight: bold;
-        color: #ffffff;
+        color: var(--c-text-primary);
       }
 
       .section-subtitle {
-        font-size: 12px;
-        color: rgba(255, 255, 255, 0.6);
+        font-size: 24rpx;
+        color: var(--c-text-secondary);
       }
     }
 
@@ -33,18 +34,18 @@
       .item {
         display: flex;
         align-items: center;
-        padding: 10px 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        padding: 24rpx 0;
+        border-bottom: 1px solid var(--c-border-glass);
 
         &:last-child {
           border-bottom: none;
         }
 
         .item-image {
-          width: 52px;
-          height: 52px;
-          border-radius: 10px;
-          margin-right: 12px;
+          width: 100rpx;
+          height: 100rpx;
+          border-radius: 16rpx;
+          margin-right: 24rpx;
           background: rgba(255, 255, 255, 0.08);
         }
 
@@ -54,9 +55,9 @@
 
           .item-name {
             display: block;
-            color: #ffffff;
-            font-size: 14px;
-            margin-bottom: 4px;
+            color: var(--c-text-primary);
+            font-size: 28rpx;
+            margin-bottom: 12rpx;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -64,8 +65,8 @@
 
           .item-meta {
             display: block;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 12px;
+            color: var(--c-text-secondary);
+            font-size: 24rpx;
           }
         }
       }
@@ -75,23 +76,25 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 10px;
+      margin-top: 24rpx;
+      padding-top: 24rpx;
+      border-top: 1px solid var(--c-border-glass);
 
       .total-label {
-        color: rgba(255, 255, 255, 0.75);
-        font-size: 13px;
+        color: var(--c-text-secondary);
+        font-size: 26rpx;
       }
 
       .total-value {
-        color: #ff4800;
-        font-size: 18px;
+        color: var(--c-brand-orange);
+        font-size: 30rpx;
         font-weight: bold;
       }
     }
 
     .form {
       .form-item {
-        margin-bottom: 12px;
+        margin-bottom: 32rpx;
 
         &:last-child {
           margin-bottom: 0;
@@ -99,55 +102,61 @@
 
         .label {
           display: block;
-          font-size: 13px;
-          color: rgba(255, 255, 255, 0.75);
-          margin-bottom: 8px;
+          font-size: 26rpx;
+          color: var(--c-text-secondary);
+          margin-bottom: 16rpx;
         }
 
         .input {
-          height: 44px;
-          padding: 0 12px;
-          border-radius: 12px;
+          height: 88rpx; // rpx
+          padding: 0 32rpx;
+          border-radius: 16rpx;
           background: rgba(255, 255, 255, 0.08);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          color: #ffffff;
-          font-size: 14px;
+          border: 1px solid var(--c-border-glass);
+          color: var(--c-text-primary);
+          font-size: 28rpx;
+          transition: border-color 0.3s ease, background 0.3s ease;
+
+          &:focus {
+            border-color: var(--c-brand-orange);
+            background: rgba(255, 255, 255, 0.12);
+          }
+        }
+        
+        .input-placeholder {
+          color: var(--c-text-tertiary);
         }
       }
     }
 
     .empty {
-      padding: 10px 0 6px;
+      padding: 32rpx 0 20rpx;
       text-align: center;
 
       .empty-text {
         display: block;
-        color: rgba(255, 255, 255, 0.7);
-        margin-bottom: 10px;
+        color: var(--c-text-secondary);
+        margin-bottom: 32rpx;
+        font-size: 28rpx;
       }
     }
   }
 
-  .bottom {
+  .bottom-bar {
     position: fixed;
     left: 0;
     right: 0;
     bottom: 0;
-    padding: 12px 16px 18px;
-    background: rgba(10, 10, 10, 0.92);
-    backdrop-filter: blur(10px);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 24rpx 32rpx;
+    padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+    background: var(--c-bg-glass-heavy);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--c-border-glass);
 
     .submit-btn {
       width: 100%;
-      height: 46px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #ff4800, #ff7a00);
-      border: none;
-      color: #ffffff;
-      font-size: 16px;
-      font-weight: bold;
+      height: 88rpx;
     }
   }
 }
-

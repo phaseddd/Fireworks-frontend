@@ -1,43 +1,16 @@
 // 商品详情页面样式 - 深色主题 + 毛玻璃效果
-// Story 2.3 - 与首页烟花暖色调统一
-
-// ==================== 毛玻璃效果 Mixins ====================
-
-// 基础毛玻璃效果
-@mixin glassmorphism($blur: 20px, $opacity: 0.15) {
-  background: rgba(255, 255, 255, $opacity);
-  backdrop-filter: blur($blur);
-  -webkit-backdrop-filter: blur($blur);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-// 带橙色光晕的毛玻璃（与烟花主题呼应）
-@mixin glassmorphism-warm($blur: 20px) {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 72, 0, 0.12) 0%,
-    rgba(255, 140, 0, 0.06) 50%,
-    rgba(255, 255, 255, 0.08) 100%
-  );
-  backdrop-filter: blur($blur);
-  -webkit-backdrop-filter: blur($blur);
-  border: 1px solid rgba(255, 140, 0, 0.2);
-  box-shadow: 0 8px 32px rgba(255, 72, 0, 0.12);
-}
-
-// ==================== 页面主体 ====================
+@import "../../../styles/theme.scss";
 
 .detail-page {
   min-height: 100vh;
+  // Deep gradients for immersive feel
   background:
     radial-gradient(circle at 50% 25%, rgba(255, 72, 0, 0.12) 0%, rgba(10, 10, 10, 0) 50%),
     radial-gradient(circle at 20% 80%, rgba(255, 140, 0, 0.08) 0%, rgba(10, 10, 10, 0) 45%),
     radial-gradient(circle at 80% 70%, rgba(255, 72, 0, 0.06) 0%, rgba(10, 10, 10, 0) 40%),
-    linear-gradient(180deg, #0a0a0a 0%, #0f0f12 50%, #0a0a0a 100%);
-  padding-bottom: 120px;
+    linear-gradient(180deg, var(--c-bg-page) 0%, #0f0f12 50%, var(--c-bg-page) 100%);
+  padding-bottom: 120rpx;
   position: relative;
-
-  // ==================== 加载/错误状态 ====================
 
   .loading-state,
   .error-state {
@@ -46,31 +19,24 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 40px;
+    padding: 80rpx;
 
     .loading-icon,
     .error-icon {
-      font-size: 64px;
-      margin-bottom: 24px;
+      font-size: 128rpx;
+      margin-bottom: 48rpx;
     }
 
     .loading-text,
     .error-text {
-      font-size: 18px;
-      color: rgba(255, 255, 255, 0.7);
+      font-size: 32rpx;
+      color: var(--c-text-secondary);
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 48rpx;
     }
 
     .retry-btn {
-      width: 160px;
-      height: 44px;
-      background: linear-gradient(135deg, #ff4800 0%, #ff8c00 100%);
-      border: none;
-      border-radius: 22px;
-      color: #ffffff;
-      font-size: 16px;
-      font-weight: bold;
+      width: 480rpx;
     }
   }
 
@@ -80,8 +46,9 @@
     position: relative;
     width: 100%;
     height: 56vh;
-    min-height: 320px;
-    max-height: 520px;
+    min-height: 640rpx;
+    max-height: 1040rpx;
+    // No overflow hidden to allow PageHeader on top if needed, but PageHeader is fixed.
     overflow: hidden;
 
     .image-swiper {
@@ -100,7 +67,6 @@
       }
     }
 
-    // 无图片占位
     .no-image {
       width: 100%;
       height: 100%;
@@ -111,73 +77,71 @@
       background: rgba(255, 255, 255, 0.05);
 
       .no-image-icon {
-        font-size: 64px;
-        margin-bottom: 16px;
+        font-size: 128rpx;
+        margin-bottom: 32rpx;
       }
 
       .no-image-text {
-        font-size: 16px;
-        color: rgba(255, 255, 255, 0.5);
+        font-size: 32rpx;
+        color: var(--c-text-secondary);
       }
     }
 
-    // 图片指示器 - 毛玻璃胶囊
     .image-indicator {
       position: absolute;
-      bottom: 16px;
-      right: 16px;
-      padding: 6px 14px;
-      border-radius: 14px;
+      bottom: 32rpx;
+      right: 32rpx;
+      padding: 12rpx 28rpx;
+      border-radius: 28rpx;
       z-index: 10;
-
-      @include glassmorphism(10px, 0.35);
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
 
       .indicator-text {
-        font-size: 13px;
-        color: #ffffff;
+        font-size: 24rpx;
+        color: var(--c-text-primary);
         font-weight: 500;
       }
     }
 
-    // 二维码提示
     .qrcode-hint {
       position: absolute;
-      bottom: 16px;
-      left: 16px;
-      right: 80px;
+      bottom: 100rpx; // Moved higher to avoid overlap with product-info-card
+      left: 32rpx;
+      right: 200rpx;
       display: flex;
       align-items: center;
-      padding: 10px 14px;
-      border-radius: 12px;
+      padding: 20rpx 28rpx;
+      border-radius: 24rpx;
       z-index: 10;
-
-      @include glassmorphism(10px, 0.35);
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
 
       .hint-icon {
-        width: 20px;
-        height: 20px;
-        border-radius: 10px;
+        width: 80rpx;
+        height: 80rpx;
+        border-radius: 40rpx;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 12px;
+        font-size: 40rpx;
         font-weight: 700;
-        color: #ff8c00;
+        color: var(--c-brand-orange);
         background: rgba(255, 72, 0, 0.16);
-        border: 1px solid rgba(255, 140, 0, 0.28);
-        margin-right: 10px;
+        margin-right: 20rpx;
         flex-shrink: 0;
       }
 
       .hint-text {
-        font-size: 14px;
+        font-size: 28rpx;
         font-weight: 600;
-        color: #ff8c00;
+        color: var(--c-brand-orange);
         flex: 1;
       }
     }
 
-    // 二维码大图遮罩（用于长按识别二维码）
     .qrcode-viewer-mask {
       position: fixed;
       top: 0;
@@ -185,52 +149,44 @@
       bottom: 0;
       left: 0;
       z-index: 999;
-      padding: 24px 16px;
+      padding: 48rpx 32rpx;
       box-sizing: border-box;
       display: flex;
       align-items: center;
       justify-content: center;
       background: rgba(0, 0, 0, 0.75);
     }
-
+    
+    // qrcode-viewer is now a GlassCard, so minimal styles needed for layout
     .qrcode-viewer {
       width: 100%;
-      max-width: 560px;
-      max-height: calc(100vh - 48px);
+      max-width: 600rpx;
+      max-height: calc(100vh - 96rpx);
       overflow: auto;
-      border-radius: 16px;
-
-      @include glassmorphism(18px, 0.18);
 
       .qrcode-viewer-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 12px 14px;
+        padding: 24rpx 28rpx;
       }
 
       .qrcode-viewer-title {
-        font-size: 16px;
+        font-size: 32rpx;
         font-weight: 700;
-        color: #ffffff;
+        color: var(--c-text-primary);
       }
 
       .qrcode-viewer-close {
-        width: 32px;
-        height: 32px;
-        border-radius: 16px;
+        width: 88rpx;
+        height: 88rpx;
         display: flex;
         align-items: center;
         justify-content: center;
 
-        &:active {
-          transform: scale(0.96);
-          background: rgba(255, 255, 255, 0.12);
-        }
-
         .qrcode-viewer-close-icon {
-          font-size: 22px;
-          color: rgba(255, 255, 255, 0.9);
+          font-size: 44rpx;
+          color: var(--c-text-primary);
           line-height: 1;
         }
       }
@@ -241,28 +197,26 @@
       }
 
       .qrcode-viewer-tip {
-        margin: 12px 14px 16px;
-        padding: 10px 12px;
-        border-radius: 12px;
+        margin: 24rpx 28rpx 32rpx;
+        padding: 20rpx 24rpx;
+        border-radius: 24rpx;
         display: flex;
         align-items: flex-start;
-
-        @include glassmorphism(10px, 0.35);
+        background: rgba(255, 72, 0, 0.1);
 
         .tip-icon {
-          width: 20px;
-          height: 20px;
-          border-radius: 10px;
+          width: 64rpx;
+          height: 64rpx;
+          border-radius: 32rpx;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 12px;
+          font-size: 32rpx;
           font-weight: 700;
-          color: #ff8c00;
+          color: var(--c-brand-orange);
           background: rgba(255, 72, 0, 0.16);
-          border: 1px solid rgba(255, 140, 0, 0.28);
-          margin-right: 10px;
-          margin-top: 1px;
+          margin-right: 20rpx;
+          margin-top: 2rpx;
           flex-shrink: 0;
         }
 
@@ -272,228 +226,161 @@
         }
 
         .tip-title {
-          font-size: 14px;
+          font-size: 28rpx;
           font-weight: 600;
-          line-height: 20px;
-          color: #ff8c00;
-          margin-bottom: 4px;
+          line-height: 40rpx;
+          color: var(--c-brand-orange);
+          margin-bottom: 8rpx;
         }
 
         .tip-desc {
-          font-size: 14px;
-          font-weight: 600;
-          line-height: 20px;
-          color: #ff8c00;
+          font-size: 24rpx;
+          line-height: 36rpx;
+          color: var(--c-brand-orange);
           word-break: break-word;
         }
       }
     }
-
-    // 返回按钮 - 左上角毛玻璃圆形
-    .back-button {
-      position: absolute;
-      top: 16px;
-      left: 16px;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 20;
-
-      @include glassmorphism(12px, 0.4);
-
-      &:active {
-        transform: scale(0.95);
-        background: rgba(255, 255, 255, 0.5);
-      }
-
-      .back-icon {
-        font-size: 20px;
-        color: #ffffff;
-        font-weight: bold;
-      }
-    }
   }
 
-  // ==================== 商品信息卡片 - 毛玻璃效果 ====================
+  // ==================== 商品信息卡片 ====================
 
   .product-info-card {
-    margin: 12px 16px 20px;
-    padding: 24px 20px;
-    border-radius: 20px;
+    margin: -80rpx 32rpx 40rpx; // Negative top margin to overlap image
+    padding: 40rpx 32rpx;
     position: relative;
-    z-index: 10;
-
-    // 暖色调毛玻璃效果
-    @include glassmorphism-warm(24px);
-
-    // 商品名称
+    z-index: 20; // Higher than qrcode-hint (z-index: 10)
+    
+    // product-info-card is a GlassCard, so background is handled
+    
     .product-name {
       display: block;
-      font-size: 24px;
+      font-size: 30rpx;
       font-weight: bold;
-      color: #ffffff;
-      line-height: 1.3;
-      margin-bottom: 16px;
+      color: var(--c-text-primary);
+      line-height: 1.4;
+      margin-bottom: 24rpx;
     }
 
-    // 价格区域
     .price-row {
-      margin-bottom: 16px;
+      margin-bottom: 24rpx;
 
       .product-price {
-        font-size: 32px;
+        font-size: 32rpx;
         font-weight: bold;
-        color: #ff4800;
-        text-shadow: 0 0 20px rgba(255, 72, 0, 0.35);
+        color: var(--c-brand-orange);
+        text-shadow: 0 0 20rpx rgba(255, 72, 0, 0.35);
 
         &::before {
           content: '¥';
-          font-size: 20px;
-          margin-right: 2px;
+          font-size: 28rpx;
+          margin-right: 8rpx;
         }
       }
     }
 
-    // 分类标签
     .category-tag {
       display: inline-block;
       background: rgba(255, 72, 0, 0.2);
       border: 1px solid rgba(255, 72, 0, 0.35);
-      padding: 8px 16px;
-      border-radius: 20px;
-      margin-bottom: 20px;
+      padding: 12rpx 24rpx;
+      border-radius: 24rpx;
+      margin-bottom: 32rpx;
 
       .category-text {
-        font-size: 14px;
+        font-size: 24rpx;
         color: #ff8c00;
         font-weight: 500;
       }
     }
 
-    // 描述区域
     .description-section {
-      padding-top: 20px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 32rpx;
+      border-top: 1px solid var(--c-border-glass);
 
       .section-title {
         display: block;
-        font-size: 14px;
-        color: rgba(255, 255, 255, 0.5);
-        margin-bottom: 12px;
+        font-size: 30rpx;
+        color: var(--c-text-secondary);
+        margin-bottom: 20rpx;
         font-weight: 500;
       }
 
       .product-desc {
         display: block;
-        font-size: 16px;
-        color: rgba(255, 255, 255, 0.8);
-        line-height: 1.7;
+        font-size: 28rpx;
+        color: rgba(255, 255, 255, 0.9);
+        line-height: 1.6;
         white-space: pre-wrap;
       }
     }
   }
 
-  // ==================== 底部操作栏 - 毛玻璃效果 ====================
+  // ==================== 底部操作栏 ====================
 
   .bottom-bar {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 16px 20px;
-    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+    padding: 24rpx 32rpx;
+    padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
     z-index: 100;
 
-    // 深色毛玻璃背景
-    background: rgba(26, 26, 26, 0.88);
+    background: var(--c-bg-glass-heavy);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid var(--c-border-glass);
 
     .add-btn {
       width: 100%;
-      height: 52px;
-      background: linear-gradient(135deg, #ff4800 0%, #ff8c00 100%);
-      border: none;
-      border-radius: 26px;
-      color: #ffffff;
-      font-size: 18px;
-      font-weight: bold;
-      letter-spacing: 2px;
-      box-shadow: 0 6px 24px rgba(255, 72, 0, 0.45);
-
-      &:active {
-        transform: scale(0.98);
-        box-shadow: 0 4px 16px rgba(255, 72, 0, 0.35);
-      }
-
-      // 禁用状态
-      &.disabled {
-        opacity: 0.55;
-        box-shadow: none;
-        cursor: not-allowed;
-
-        &:active {
-          transform: none;
-        }
-      }
+      // GlassButton handles styles
     }
   }
 }
 
-// 视频播放区域（追加样式）
+// 视频播放区域
 .detail-page .product-info-card .video-section {
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 32rpx;
+  padding-top: 32rpx;
+  border-top: 1px solid var(--c-border-glass);
 
   .section-title {
     display: block;
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.5);
-    margin-bottom: 12px;
+    font-size: 30rpx;
+    color: var(--c-text-secondary);
+    margin-bottom: 20rpx;
     font-weight: 500;
   }
 
   .video-player {
     width: 100%;
-    height: 200px;
-    border-radius: 12px;
+    height: 450rpx; // approx 225px
+    border-radius: 24rpx;
     overflow: hidden;
     background: #000000;
   }
 
   .video-placeholder {
     width: 100%;
-    height: 120px;
+    height: 360rpx;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border-radius: 12px;
+    border-radius: 24rpx;
     background: rgba(255, 72, 0, 0.15);
     border: 2px dashed rgba(255, 72, 0, 0.4);
-    cursor: pointer;
-    transition: all 0.2s ease;
-
-    &:active {
-      transform: scale(0.98);
-      background: rgba(255, 72, 0, 0.25);
-    }
 
     .play-icon {
-      font-size: 36px;
-      color: #ff4800;
-      margin-bottom: 8px;
-      text-shadow: 0 0 12px rgba(255, 72, 0, 0.5);
+      font-size: 80rpx;
+      color: var(--c-brand-orange);
+      margin-bottom: 16rpx;
     }
 
     .play-text {
-      font-size: 14px;
-      color: rgba(255, 255, 255, 0.7);
+      font-size: 28rpx;
+      color: var(--c-text-secondary);
       font-weight: 500;
     }
   }

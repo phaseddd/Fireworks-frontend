@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import { View, Text, Swiper, SwiperItem, Image, Video } from '@tarojs/components'
 import { useRouter } from '@tarojs/taro'
-import { Button } from '@nutui/nutui-react-taro'
 import Taro from '@tarojs/taro'
 import { api } from '@/services/api'
 import { categoryMap } from '@/types'
 import type { Product } from '@/types'
 import { useWishlist } from '@/hooks/useWishlist'
+import GlassCard from '@/components/ui/GlassCard'
+import GlassButton from '@/components/ui/GlassButton'
+import PageHeader from '@/components/ui/PageHeader'
 import './index.scss'
 
 /**
@@ -73,6 +75,7 @@ export default function ProductDetail() {
   const handleAddToWishlist = () => {
     if (!product) return
     addItem(product)
+    Taro.showToast({ title: '已加入清单', icon: 'success' })
   }
 
   // 返回上一页
@@ -84,6 +87,7 @@ export default function ProductDetail() {
   if (loading) {
     return (
       <View className='detail-page'>
+        <PageHeader title="详情" onBack={handleGoBack} />
         <View className='loading-state'>
           <Text className='loading-icon'>🎆</Text>
           <Text className='loading-text'>加载中...</Text>
@@ -96,12 +100,13 @@ export default function ProductDetail() {
   if (error) {
     return (
       <View className='detail-page'>
+        <PageHeader title="详情" onBack={handleGoBack} />
         <View className='error-state'>
           <Text className='error-icon'>😿</Text>
           <Text className='error-text'>{error}</Text>
-          <Button className='retry-btn' onClick={handleGoBack}>
+          <GlassButton className='retry-btn' onClick={handleGoBack} variant="primary">
             返回上一页
-          </Button>
+          </GlassButton>
         </View>
       </View>
     )
@@ -111,12 +116,13 @@ export default function ProductDetail() {
   if (!product) {
     return (
       <View className='detail-page'>
+        <PageHeader title="详情" onBack={handleGoBack} />
         <View className='error-state'>
           <Text className='error-icon'>🔍</Text>
           <Text className='error-text'>商品不存在</Text>
-          <Button className='retry-btn' onClick={handleGoBack}>
+          <GlassButton className='retry-btn' onClick={handleGoBack} variant="primary">
             返回上一页
-          </Button>
+          </GlassButton>
         </View>
       </View>
     )
@@ -138,6 +144,8 @@ export default function ProductDetail() {
 
   return (
     <View className='detail-page'>
+      <PageHeader title={product.name} onBack={handleGoBack} transparent />
+      
       {/* 图片轮播区域 */}
       <View className='image-section'>
         {hasImages ? (
@@ -186,7 +194,7 @@ export default function ProductDetail() {
         {/* 二维码大图（使用 Image 长按菜单能力，避免 wx.previewImage 行为差异） */}
         {qrcodeViewerUrl && (
           <View className='qrcode-viewer-mask' onClick={closeQrcodeViewer}>
-            <View className='qrcode-viewer' onClick={(e) => e.stopPropagation()}>
+            <GlassCard className='qrcode-viewer' onClick={(e: any) => e.stopPropagation()} padding={0}>
               <View className='qrcode-viewer-header'>
                 <Text className='qrcode-viewer-title'>二维码</Text>
                 <View className='qrcode-viewer-close' onClick={closeQrcodeViewer}>
@@ -206,18 +214,13 @@ export default function ProductDetail() {
                   <View className='tip-desc'>{qrViewerTipDesc}</View>
                 </View>
               </View>
-            </View>
+            </GlassCard>
           </View>
         )}
-
-        {/* 返回按钮 */}
-        <View className='back-button' onClick={handleGoBack}>
-          <Text className='back-icon'>←</Text>
-        </View>
       </View>
 
       {/* 商品信息卡片 - 毛玻璃效果 */}
-      <View className='product-info-card'>
+      <GlassCard className='product-info-card'>
         {/* 商品名称 */}
         <Text className='product-name'>{product.name}</Text>
 
@@ -264,16 +267,17 @@ export default function ProductDetail() {
             <Text className='product-desc'>{product.description}</Text>
           </View>
         )}
-      </View>
+      </GlassCard>
 
       {/* 底部操作栏 - 毛玻璃效果 */}
       <View className='bottom-bar'>
-        <Button
+        <GlassButton
           className='add-btn'
           onClick={handleAddToWishlist}
+          variant='primary'
         >
           加入意向清单
-        </Button>
+        </GlassButton>
       </View>
     </View>
   )

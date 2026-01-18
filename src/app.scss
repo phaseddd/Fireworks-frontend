@@ -1,19 +1,14 @@
 // 引入 NutUI 样式
 @import "@nutui/nutui-react-taro/dist/styles/themes/default.scss";
-
-// 全局样式
-// NutUI 样式会在组件使用时自动引入
+@import "./styles/theme.scss";
 
 // 自定义 CSS 变量
 :root {
-  // 主题色 - 烟花风格
-  --color-primary: #ff6b35;
-  --color-secondary: #ffd700;
-  --color-background: #1a1a2e;
-  --color-surface: #16213e;
-  --color-text: #eee;
-  --color-text-secondary: #aaa;
-
+  // 保持原有变量兼容性，但映射到新的 design tokens
+  --color-primary: var(--c-brand-orange);
+  --color-background: var(--c-bg-page);
+  --color-text: var(--c-text-primary);
+  
   // 安全区域
   --safe-area-inset-bottom: env(safe-area-inset-bottom);
 }
@@ -23,8 +18,11 @@ page {
   font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica,
     Segoe UI, Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei',
     sans-serif;
-  background-color: var(--color-background);
-  color: var(--color-text);
+  background-color: var(--c-bg-page);
+  color: var(--c-text-primary);
+  line-height: 1.5;
+  letter-spacing: 0.02em; // 优化深色背景下的可读性
+  font-size: 28px; // Taro 默认 px 会转 rpx，28px 约为 14px
 }
 
 // 通用工具类

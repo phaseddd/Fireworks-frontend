@@ -1,0 +1,18 @@
+.glass-card {
+  position: relative;
+  background: var(--c-bg-glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--c-border-glass);
+  border-radius: 32px;
+  overflow: hidden;
+  box-sizing: border-box;
+  transition: all var(--anim-duration) var(--anim-ease);
+
+  &:active {
+    &.clickable {
+      transform: scale(0.99);
+      background: var(--c-bg-glass-heavy);
+    }
+  }
+}

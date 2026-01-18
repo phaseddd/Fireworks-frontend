@@ -8,6 +8,7 @@ import SearchBar from '@/components/customer/SearchBar'
 import EmptyResult from '@/components/customer/SearchBar/EmptyResult'
 import SearchHistory from '@/components/customer/SearchBar/SearchHistory'
 import HotKeywords from '@/components/customer/SearchBar/HotKeywords'
+import PageHeader from '@/components/ui/PageHeader'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useSearchHistory } from '@/hooks/useSearchHistory'
 import { api } from '@/services/api'
@@ -41,6 +42,14 @@ const ProductList: React.FC = () => {
   const loadingRef = useRef(false)
   const pendingRef = useRef<{ pageNum: number; refresh: boolean; filters: Filters } | null>(null)
   const initialLoadDone = useRef(false)
+  
+  // Header height logic
+  const [headerHeight, setHeaderHeight] = useState(0)
+  useEffect(() => {
+    const info = Taro.getSystemInfoSync()
+    const sbHeight = info.statusBarHeight || 20
+    setHeaderHeight(sbHeight + 44) // 44 is nav bar height
+  }, [])
 
   // 加载热门搜索关键词
   useEffect(() => {
@@ -190,18 +199,22 @@ const ProductList: React.FC = () => {
   const showPanel = showSearchPanel
 
   return (
-    <View className='products-page'>
+    <View className='products-page' style={{ paddingTop: `${headerHeight}px` }}>
+      <PageHeader title="商品列表" showBack={false} />
+      
       {/* 搜索栏 - Story 2.5 */}
-      <SearchBar
-        value={keyword}
-        onChange={setKeyword}
-        onFocus={handleSearchFocus}
-      />
+      <View style={{ marginTop: '8px' }}>
+        <SearchBar
+          value={keyword}
+          onChange={setKeyword}
+          onFocus={handleSearchFocus}
+        />
+      </View>
 
       {showPanel ? (
         // 搜索面板：显示历史和热门
         <>
-          <View className='search-panel'>
+          <View className='search-panel' style={{ top: `${headerHeight + 50}px` }}>
             <HotKeywords keywords={hotKeywords} onSelect={handleSelectKeyword} />
             <SearchHistory
               history={history}
@@ -210,11 +223,11 @@ const ProductList: React.FC = () => {
             />
           </View>
           {/* 遮罩层：点击关闭搜索面板 */}
-          <View className='search-overlay' onClick={handleCloseSearchPanel} />
+          <View className='search-overlay' onClick={handleCloseSearchPanel} style={{ top: `${headerHeight}px` }} />
         </>
       ) : (
         <>
-          <View className='filters-sticky'>
+          <View className='filters-sticky' style={{ top: `${headerHeight}px` }}>
             {/* 分类筛选栏 */}
             <CategoryTabs value={category} onChange={handleCategoryChange} />
             {/* 价格区间筛选栏 */}

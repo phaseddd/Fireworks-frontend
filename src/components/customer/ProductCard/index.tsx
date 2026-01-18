@@ -1,6 +1,7 @@
 import { View, Image, Text } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import type { Product } from '@/types'
+import GlassCard from '@/components/ui/GlassCard'
 import './index.scss'
 
 interface ProductCardProps {
@@ -23,13 +24,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   }
 
   return (
-    <View className='product-card' onClick={handleClick}>
+    <GlassCard className='product-card' onClick={handleClick} padding={0}>
       <View className='product-image'>
         {mainImage ? (
           <Image
             src={mainImage}
             mode='aspectFill'
-            lazyLoad
           />
         ) : (
           <View className='product-image-placeholder'>
@@ -41,7 +41,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <Text className='product-name'>{product.name}</Text>
         <Text className='product-price'>{product.price}</Text>
       </View>
-    </View>
+    </GlassCard>
   )
 }
 

@@ -1,0 +1,20 @@
+:root, page {
+  /* --- 基础色板 --- */
+  --c-bg-page: #050505;                       // 页面底色：深邃黑
+  --c-bg-glass: rgba(255, 255, 255, 0.1);     // 毛玻璃背景 (常规)
+  --c-bg-glass-heavy: rgba(255, 255, 255, 0.15); // 毛玻璃背景 (强调)
+  --c-border-glass: rgba(255, 255, 255, 0.2); // 毛玻璃边框
+
+  /* --- 文字系统 --- */
+  --c-text-primary: #ffffff;                  // 主标题/正文
+  --c-text-secondary: rgba(255, 255, 255, 0.6); // 次要信息
+  --c-text-tertiary: rgba(255, 255, 255, 0.4);  // 辅助/占位符
+  
+  /* --- 品牌色 & 装饰 --- */
+  --c-brand-orange: #ff4800;                  // 品牌点缀色
+  --g-text-gold: linear-gradient(135deg, #fff 0%, #ffe0b2 100%); // 金沙渐变标题
+
+  /* --- 动效参数 --- */
+  --anim-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --anim-duration: 0.3s;
+}

@@ -1,8 +1,11 @@
 import { View, Text, Image } from '@tarojs/components'
 import Taro from '@tarojs/taro'
-import { useMemo, useState } from 'react'
-import { Button, Dialog } from '@nutui/nutui-react-taro'
+import { useMemo, useState, useEffect } from 'react'
+import { Dialog } from '@nutui/nutui-react-taro'
 import useWishlist, { type WishlistItem } from '@/hooks/useWishlist'
+import GlassCard from '@/components/ui/GlassCard'
+import GlassButton from '@/components/ui/GlassButton'
+import PageHeader from '@/components/ui/PageHeader'
 import './index.scss'
 
 /**
@@ -15,6 +18,14 @@ export default function Wishlist() {
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false)
   const [clearDialogVisible, setClearDialogVisible] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState<WishlistItem | null>(null)
+  
+  // Header height logic
+  const [headerHeight, setHeaderHeight] = useState(0)
+  useEffect(() => {
+    const info = Taro.getSystemInfoSync()
+    const sbHeight = info.statusBarHeight || 20
+    setHeaderHeight(sbHeight + 44)
+  }, [])
 
   const itemCountText = useMemo(() => (count > 99 ? '99+' : String(count)), [count])
 
@@ -52,19 +63,24 @@ export default function Wishlist() {
   }
 
   return (
-    <View className='wishlist-page'>
-      <View className='header'>
+    <View className='wishlist-page' style={{ paddingTop: `${headerHeight}px` }}>
+      <PageHeader title="意向清单" showBack={false} />
+
+      <View className='header-stats'>
         <View className='title-row'>
-          <Text className='title'>意向清单</Text>
+          <Text className='title'>已选商品</Text>
           <View className='badge'>
             <Text className='badge-text'>{itemCountText}</Text>
           </View>
         </View>
-        <View className='header-actions'>
-          <Button size='small' className='clear-btn' onClick={handleClearAll} disabled={items.length === 0}>
-            清空
-          </Button>
-        </View>
+        <GlassButton 
+          className='clear-btn' 
+          onClick={handleClearAll} 
+          variant='ghost' 
+          style={{ width: '80px', height: '32px', fontSize: '12px' }}
+        >
+          清空
+        </GlassButton>
       </View>
 
       {items.length === 0 ? (
@@ -72,46 +88,48 @@ export default function Wishlist() {
           <Text className='empty-icon'>❤️</Text>
           <Text className='empty-title'>还没有收藏商品哦</Text>
           <Text className='empty-desc'>去商品页挑选心仪的烟花吧</Text>
-          <Button className='go-btn' type='primary' onClick={handleGoProducts}>
+          <GlassButton className='go-btn' variant='primary' onClick={handleGoProducts}>
             去逛逛
-          </Button>
+          </GlassButton>
         </View>
       ) : (
         <View className='list'>
           {items.map((item) => (
-            <View key={item.productId} className='item'>
-              <Image className='item-image' src={item.image} mode='aspectFill' />
-              <View className='item-info'>
-                <Text className='item-name'>{item.name}</Text>
-                <Text className='item-price'>¥{Number(item.price || 0).toFixed(2)}</Text>
-              </View>
-              <View className='item-actions'>
-                <View className='delete' onClick={() => handleDelete(item)}>
-                  <Text className='delete-text'>删除</Text>
+            <GlassCard key={item.productId} className='item' padding={0}>
+              <View className='item-content'>
+                <Image className='item-image' src={item.image} mode='aspectFill' />
+                <View className='item-info'>
+                  <Text className='item-name'>{item.name}</Text>
+                  <Text className='item-price'>¥{Number(item.price || 0).toFixed(2)}</Text>
                 </View>
-                <View className='qty'>
-                  <View className='qty-btn' onClick={() => updateQuantity(item.productId, item.quantity - 1)}>
-                    <Text className='qty-btn-text'>-</Text>
+                <View className='item-actions'>
+                  <View className='delete' onClick={() => handleDelete(item)}>
+                    <Text className='delete-text'>删除</Text>
                   </View>
-                  <Text className='qty-value'>{item.quantity}</Text>
-                  <View className='qty-btn' onClick={() => updateQuantity(item.productId, item.quantity + 1)}>
-                    <Text className='qty-btn-text'>+</Text>
+                  <View className='qty'>
+                    <View className='qty-btn' onClick={() => updateQuantity(item.productId, item.quantity - 1)}>
+                      <Text className='qty-btn-text'>-</Text>
+                    </View>
+                    <Text className='qty-value'>{item.quantity}</Text>
+                    <View className='qty-btn' onClick={() => updateQuantity(item.productId, item.quantity + 1)}>
+                      <Text className='qty-btn-text'>+</Text>
+                    </View>
                   </View>
                 </View>
               </View>
-            </View>
+            </GlassCard>
           ))}
         </View>
       )}
 
-      <View className='bottom'>
+      <View className='bottom-bar'>
         <View className='summary'>
           <Text className='summary-text'>共 {count} 件</Text>
           <Text className='summary-total'>预估总价 ¥{total.toFixed(2)}</Text>
         </View>
-        <Button className='create-btn' type='primary' onClick={handleCreateInquiry} disabled={items.length === 0}>
+        <GlassButton className='create-btn' variant='primary' onClick={handleCreateInquiry}>
           生成询价单
-        </Button>
+        </GlassButton>
       </View>
 
       <Dialog
