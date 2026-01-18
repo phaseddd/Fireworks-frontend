@@ -1,131 +1,245 @@
-// 首页样式 - 深色主题 + 烟花暖色调
 .index-page {
   position: relative;
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at 50% 18%, rgba(255, 72, 0, 0.18) 0%, rgba(10, 10, 10, 0) 55%),
-    radial-gradient(circle at 18% 70%, rgba(255, 140, 0, 0.10) 0%, rgba(10, 10, 10, 0) 52%),
-    radial-gradient(circle at 82% 72%, rgba(255, 72, 0, 0.08) 0%, rgba(10, 10, 10, 0) 50%),
-    linear-gradient(180deg, #0a0a0a 0%, #0f0f12 55%, #0a0a0a 100%);
-  display: flex;
-  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  background-color: #050505;
   overflow: hidden;
 
-  // 暗角 + 轻微光晕叠层，增强沉浸感
-  &::before {
-    content: '';
+  // --- 天空背景层 ---
+  .sky-container {
     position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(ellipse at 50% 35%, rgba(255, 72, 0, 0.06) 0%, rgba(10, 10, 10, 0) 60%),
-      radial-gradient(ellipse at 50% 115%, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.78) 100%);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 40%; // 只占据上部 40% 即可
+    z-index: 1; // 在 Canvas(0) 之上，但在 Content(10) 之下？
+    // 不，烟花(Canvas)应该挡住月亮吗？
+    // 真实世界是烟花挡住月亮。但 Canvas 是透明背景，如果 Canvas z=0，sky z=1，则月亮挡住烟花。
+    // 所以 sky 应该是 z=0 (和 Canvas 同层？不行)
+    // 方案：Sky z=0, Canvas z=1 (Canvas 背景透明), Content z=10
+    // 原来 FireworksCanvas z=0。我们把 Sky 放 z=0，FireworksCanvas 放 z=1
     pointer-events: none;
-    z-index: 0;
+  }
+  
+  // 月亮 - 朦胧辉光
+  .moon {
+    position: absolute;
+    top: 60px;
+    right: 40px;
+    width: 60px;
+    height: 60px;
+    background: #fff;
+    border-radius: 50%;
+    // 多层辉光模拟月晕
+    box-shadow: 
+      0 0 20px 2px rgba(255, 255, 255, 0.4),
+      0 0 40px 10px rgba(255, 255, 255, 0.2),
+      0 0 80px 20px rgba(255, 255, 255, 0.1);
+    opacity: 0.8;
+  }
+
+  // 繁星 - 使用 box-shadow 粒子技术 (高性能)
+  // Sass 函数随机生成星星
+  @function generate-stars($n) {
+    $value: '#{random(100)}vw #{random(100)}vh #FFF';
+    @for $i from 2 through $n {
+      $value: '#{$value}, #{random(100)}vw #{random(100)}vh #FFF';
+    }
+    @return unquote($value);
+  }
+
+  // 大星星
+  .stars {
+    width: 2px;
+    height: 2px;
+    background: transparent;
+    box-shadow: generate-stars(50); // 生成 50 颗
+    animation: twinkle 4s infinite ease-in-out alternate;
+    opacity: 0.8;
+  }
+  
+  // 小星星 (背景尘埃)
+  .stars-small {
+    width: 1px;
+    height: 1px;
+    background: transparent;
+    box-shadow: generate-stars(100); // 生成 100 颗
+    animation: twinkle 6s infinite ease-in-out alternate-reverse;
+    opacity: 0.5;
   }
 
   .content {
-    flex: 1;
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 60px 40px 120px;
-    box-sizing: border-box;
-    position: relative;
-    z-index: 1;
-  }
+    // 渐变遮罩：底部稍暗，保证文字可读性，上方透明显示烟花
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.6) 100%);
+    
+    pointer-events: none; // 默认穿透，让用户能玩烟花
 
-  // Logo 区域
-  .logo-wrapper {
-    width: 200px;
-    height: 200px;
-    margin-bottom: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
+    .spacer {
+      flex: 4; // 上方留白 40%
+    }
 
-    .logo {
+    .hero-section {
+      flex: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      .subtitle-en {
+        font-size: 12px;
+        letter-spacing: 6px;
+        color: rgba(255, 255, 255, 0.4);
+        margin-bottom: 8px;
+        font-family: monospace; // 科技感字体
+      }
+
+      .title-wrapper {
+        display: flex;
+        align-items: center;
+        margin-bottom: 16px;
+
+        .title-cn {
+          font-size: 48px;
+          font-weight: 300; // 细体更显高级
+          color: #fff;
+          letter-spacing: 8px;
+          // 文字渐变
+          background: linear-gradient(135deg, #fff 0%, #ffe0b2 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+
+        .dot {
+          width: 6px;
+          height: 6px;
+          background-color: #ff4800; // 点睛之笔：橙色圆点
+          border-radius: 50%;
+          margin: 0 16px;
+          box-shadow: 0 0 10px #ff4800;
+        }
+      }
+
+      .slogan {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.6);
+        letter-spacing: 4px;
+        font-weight: 300;
+      }
+    }
+
+    .action-section {
+      flex: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       width: 100%;
-      height: 100%;
-      border-radius: 24px;
-      box-shadow:
-        0 18px 60px rgba(0, 0, 0, 0.65),
-        0 0 48px rgba(255, 72, 0, 0.16);
+      padding-top: 20px;
+
+      // 毛玻璃按钮核心样式
+      .btn-glass {
+        pointer-events: auto; // 开启点击
+        position: relative;
+        width: 200px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 28px;
+        
+        // 背景：极度半透明白
+        background: rgba(255, 255, 255, 0.1);
+        // 模糊：毛玻璃效果
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        
+        // 边框：微弱发光
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        
+        overflow: hidden;
+        transition: all 0.3s ease;
+
+        .btn-text {
+          font-size: 16px;
+          color: #fff;
+          letter-spacing: 2px;
+          z-index: 2;
+        }
+
+        // 扫光动画
+        .btn-shine {
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 50%;
+          height: 100%;
+          background: linear-gradient(
+            to right,
+            rgba(255,255,255,0) 0%,
+            rgba(255,255,255,0.2) 50%,
+            rgba(255,255,255,0) 100%
+          );
+          transform: skewX(-25deg);
+          animation: shine 3s infinite;
+        }
+      }
+
+      .btn-glass-hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(0.98);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .link-group {
+        margin-top: 32px;
+        .link-item {
+          pointer-events: auto;
+          padding: 10px 20px;
+          
+          .link-text {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.3);
+            text-decoration: none; // 去掉下划线，更简洁
+          }
+        }
+      }
     }
-  }
 
-  // 店铺名称 - 大字醒目
-  .store-name {
-    display: block;
-    font-size: 42px;
-    font-weight: bold;
-    color: #ffffff;
-    letter-spacing: 8px;
-    margin-bottom: 16px;
-    text-align: center;
-  }
-
-  // 口号
-  .slogan {
-    display: block;
-    font-size: 18px;
-    color: #999999;
-    margin-bottom: 60px;
-    text-align: center;
-    letter-spacing: 2px;
-  }
-
-  // 开始浏览按钮 - 渐变色主按钮
-  .btn-start {
-    width: 280px;
-    height: 56px;
-    background: linear-gradient(135deg, #ff4800 0%, #ff8c00 100%);
-    border: none;
-    border-radius: 28px;
-    font-size: 20px;
-    font-weight: bold;
-    color: #ffffff;
-    letter-spacing: 4px;
-    box-shadow: 0 8px 24px rgba(255, 72, 0, 0.4);
-    margin-bottom: 40px;
-
-    &:active {
-      transform: scale(0.98);
-      box-shadow: 0 4px 12px rgba(255, 72, 0, 0.3);
-    }
-  }
-
-  // 店主入口 - 低调的文字链接
-  .admin-entry {
-    padding: 12px 24px;
-
-    .admin-text {
-      font-size: 14px;
-      color: #666666;
-      text-decoration: underline;
-      letter-spacing: 1px;
-    }
-
-    &:active {
-      .admin-text {
-        color: #888888;
+    .footer {
+      flex: 1;
+      display: flex;
+      align-items: flex-end;
+      padding-bottom: 24px;
+      
+      .copyright {
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.2);
+        font-family: sans-serif;
       }
     }
   }
+}
 
-  // 底部版权
-  .footer {
-    position: absolute;
-    bottom: 40px;
-    left: 0;
-    right: 0;
-    text-align: center;
-    z-index: 1;
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0px); }
+}
 
-    .copyright {
-      font-size: 12px;
-      color: #444444;
-    }
-  }
+@keyframes twinkle {
+  0% { opacity: 0.3; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes shine {
+  0% { left: -100%; }
+  20% { left: 200%; }
+  100% { left: 200%; }
 }

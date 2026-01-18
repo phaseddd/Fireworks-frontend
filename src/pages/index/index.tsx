@@ -1,14 +1,12 @@
-import { View, Text, Image } from '@tarojs/components'
+import { View, Text } from '@tarojs/components'
 import { useDidShow, useLoad } from '@tarojs/taro'
-import { Button } from '@nutui/nutui-react-taro'
 import Taro from '@tarojs/taro'
 import { useRef } from 'react'
 import { api } from '@/services/api'
 import { authUtils } from '../../hooks/useAuth'
-import logoImg from '../../assets/images/logo.png'
+import FireworksCanvas from '../../components/FireworksCanvas'
 import './index.scss'
 
-const FIREWORKS_EMOJI = String.fromCodePoint(0x1F386)
 const COPYRIGHT_SIGN = String.fromCodePoint(0x00A9)
 
 export default function Index() {
@@ -16,7 +14,9 @@ export default function Index() {
   const bindingRef = useRef(false)
 
   useLoad(() => {
-    console.log(`${FIREWORKS_EMOJI} 南澳烟花首页加载完成`)
+    // 隐藏原生导航栏，实现全屏沉浸
+    // 注意：需要在 app.config.ts window 配置 navigationStyle: 'custom' 才能完全生效
+    // 这里先不做强制，利用样式覆盖
   })
 
   useDidShow(() => {
@@ -50,21 +50,19 @@ export default function Index() {
           Taro.hideLoading()
         }
       } catch {
-        // 用户关闭弹窗/系统异常时不打扰
+        // quiet
       } finally {
         bindingRef.current = false
       }
     })()
   })
 
-  // 跳转到商品列表 (TabBar 页面，使用 switchTab)
   const handleStartBrowsing = () => {
     Taro.switchTab({
       url: '/pages/products/list/index'
     })
   }
 
-  // 店主入口 - 需要预加载分包
   const handleAdminLogin = () => {
     if (navigatingRef.current) return
     navigatingRef.current = true
@@ -73,14 +71,8 @@ export default function Index() {
       ? '/pages/admin/dashboard'
       : '/pages/admin/login'
 
-    const loadSubPackage = (Taro as unknown as {
-      loadSubPackage?: (options: {
-        name: string
-        success?: () => void
-        fail?: (err: unknown) => void
-      }) => void
-    }).loadSubPackage
-
+    // 尝试分包加载逻辑...
+    const loadSubPackage = (Taro as any).loadSubPackage
     if (typeof loadSubPackage === 'function') {
       Taro.showLoading({ title: '加载中...' })
       loadSubPackage({
@@ -89,16 +81,15 @@ export default function Index() {
           Taro.hideLoading()
           Taro.navigateTo({
             url,
-            complete: () => {
-              navigatingRef.current = false
-            },
+            complete: () => { navigatingRef.current = false }
           })
         },
-        fail: (err) => {
-          console.error('loadSubPackage failed:', err)
+        fail: () => {
           Taro.hideLoading()
-          Taro.showToast({ title: '加载失败，请重试', icon: 'none' })
-          navigatingRef.current = false
+          Taro.navigateTo({
+             url,
+             complete: () => { navigatingRef.current = false }
+          })
         }
       })
       return
@@ -106,48 +97,68 @@ export default function Index() {
 
     Taro.navigateTo({
       url,
-      complete: () => {
-        navigatingRef.current = false
-      },
+      complete: () => { navigatingRef.current = false }
     })
   }
 
   return (
     <View className='index-page'>
-      {/* 主内容区 */}
-      <View className='content'>
-        {/* Logo */}
-        <View className='logo-wrapper'>
-          <Image
-            className='logo'
-            src={logoImg}
-            mode='aspectFit'
-          />
-        </View>
-
-        {/* 店铺名称 */}
-        <Text className='store-name'>南澳烟花</Text>
-
-        {/* 口号 */}
-        <Text className='slogan'>绚烂烟火，点亮美好时刻</Text>
-
-        {/* 开始浏览按钮 */}
-        <Button
-          className='btn-start'
-          onClick={handleStartBrowsing}
-        >
-          开始浏览
-        </Button>
-
-        {/* 店主入口 - 小字链接样式 */}
-        <View className='admin-entry' onClick={handleAdminLogin}>
-          <Text className='admin-text'>店主入口</Text>
-        </View>
+      {/* 背景层：月亮与繁星 (纯 CSS 实现，不占 Canvas 性能) */}
+      <View className='sky-container'>
+        <View className='stars' />
+        <View className='stars-small' />
+        <View className='moon' />
       </View>
 
-      {/* 底部版权信息 */}
-      <View className='footer'>
-        <Text className='copyright'>{COPYRIGHT_SIGN} 2025 南澳烟花</Text>
+      <FireworksCanvas />
+
+      {/* 沉浸式内容层 */}
+      <View className='content'>
+        
+        {/* 顶部留白区域 (占位 40%)，让烟花在上方尽情绽放 */}
+        <View className='spacer' />
+
+        {/* 核心视觉区 */}
+        <View className='hero-section'>
+          {/* 英文装饰字 */}
+          <Text className='subtitle-en'>NANAO FIREWORKS</Text>
+          
+          {/* 主标题 - 艺术排版 */}
+          <View className='title-wrapper'>
+            <Text className='title-cn'>南澳</Text>
+            <View className='dot' />
+            <Text className='title-cn'>烟花</Text>
+          </View>
+
+          {/* Slogan */}
+          <Text className='slogan'>点亮每一个美好时刻</Text>
+        </View>
+
+        {/* 操作区 */}
+        <View className='action-section'>
+          {/* 毛玻璃按钮 */}
+          <View 
+            className='btn-glass'
+            onClick={handleStartBrowsing}
+            hoverClass='btn-glass-hover'
+          >
+            <Text className='btn-text'>进入展厅</Text>
+            <View className='btn-shine' />
+          </View>
+
+          {/* 底部功能链接 */}
+          <View className='link-group'>
+             <View className='link-item' onClick={handleAdminLogin}>
+               <Text className='link-text'>店主登录</Text>
+             </View>
+          </View>
+        </View>
+
+        {/* 底部版权 */}
+        <View className='footer'>
+          <Text className='copyright'>{COPYRIGHT_SIGN} 2026 Nanao Fireworks</Text>
+        </View>
+
       </View>
     </View>
   )

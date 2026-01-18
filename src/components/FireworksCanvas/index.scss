@@ -1,0 +1,17 @@
+// src/components/FireworksCanvas/index.scss
+.fireworks-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1; // 提升一层，在月亮之上
+  pointer-events: auto; // 允许触摸
+  overflow: hidden;
+}
+
+.fireworks-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
