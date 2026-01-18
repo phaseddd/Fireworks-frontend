@@ -1,0 +1,26 @@
+.fireworks-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.fireworks-bg__touch {
+  position: absolute;
+  inset: 0;
+}
+
+.fireworks-bg__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.fireworks-bg__vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 25%, rgba(255, 215, 0, 0.10) 0%, rgba(10, 10, 10, 0) 60%),
+    radial-gradient(ellipse at 50% 110%, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.78) 100%);
+}

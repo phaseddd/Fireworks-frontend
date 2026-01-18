@@ -11,35 +11,52 @@
   flex-direction: column;
   overflow: hidden;
 
-  // 暗角 + 轻微光晕叠层，增强沉浸感
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(ellipse at 50% 35%, rgba(255, 72, 0, 0.06) 0%, rgba(10, 10, 10, 0) 60%),
-      radial-gradient(ellipse at 50% 115%, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.78) 100%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
   .content {
     flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 60px 40px 120px;
+    padding: 52px 24px 160px;
     box-sizing: border-box;
     position: relative;
     z-index: 1;
   }
 
+  // 主视觉卡片：玻璃质感（读字第一）
+  .hero-card {
+    width: 336px;
+    max-width: calc(100% - 48px);
+    padding: 26px 22px 20px;
+    border-radius: 24px;
+
+    background: rgba(10, 10, 10, 0.56);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    box-shadow:
+      0 18px 60px rgba(0, 0, 0, 0.55),
+      0 0 44px rgba(255, 72, 0, 0.10);
+
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .brand-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
   // Logo 区域
   .logo-wrapper {
-    width: 200px;
-    height: 200px;
-    margin-bottom: 32px;
+    width: 76px;
+    height: 76px;
+    margin-bottom: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -48,47 +65,63 @@
     .logo {
       width: 100%;
       height: 100%;
-      border-radius: 24px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.10);
       box-shadow:
-        0 18px 60px rgba(0, 0, 0, 0.65),
-        0 0 48px rgba(255, 72, 0, 0.16);
+        0 16px 50px rgba(0, 0, 0, 0.55),
+        0 0 36px rgba(255, 72, 0, 0.14);
     }
+  }
+
+  .brand-text {
+    flex: 1;
+    min-width: 0;
   }
 
   // 店铺名称 - 大字醒目
   .store-name {
     display: block;
-    font-size: 42px;
+    font-size: 30px;
     font-weight: bold;
     color: #ffffff;
-    letter-spacing: 8px;
-    margin-bottom: 16px;
-    text-align: center;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+    text-align: left;
+    line-height: 1.12;
+  }
+
+  .sub-title {
+    display: block;
+    font-size: 13px;
+    color: rgba(255, 215, 0, 0.86);
+    letter-spacing: 1px;
+    text-align: left;
   }
 
   // 口号
   .slogan {
     display: block;
-    font-size: 18px;
-    color: #999999;
-    margin-bottom: 60px;
-    text-align: center;
-    letter-spacing: 2px;
+    width: 100%;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.62);
+    margin-bottom: 22px;
+    text-align: left;
+    letter-spacing: 1px;
   }
 
   // 开始浏览按钮 - 渐变色主按钮
   .btn-start {
-    width: 280px;
-    height: 56px;
+    width: 100%;
+    height: 52px;
     background: linear-gradient(135deg, #ff4800 0%, #ff8c00 100%);
     border: none;
-    border-radius: 28px;
-    font-size: 20px;
+    border-radius: 26px;
+    font-size: 18px;
     font-weight: bold;
     color: #ffffff;
-    letter-spacing: 4px;
+    letter-spacing: 2px;
     box-shadow: 0 8px 24px rgba(255, 72, 0, 0.4);
-    margin-bottom: 40px;
+    margin-bottom: 14px;
 
     &:active {
       transform: scale(0.98);
@@ -98,13 +131,19 @@
 
   // 店主入口 - 低调的文字链接
   .admin-entry {
-    padding: 12px 24px;
+    width: 100%;
+    padding: 10px 0;
+    display: flex;
+    justify-content: center;
 
     .admin-text {
-      font-size: 14px;
-      color: #666666;
-      text-decoration: underline;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.42);
       letter-spacing: 1px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      background: rgba(10, 10, 10, 0.25);
     }
 
     &:active {
@@ -114,10 +153,35 @@
     }
   }
 
+  // 轻提示：引导用户体验交互（短暂出现，避免打扰）
+  .hint {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(96px + env(safe-area-inset-bottom));
+    display: flex;
+    justify-content: center;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .hint-chip {
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(10, 10, 10, 0.48);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.70);
+    letter-spacing: 1px;
+  }
+
   // 底部版权
   .footer {
     position: absolute;
-    bottom: 40px;
+    bottom: calc(40px + env(safe-area-inset-bottom));
     left: 0;
     right: 0;
     text-align: center;

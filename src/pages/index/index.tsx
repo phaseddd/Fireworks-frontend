@@ -1,9 +1,11 @@
 import { View, Text, Image } from '@tarojs/components'
-import { useDidShow, useLoad } from '@tarojs/taro'
+import { useDidHide, useDidShow, useLoad } from '@tarojs/taro'
 import { Button } from '@nutui/nutui-react-taro'
 import Taro from '@tarojs/taro'
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { api } from '@/services/api'
+import FireworksBackground, { type FireworksBackgroundHandle } from '@/components/customer/FireworksBackground'
+import LogoHalo from '@/components/customer/LogoHalo'
 import { authUtils } from '../../hooks/useAuth'
 import logoImg from '../../assets/images/logo.png'
 import './index.scss'
@@ -12,14 +14,25 @@ const FIREWORKS_EMOJI = String.fromCodePoint(0x1F386)
 const COPYRIGHT_SIGN = String.fromCodePoint(0x00A9)
 
 export default function Index() {
+  const [bgActive, setBgActive] = useState(true)
+  const [showHint, setShowHint] = useState(true)
   const navigatingRef = useRef(false)
   const bindingRef = useRef(false)
+  const fireworksRef = useRef<FireworksBackgroundHandle | null>(null)
 
   useLoad(() => {
     console.log(`${FIREWORKS_EMOJI} 南澳烟花首页加载完成`)
   })
 
+  useEffect(() => {
+    const t = setTimeout(() => setShowHint(false), 3200)
+    return () => clearTimeout(t)
+  }, [])
+
   useDidShow(() => {
+    // 页面回到前台，恢复背景动效（节能 + 稳定）
+    setBgActive(true)
+
     const raw = Taro.getStorageSync('pendingBindCode')
     const pendingBindCode = raw ? String(raw).trim() : ''
     if (!pendingBindCode) return
@@ -57,8 +70,21 @@ export default function Index() {
     })()
   })
 
+  useDidHide(() => {
+    // TabBar 切走/进后台时暂停，避免后台耗电与不必要的绘制
+    setBgActive(false)
+  })
+
   // 跳转到商品列表 (TabBar 页面，使用 switchTab)
   const handleStartBrowsing = () => {
+    try {
+      const { windowWidth, windowHeight } = Taro.getSystemInfoSync()
+      // 不阻塞跳转：仅作轻量“点火”反馈（可能看不清也没关系）
+      fireworksRef.current?.burstAt(windowWidth / 2, windowHeight * 0.62, 'soft')
+    } catch {
+      // ignore
+    }
+
     Taro.switchTab({
       url: '/pages/products/list/index'
     })
@@ -114,36 +140,53 @@ export default function Index() {
 
   return (
     <View className='index-page'>
+      <FireworksBackground ref={fireworksRef} active={bgActive} />
+
       {/* 主内容区 */}
       <View className='content'>
-        {/* Logo */}
-        <View className='logo-wrapper'>
-          <Image
-            className='logo'
-            src={logoImg}
-            mode='aspectFit'
-          />
-        </View>
+        <View className='hero-card'>
+          <View className='brand-row'>
+            {/* Logo */}
+            <View className='logo-wrapper'>
+              <LogoHalo active={bgActive} size={116} />
+              <Image
+                className='logo'
+                src={logoImg}
+                mode='aspectFit'
+              />
+            </View>
 
-        {/* 店铺名称 */}
-        <Text className='store-name'>南澳烟花</Text>
+            <View className='brand-text'>
+              {/* 店铺名称 */}
+              <Text className='store-name'>南澳烟花</Text>
+              {/* 合规定位/副标题 */}
+              <Text className='sub-title'>烟花信息查询助手</Text>
+            </View>
+          </View>
 
-        {/* 口号 */}
-        <Text className='slogan'>绚烂烟火，点亮美好时刻</Text>
+          {/* 口号（更协调、偏功能价值） */}
+          <Text className='slogan'>参考价格 · 燃放视频 · 一键询价</Text>
 
-        {/* 开始浏览按钮 */}
-        <Button
-          className='btn-start'
-          onClick={handleStartBrowsing}
-        >
-          开始浏览
-        </Button>
+          {/* 开始浏览按钮 */}
+          <Button
+            className='btn-start'
+            onClick={handleStartBrowsing}
+          >
+            进入产品库
+          </Button>
 
-        {/* 店主入口 - 小字链接样式 */}
-        <View className='admin-entry' onClick={handleAdminLogin}>
-          <Text className='admin-text'>店主入口</Text>
+          {/* 店主入口 - 小字链接样式 */}
+          <View className='admin-entry' onClick={handleAdminLogin}>
+            <Text className='admin-text'>店主入口</Text>
+          </View>
         </View>
       </View>
+
+      {showHint && (
+        <View className='hint'>
+          <Text className='hint-chip'>点一下放烟花</Text>
+        </View>
+      )}
 
       {/* 底部版权信息 */}
       <View className='footer'>
