@@ -158,9 +158,10 @@ export class FireworksRenderer {
 
         // 逻辑判断：升空粒子到达顶点或速度向下时爆炸
         if (wasRocket && !p.isDead()) {
-           // 调整爆炸高度：从 0.25 下调到 0.38 (约屏幕顶部 38% 处)，大致对齐 NANAO FIREWORKS 文字高度
-           // 让烟花在文字上方一点点炸开，而不是飞太高
-           if (p.vy >= 0 || p.y < this.height * 0.38) { 
+           // 调整爆炸高度：设置到 0.25 (屏幕顶部 25% 处)
+           // 之前的 0.38 仍然感觉视觉偏低，容易遮挡文字。
+           // 抬高到 0.25，让烟花在月亮下方、文字上方炸开，形成完美的"上-中-下"层次。
+           if (p.vy >= 0 || p.y < this.height * 0.25) { 
              p.alpha = 0; // 立即销毁 rocket
              this.explode(p.x, p.y); // 原位爆炸
            }
