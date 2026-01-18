@@ -1,4 +1,4 @@
-// 首页样式 - 深色主题 + 烟花暖色调
+// 首页样式 - 深色主题 + 烟花暖色调 + Lottie 动画层
 .index-page {
   position: relative;
   min-height: 100vh;
@@ -23,6 +23,86 @@
     z-index: 0;
   }
 
+  // ========================================
+  // Layer 1: CSS 星星闪烁装饰层
+  // ========================================
+  .stars-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+
+    .star {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: #ffffff;
+      border-radius: 50%;
+      opacity: 0;
+      animation: twinkle 3s ease-in-out infinite;
+
+      // 不同大小的星星
+      &.star-1 {
+        width: 2px;
+        height: 2px;
+        animation-duration: 2.5s;
+      }
+
+      &.star-2 {
+        width: 3px;
+        height: 3px;
+        animation-duration: 3s;
+      }
+
+      &.star-3 {
+        width: 4px;
+        height: 4px;
+        animation-duration: 3.5s;
+        box-shadow: 0 0 6px rgba(255, 140, 0, 0.5);
+      }
+    }
+  }
+
+  // 星星闪烁动画
+  @keyframes twinkle {
+    0%, 100% {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1);
+    }
+  }
+
+  // ========================================
+  // Layer 2-3: Lottie Canvas 动画层
+  // ========================================
+  .fireworks-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  // 背景烟花 Canvas (Layer 2)
+  .fireworks-bg-canvas {
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0.85;
+  }
+
+  // 点击烟花 Canvas (Layer 3)
+  .fireworks-click-canvas {
+    z-index: 3;
+    // 允许触摸事件穿透到此层
+    pointer-events: auto;
+  }
+
+  // ========================================
+  // Layer 4: UI 内容层
+  // ========================================
   .content {
     flex: 1;
     display: flex;
@@ -32,100 +112,224 @@
     padding: 60px 40px 120px;
     box-sizing: border-box;
     position: relative;
-    z-index: 1;
+    z-index: 10;
+    // 允许点击穿透到下层 Canvas，但保留按钮点击
+    pointer-events: none;
+
+    // 所有可交互元素恢复点击
+    .btn-start,
+    .admin-entry,
+    .logo-wrapper {
+      pointer-events: auto;
+    }
   }
 
-  // Logo 区域
+  // Logo 区域 - 圆形裁剪 + 发光边框融入深色背景
   .logo-wrapper {
-    width: 200px;
-    height: 200px;
-    margin-bottom: 32px;
+    width: 180px;
+    height: 180px;
+    margin-bottom: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
 
+    // 外发光边框
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(255, 72, 0, 0.6) 0%, rgba(255, 140, 0, 0.3) 100%);
+      opacity: 0.8;
+      animation: logo-ring-glow 3s ease-in-out infinite;
+      z-index: -1;
+    }
+
     .logo {
       width: 100%;
       height: 100%;
-      border-radius: 24px;
+      border-radius: 50%;  // 圆形裁剪
+      object-fit: cover;
       box-shadow:
-        0 18px 60px rgba(0, 0, 0, 0.65),
-        0 0 48px rgba(255, 72, 0, 0.16);
+        0 0 40px rgba(255, 72, 0, 0.25),
+        inset 0 0 20px rgba(0, 0, 0, 0.3);
+      // 入场动画而非持续动画 (遵循 UX 指南)
+      animation: logo-enter 0.8s ease-out forwards;
     }
   }
 
-  // 店铺名称 - 大字醒目
-  .store-name {
-    display: block;
-    font-size: 42px;
-    font-weight: bold;
-    color: #ffffff;
-    letter-spacing: 8px;
-    margin-bottom: 16px;
-    text-align: center;
+  // Logo 入场动画
+  @keyframes logo-enter {
+    0% {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 
-  // 口号
+  // Logo 外环发光动画
+  @keyframes logo-ring-glow {
+    0%, 100% {
+      opacity: 0.6;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.9;
+      transform: scale(1.02);
+    }
+  }
+
+  // 店铺名称 - 橙色渐变大字，烟花气质
+  .store-name {
+    display: block;
+    font-size: 48px;
+    font-weight: bold;
+    // 橙色渐变文字
+    background: linear-gradient(135deg, #ffffff 0%, #ff8c00 50%, #ff4800 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    // 增强发光效果
+    filter: drop-shadow(0 0 20px rgba(255, 72, 0, 0.4));
+    // 入场动画
+    animation: text-enter 0.6s ease-out 0.2s both;
+  }
+
+  // 口号 - 浅橙色与品牌呼应
   .slogan {
     display: block;
     font-size: 18px;
-    color: #999999;
-    margin-bottom: 60px;
+    color: rgba(255, 140, 0, 0.85);
+    margin-bottom: 56px;
     text-align: center;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
+    text-shadow: 0 0 12px rgba(255, 72, 0, 0.3);
+    // 入场动画
+    animation: text-enter 0.6s ease-out 0.4s both;
   }
 
-  // 开始浏览按钮 - 渐变色主按钮
-  .btn-start {
-    width: 280px;
-    height: 56px;
-    background: linear-gradient(135deg, #ff4800 0%, #ff8c00 100%);
-    border: none;
-    border-radius: 28px;
-    font-size: 20px;
-    font-weight: bold;
-    color: #ffffff;
-    letter-spacing: 4px;
-    box-shadow: 0 8px 24px rgba(255, 72, 0, 0.4);
-    margin-bottom: 40px;
-
-    &:active {
-      transform: scale(0.98);
-      box-shadow: 0 4px 12px rgba(255, 72, 0, 0.3);
+  // 文字入场动画
+  @keyframes text-enter {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 
-  // 店主入口 - 低调的文字链接
+  // 开始浏览按钮 - 渐变色主按钮，视觉焦点
+  .btn-start {
+    width: 300px;
+    height: 60px;
+    background: linear-gradient(135deg, #ff4800 0%, #ff8c00 100%);
+    border: none;
+    border-radius: 30px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #ffffff;
+    letter-spacing: 6px;
+    box-shadow:
+      0 8px 32px rgba(255, 72, 0, 0.5),
+      0 0 48px rgba(255, 72, 0, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    margin-bottom: 36px;
+    // 入场动画而非持续动画 (遵循 UX 指南)
+    animation: btn-enter 0.6s ease-out 0.6s both;
+    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+
+    &:active {
+      transform: scale(0.96);
+      box-shadow:
+        0 4px 16px rgba(255, 72, 0, 0.4),
+        0 0 24px rgba(255, 72, 0, 0.15);
+    }
+  }
+
+  // 按钮入场动画
+  @keyframes btn-enter {
+    0% {
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  // 店主入口 - 低调的文字链接，与整体协调
   .admin-entry {
     padding: 12px 24px;
+    animation: text-enter 0.6s ease-out 0.8s both;
 
     .admin-text {
       font-size: 14px;
-      color: #666666;
-      text-decoration: underline;
-      letter-spacing: 1px;
+      color: rgba(255, 140, 0, 0.5);
+      text-decoration: none;
+      letter-spacing: 2px;
+      border-bottom: 1px solid rgba(255, 140, 0, 0.3);
+      padding-bottom: 2px;
+      transition: color 0.15s ease-out, border-color 0.15s ease-out;
     }
 
     &:active {
       .admin-text {
-        color: #888888;
+        color: rgba(255, 140, 0, 0.8);
+        border-color: rgba(255, 140, 0, 0.6);
       }
     }
   }
 
-  // 底部版权
+  // 底部版权 - 与整体配色协调
   .footer {
     position: absolute;
-    bottom: 40px;
+    bottom: 32px;
     left: 0;
     right: 0;
     text-align: center;
-    z-index: 1;
+    z-index: 10;
+    pointer-events: none;
 
     .copyright {
       font-size: 12px;
-      color: #444444;
+      color: rgba(255, 140, 0, 0.35);
+      letter-spacing: 1px;
+    }
+  }
+}
+
+// ========================================
+// 可访问性: 减少动画偏好支持
+// ========================================
+@media (prefers-reduced-motion: reduce) {
+  .index-page {
+    .star {
+      animation: none !important;
+      opacity: 0.5 !important;
+    }
+
+    .logo-wrapper::before {
+      animation: none !important;
+    }
+
+    .logo,
+    .store-name,
+    .slogan,
+    .btn-start,
+    .admin-entry {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
     }
   }
 }

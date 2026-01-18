@@ -29,6 +29,11 @@ export default defineConfig<'webpack5'>(async (merge) => {
     },
     copy: {
       patterns: [
+        // Copy Lottie animation JSON files to output directory
+        {
+          from: 'src/assets/lottie/',
+          to: 'dist/assets/lottie/'
+        }
       ],
       options: {
       }
