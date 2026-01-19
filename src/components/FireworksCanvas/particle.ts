@@ -46,11 +46,12 @@ export class Particle {
       case 'rocket':
         // 升空粒子：垂直向上，速度较快
         this.vx = (Math.random() - 0.5) * 1; 
-        this.vy = -(Math.random() * 3 + 4); // 初始向上速度
+        // 轻微提升初速度，让升空高度更高
+        this.vy = -(Math.random() * 3.5 + 4.5); // 初始向上速度
         this.size = 2;
         this.alpha = 1;
         this.decay = 0.005; // 缓慢消散
-        this.gravity = 0.05;
+        this.gravity = 0.045;
         this.friction = 0.99;
         this.life = 100; // 这里的 life 更多作为逻辑判断辅助
         break;
@@ -58,16 +59,16 @@ export class Particle {
       case 'spark':
         // 爆炸粒子：向四周扩散
         const angle = Math.random() * Math.PI * 2;
-        // 速度翻倍：从 3+1 改为 5+3，让爆炸半径更大
-        const speed = Math.random() * 5 + 3; 
+        // 爆炸半径再增大一点点：提升初速度，并略微降低阻力/重力
+        const speed = Math.random() * 6 + 3; 
         this.vx = Math.cos(angle) * speed;
         this.vy = Math.sin(angle) * speed;
         // 粒子稍微变大一点
         this.size = Math.random() * 2.5 + 1;
         this.alpha = 1;
         this.decay = Math.random() * 0.015 + 0.01; // 稍微减慢消散速度
-        this.gravity = 0.04; // 减小重力，滞空感更强
-        this.friction = 0.96; // 稍微减小阻力(数值越大阻力越小)，飞得更远
+        this.gravity = 0.038; // 减小重力，滞空感更强
+        this.friction = 0.965; // 数值越大阻力越小，飞得更远
         this.life = 100;
         break;
 
