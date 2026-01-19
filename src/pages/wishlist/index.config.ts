@@ -1,6 +1,8 @@
 export default definePageConfig({
+  navigationStyle: 'custom',
   navigationBarTitleText: '我的',
-  navigationBarBackgroundColor: '#0a0a0a',
+  navigationBarBackgroundColor: '#050505',
   navigationBarTextStyle: 'white',
-  backgroundColor: '#0a0a0a'
+  backgroundColor: '#050505',
+  backgroundColorTop: '#050505'
 })

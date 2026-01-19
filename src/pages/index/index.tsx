@@ -5,6 +5,7 @@ import { useRef } from 'react'
 import { api } from '@/services/api'
 import { authUtils } from '../../hooks/useAuth'
 import FireworksCanvas from '../../components/FireworksCanvas'
+import PageHeader from '@/components/ui/PageHeader'
 import './index.scss'
 
 const COPYRIGHT_SIGN = String.fromCodePoint(0x00A9)
@@ -14,9 +15,7 @@ export default function Index() {
   const bindingRef = useRef(false)
 
   useLoad(() => {
-    // 隐藏原生导航栏，实现全屏沉浸
-    // 注意：需要在 app.config.ts window 配置 navigationStyle: 'custom' 才能完全生效
-    // 这里先不做强制，利用样式覆盖
+    // 首页使用自定义导航（见 pages/index/index.config.ts）
   })
 
   useDidShow(() => {
@@ -103,6 +102,7 @@ export default function Index() {
 
   return (
     <View className='index-page'>
+      <PageHeader title='南澳烟花' showBack={false} />
       {/* 背景层：月亮与繁星 (纯 CSS 实现，不占 Canvas 性能) */}
       <View className='sky-container'>
         <View className='stars' />

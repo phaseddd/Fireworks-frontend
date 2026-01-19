@@ -26,15 +26,17 @@ interface CategoryTabsProps {
 const CategoryTabs: React.FC<CategoryTabsProps> = ({ value, onChange }) => {
   return (
     <ScrollView className='category-tabs' scrollX>
-      {categoryOptions.map((item) => (
-        <View
-          key={item.value}
-          className={`tab-item ${value === item.value ? 'active' : ''}`}
-          onClick={() => onChange(item.value)}
-        >
-          {item.text}
-        </View>
-      ))}
+      <View className='category-tabs-inner'>
+        {categoryOptions.map((item) => (
+          <View
+            key={item.value}
+            className={`tab-item ${value === item.value ? 'active' : ''}`}
+            onClick={() => onChange(item.value)}
+          >
+            {item.text}
+          </View>
+        ))}
+      </View>
     </ScrollView>
   )
 }

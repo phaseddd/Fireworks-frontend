@@ -1,11 +1,12 @@
 import { View, Text, Image } from '@tarojs/components'
-import Taro from '@tarojs/taro'
-import { useMemo, useState, useEffect } from 'react'
+import Taro, { useDidShow } from '@tarojs/taro'
+import { useMemo, useState } from 'react'
 import { Dialog } from '@nutui/nutui-react-taro'
 import useWishlist, { type WishlistItem } from '@/hooks/useWishlist'
 import GlassCard from '@/components/ui/GlassCard'
 import GlassButton from '@/components/ui/GlassButton'
 import PageHeader from '@/components/ui/PageHeader'
+import { useNavBarMetrics } from '@/hooks/useNavBarMetrics'
 import './index.scss'
 
 /**
@@ -14,18 +15,17 @@ import './index.scss'
  * Story 3.2: 生成询价单入口
  */
 export default function Wishlist() {
-  const { items, updateQuantity, removeItem, clearAll, total, count } = useWishlist()
+  const { items, updateQuantity, removeItem, clearAll, total, count, reload } = useWishlist()
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false)
   const [clearDialogVisible, setClearDialogVisible] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState<WishlistItem | null>(null)
   
-  // Header height logic
-  const [headerHeight, setHeaderHeight] = useState(0)
-  useEffect(() => {
-    const info = Taro.getSystemInfoSync()
-    const sbHeight = info.statusBarHeight || 20
-    setHeaderHeight(sbHeight + 44)
-  }, [])
+  const { totalHeight: headerHeight } = useNavBarMetrics()
+  const hasItems = items.length > 0
+
+  useDidShow(() => {
+    reload()
+  })
 
   const itemCountText = useMemo(() => (count > 99 ? '99+' : String(count)), [count])
 
@@ -63,25 +63,30 @@ export default function Wishlist() {
   }
 
   return (
-    <View className='wishlist-page' style={{ paddingTop: `${headerHeight}px` }}>
+    <View
+      className='wishlist-page'
+      style={{ paddingTop: `${headerHeight}px`, paddingBottom: hasItems ? '240rpx' : '0' }}
+    >
       <PageHeader title="意向清单" showBack={false} />
 
-      <View className='header-stats'>
-        <View className='title-row'>
-          <Text className='title'>已选商品</Text>
-          <View className='badge'>
-            <Text className='badge-text'>{itemCountText}</Text>
+      {hasItems && (
+        <View className='header-stats'>
+          <View className='title-row'>
+            <Text className='title'>已选商品</Text>
+            <View className='badge'>
+              <Text className='badge-text'>{itemCountText}</Text>
+            </View>
           </View>
+          <GlassButton
+            className='clear-btn'
+            onClick={handleClearAll}
+            variant='ghost'
+            style={{ width: '80px', height: '32px', fontSize: '12px' }}
+          >
+            清空
+          </GlassButton>
         </View>
-        <GlassButton 
-          className='clear-btn' 
-          onClick={handleClearAll} 
-          variant='ghost' 
-          style={{ width: '80px', height: '32px', fontSize: '12px' }}
-        >
-          清空
-        </GlassButton>
-      </View>
+      )}
 
       {items.length === 0 ? (
         <View className='empty'>
@@ -122,7 +127,8 @@ export default function Wishlist() {
         </View>
       )}
 
-      <View className='bottom-bar'>
+      {hasItems && (
+        <View className='bottom-bar'>
         <View className='summary'>
           <Text className='summary-text'>共 {count} 件</Text>
           <Text className='summary-total'>预估总价 ¥{total.toFixed(2)}</Text>
@@ -130,7 +136,8 @@ export default function Wishlist() {
         <GlassButton className='create-btn' variant='primary' onClick={handleCreateInquiry}>
           生成询价单
         </GlassButton>
-      </View>
+        </View>
+      )}
 
       <Dialog
         title='确认删除'

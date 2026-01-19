@@ -39,15 +39,17 @@ const PriceTabs: React.FC<PriceTabsProps> = ({ value, onChange }) => {
 
   return (
     <ScrollView className='price-tabs' scrollX>
-      {priceOptions.map((item) => (
-        <View
-          key={item.value}
-          className={`tab-item ${value === item.value ? 'active' : ''}`}
-          onClick={() => handleClick(item)}
-        >
-          {item.text}
-        </View>
-      ))}
+      <View className='price-tabs-inner'>
+        {priceOptions.map((item) => (
+          <View
+            key={item.value}
+            className={`tab-item ${value === item.value ? 'active' : ''}`}
+            onClick={() => handleClick(item)}
+          >
+            {item.text}
+          </View>
+        ))}
+      </View>
     </ScrollView>
   )
 }

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Taro from '@tarojs/taro'
 import type { Product } from '@/types'
 
@@ -12,6 +12,18 @@ export interface WishlistItem {
 }
 
 const STORAGE_KEY = 'wishlist'
+const WISHLIST_EVENT = 'wishlist:changed'
+
+function getEventCenter():
+  | { on: (eventName: string, callback: (data: any) => void) => void; off: (eventName: string, callback: (data: any) => void) => void; trigger: (eventName: string, data?: any) => void }
+  | null {
+  const eventCenter = (Taro as any).eventCenter
+  if (!eventCenter) return null
+  if (typeof eventCenter.on !== 'function') return null
+  if (typeof eventCenter.off !== 'function') return null
+  if (typeof eventCenter.trigger !== 'function') return null
+  return eventCenter
+}
 
 function loadWishlistFromStorage(): WishlistItem[] {
   try {
@@ -40,57 +52,80 @@ function persistWishlist(items: WishlistItem[]) {
 
 export function useWishlist() {
   const [items, setItems] = useState<WishlistItem[]>(() => loadWishlistFromStorage())
+  const itemsRef = useRef(items)
+  itemsRef.current = items
+
+  const reload = () => {
+    setItems(loadWishlistFromStorage())
+  }
 
   useEffect(() => {
-    persistWishlist(items)
-  }, [items])
+    const eventCenter = getEventCenter()
+    if (!eventCenter) return
+
+    const handleExternalChange = (nextItems: WishlistItem[]) => {
+      if (!Array.isArray(nextItems)) return
+      if (nextItems === itemsRef.current) return
+      setItems(nextItems)
+    }
+
+    eventCenter.on(WISHLIST_EVENT, handleExternalChange)
+    return () => {
+      eventCenter.off(WISHLIST_EVENT, handleExternalChange)
+    }
+  }, [])
+
+  const syncWishlist = (nextItems: WishlistItem[]) => {
+    persistWishlist(nextItems)
+    setItems(nextItems)
+
+    const eventCenter = getEventCenter()
+    eventCenter?.trigger(WISHLIST_EVENT, nextItems)
+  }
 
   const addItem = (product: Product) => {
     if (!product?.id) return
 
-    setItems((prev) => {
-      const existing = prev.find((i) => i.productId === product.id)
-      if (existing) {
-        return prev.map((i) =>
+    const currentItems = loadWishlistFromStorage()
+    const existing = currentItems.find((i) => i.productId === product.id)
+    const nextItems = existing
+      ? currentItems.map((i) =>
           i.productId === product.id ? { ...i, quantity: i.quantity + 1 } : i
         )
-      }
+      : [
+          ...currentItems,
+          {
+            productId: product.id,
+            name: product.name,
+            price: Number(product.price || 0),
+            image: Array.isArray(product.images) && product.images.length > 0 ? product.images[0] : '',
+            quantity: 1,
+            addedAt: Date.now(),
+          },
+        ]
 
-      const firstImage = Array.isArray(product.images) && product.images.length > 0 ? product.images[0] : ''
-      return [
-        ...prev,
-        {
-          productId: product.id,
-          name: product.name,
-          price: Number(product.price || 0),
-          image: firstImage,
-          quantity: 1,
-          addedAt: Date.now(),
-        },
-      ]
-    })
+    syncWishlist(nextItems)
 
     Taro.showToast({ title: '已加入清单', icon: 'success', duration: 1200 })
   }
 
   const removeItem = (productId: number) => {
-    setItems((prev) => prev.filter((i) => i.productId !== productId))
+    const currentItems = loadWishlistFromStorage()
+    syncWishlist(currentItems.filter((i) => i.productId !== productId))
   }
 
   const updateQuantity = (productId: number, quantity: number) => {
     if (!Number.isFinite(quantity) || quantity < 1) return
-    setItems((prev) =>
-      prev.map((i) => (i.productId === productId ? { ...i, quantity } : i))
-    )
+    const currentItems = loadWishlistFromStorage()
+    syncWishlist(currentItems.map((i) => (i.productId === productId ? { ...i, quantity } : i)))
   }
 
-  const clearAll = () => setItems([])
+  const clearAll = () => syncWishlist([])
 
   const total = useMemo(() => items.reduce((sum, i) => sum + i.price * i.quantity, 0), [items])
   const count = useMemo(() => items.reduce((sum, i) => sum + i.quantity, 0), [items])
 
-  return { items, addItem, removeItem, updateQuantity, clearAll, total, count }
+  return { items, addItem, removeItem, updateQuantity, clearAll, total, count, reload }
 }
 
 export default useWishlist
-

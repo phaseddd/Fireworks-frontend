@@ -8,20 +8,32 @@
   padding-bottom: calc(32rpx + env(safe-area-inset-bottom));
   box-sizing: border-box;
 
+  .search-full {
+    width: calc(100% + 64rpx);
+    margin-left: -32rpx;
+    margin-right: -32rpx;
+    margin-top: 16rpx;
+  }
+
   .filters-sticky {
     position: sticky;
     top: 0;
     z-index: 10;
 
-    margin: 0 -32rpx 16rpx;
-    padding: 20rpx 32rpx 12rpx;
+    width: calc(100% + 64rpx);
+    margin: 0 0 16rpx;
+    margin-left: -32rpx;
+    margin-right: -32rpx;
 
     background: var(--c-bg-glass-heavy);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
 
-    // box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35); // Optional: keep or remove
     border-bottom: 1px solid var(--c-border-glass);
+
+    .filters-inner {
+      padding: 20rpx 32rpx 12rpx;
+    }
   }
 
   .product-grid {

@@ -1,9 +1,10 @@
 import { View, Text, Button as TaroButton } from '@tarojs/components'
 import Taro, { useRouter, useShareAppMessage } from '@tarojs/taro'
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo } from 'react'
 import GlassCard from '@/components/ui/GlassCard'
 import GlassButton from '@/components/ui/GlassButton'
 import PageHeader from '@/components/ui/PageHeader'
+import { useNavBarMetrics } from '@/hooks/useNavBarMetrics'
 import './index.scss'
 
 type Snapshot = {
@@ -30,13 +31,7 @@ export default function InquiryShare() {
   const router = useRouter()
   const shareCode = String(router.params?.shareCode || '')
   
-  // Header height logic
-  const [headerHeight, setHeaderHeight] = useState(0)
-  useEffect(() => {
-    const info = Taro.getSystemInfoSync()
-    const sbHeight = info.statusBarHeight || 20
-    setHeaderHeight(sbHeight + 44)
-  }, [])
+  const { totalHeight: headerHeight } = useNavBarMetrics()
 
   useShareAppMessage(() => ({
     title: '我的烟花询价单',

@@ -10,6 +10,7 @@ import SearchHistory from '@/components/customer/SearchBar/SearchHistory'
 import HotKeywords from '@/components/customer/SearchBar/HotKeywords'
 import PageHeader from '@/components/ui/PageHeader'
 import { useDebounce } from '@/hooks/useDebounce'
+import { useNavBarMetrics } from '@/hooks/useNavBarMetrics'
 import { useSearchHistory } from '@/hooks/useSearchHistory'
 import { api } from '@/services/api'
 import type { Product } from '@/types'
@@ -43,13 +44,7 @@ const ProductList: React.FC = () => {
   const pendingRef = useRef<{ pageNum: number; refresh: boolean; filters: Filters } | null>(null)
   const initialLoadDone = useRef(false)
   
-  // Header height logic
-  const [headerHeight, setHeaderHeight] = useState(0)
-  useEffect(() => {
-    const info = Taro.getSystemInfoSync()
-    const sbHeight = info.statusBarHeight || 20
-    setHeaderHeight(sbHeight + 44) // 44 is nav bar height
-  }, [])
+  const { totalHeight: headerHeight } = useNavBarMetrics()
 
   // 加载热门搜索关键词
   useEffect(() => {
@@ -203,7 +198,7 @@ const ProductList: React.FC = () => {
       <PageHeader title="商品列表" showBack={false} />
       
       {/* 搜索栏 - Story 2.5 */}
-      <View style={{ marginTop: '8px' }}>
+      <View className='search-full'>
         <SearchBar
           value={keyword}
           onChange={setKeyword}
@@ -227,12 +222,14 @@ const ProductList: React.FC = () => {
         </>
       ) : (
         <>
-          <View className='filters-sticky' style={{ top: `${headerHeight}px` }}>
-            {/* 分类筛选栏 */}
-            <CategoryTabs value={category} onChange={handleCategoryChange} />
-            {/* 价格区间筛选栏 */}
-            <PriceTabs value={priceRange.value} onChange={handlePriceChange} />
-          </View>
+           <View className='filters-sticky' style={{ top: `${headerHeight}px` }}>
+             <View className='filters-inner'>
+               {/* 分类筛选栏 */}
+               <CategoryTabs value={category} onChange={handleCategoryChange} />
+               {/* 价格区间筛选栏 */}
+               <PriceTabs value={priceRange.value} onChange={handlePriceChange} />
+             </View>
+           </View>
 
           {showEmptyResult ? (
             <EmptyResult keyword={keyword} onClear={handleClearKeyword} />

@@ -24,13 +24,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   }
 
   return (
-    <GlassCard className='product-card' onClick={handleClick} padding={0}>
+      <GlassCard className='product-card' onClick={handleClick} padding={0}>
       <View className='product-image'>
         {mainImage ? (
-          <Image
-            src={mainImage}
-            mode='aspectFill'
-          />
+          <View className='product-image-stack'>
+            <Image className='image-bg' src={mainImage} mode='aspectFill' />
+            <View className='image-bg-mask' />
+            <Image className='image-fg' src={mainImage} mode='aspectFit' />
+          </View>
         ) : (
           <View className='product-image-placeholder'>
             <Text className='placeholder-text'>暂无图片</Text>

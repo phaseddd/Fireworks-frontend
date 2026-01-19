@@ -19,7 +19,27 @@ export default function FireworksCanvas() {
         const canvas = res[0].node;
         const width = res[0].width;
         const height = res[0].height;
-        const dpr = Taro.getSystemInfoSync().pixelRatio;
+
+        let dpr = 2;
+        try {
+          const wxAny =
+            typeof wx !== 'undefined' ? wx : (typeof globalThis !== 'undefined' ? (globalThis as any).wx : undefined);
+          if (wxAny && typeof wxAny.getDeviceInfo === 'function') {
+            const deviceInfo = wxAny.getDeviceInfo();
+            if (typeof deviceInfo?.pixelRatio === 'number') {
+              dpr = deviceInfo.pixelRatio;
+            }
+          } else if (wxAny && typeof wxAny.getWindowInfo === 'function') {
+            const windowInfo = wxAny.getWindowInfo();
+            if (typeof windowInfo?.pixelRatio === 'number') {
+              dpr = windowInfo.pixelRatio;
+            }
+          } else if (typeof window !== 'undefined' && typeof window.devicePixelRatio === 'number') {
+            dpr = window.devicePixelRatio;
+          }
+        } catch {
+          // ignore
+        }
 
         // 初始化渲染器
         rendererRef.current = new FireworksRenderer(canvas, width, height, dpr);

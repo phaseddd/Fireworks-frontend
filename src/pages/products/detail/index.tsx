@@ -75,7 +75,6 @@ export default function ProductDetail() {
   const handleAddToWishlist = () => {
     if (!product) return
     addItem(product)
-    Taro.showToast({ title: '已加入清单', icon: 'success' })
   }
 
   // 返回上一页
@@ -134,6 +133,7 @@ export default function ProductDetail() {
   const hasVideo = Boolean(product.videoUrl)
   const priceNumber = Number(product.price)
   const priceText = Number.isFinite(priceNumber) ? priceNumber.toFixed(2) : String(product.price ?? '')
+  const isQrMode = currentImageIndex === 2 && hasQrCodeImage
   const qrHintText = hasVideo
     ? '视频在下方可直接播放；二维码用于跳转厂家页面'
     : '暂未获取燃放视频，可点开二维码后在弹窗内长按识别'
@@ -143,7 +143,7 @@ export default function ProductDetail() {
     : '请长按识别二维码；若无识别入口，可转发到微信聊天后长按识别'
 
   return (
-    <View className='detail-page'>
+    <View className={isQrMode ? 'detail-page qr-mode' : 'detail-page'}>
       <PageHeader title={product.name} onBack={handleGoBack} transparent />
       
       {/* 图片轮播区域 */}
@@ -158,12 +158,14 @@ export default function ProductDetail() {
           >
             {images.map((img, index) => (
               <SwiperItem key={`${index}-${img}`} className='swiper-item'>
-                <Image
-                  className='product-image'
-                  src={img}
-                  mode={index === 2 ? 'aspectFit' : 'aspectFill'}
+                <View
+                  className='image-frame'
                   onClick={() => (index === 2 ? openQrcodeViewer(img) : handlePreviewImage(index))}
-                />
+                >
+                  <Image className='image-bg' src={img} mode='aspectFill' />
+                  <View className='image-bg-mask' />
+                  <Image className='image-fg' src={img} mode='aspectFit' />
+                </View>
               </SwiperItem>
             ))}
           </Swiper>

@@ -1,8 +1,9 @@
 import { View, Text, Input, Image } from '@tarojs/components'
 import Taro from '@tarojs/taro'
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState } from 'react'
 import useWishlist from '@/hooks/useWishlist'
 import useAgentCode from '@/hooks/useAgentCode'
+import { useNavBarMetrics } from '@/hooks/useNavBarMetrics'
 import { api } from '@/services/api'
 import GlassCard from '@/components/ui/GlassCard'
 import GlassButton from '@/components/ui/GlassButton'
@@ -19,13 +20,7 @@ export default function InquiryCreate() {
   const [wechat, setWechat] = useState('')
   const [submitting, setSubmitting] = useState(false)
   
-  // Header height logic
-  const [headerHeight, setHeaderHeight] = useState(0)
-  useEffect(() => {
-    const info = Taro.getSystemInfoSync()
-    const sbHeight = info.statusBarHeight || 20
-    setHeaderHeight(sbHeight + 44)
-  }, [])
+  const { totalHeight: headerHeight } = useNavBarMetrics()
 
   const itemCount = useMemo(() => items.reduce((sum, i) => sum + i.quantity, 0), [items])
 

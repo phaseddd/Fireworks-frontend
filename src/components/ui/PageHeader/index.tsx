@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text } from '@tarojs/components';
 import Taro from '@tarojs/taro';
+import { useNavBarMetrics } from '@/hooks/useNavBarMetrics';
 import './index.scss';
 
 interface PageHeaderProps {
@@ -11,12 +12,7 @@ interface PageHeaderProps {
 }
 
 const PageHeader: React.FC<PageHeaderProps> = ({ title, onBack, transparent = true, showBack = true }) => {
-  const [statusBarHeight, setStatusBarHeight] = React.useState(20);
-
-  React.useEffect(() => {
-    const info = Taro.getSystemInfoSync();
-    setStatusBarHeight(info.statusBarHeight || 20);
-  }, []);
+  const { statusBarHeight, navBarHeight, totalHeight } = useNavBarMetrics();
 
   const handleBack = () => {
     if (onBack) {
@@ -31,10 +27,11 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, onBack, transparent = tr
       className="page-header" 
       style={{ 
         paddingTop: `${statusBarHeight}px`,
+        height: `${totalHeight}px`,
         background: transparent ? 'transparent' : 'var(--c-bg-page)'
       }}
     >
-      <View className="header-content">
+      <View className="header-content" style={{ height: `${navBarHeight}px` }}>
         {showBack && (
           <View className="back-btn" onClick={handleBack}>
             <Text className="back-icon" style={{ fontSize: '20px', fontWeight: 'bold' }}>{'<'}</Text>

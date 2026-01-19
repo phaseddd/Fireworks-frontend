@@ -10,6 +10,36 @@
     position: relative;
     border-radius: 32rpx 32rpx 0 0; // Match GlassCard radius
     overflow: hidden;
+    background: rgba(0, 0, 0, 0.25);
+
+    .product-image-stack {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .image-bg,
+    .image-bg-mask,
+    .image-fg {
+      pointer-events: none;
+    }
+
+    .image-bg {
+      transform: scale(1.2);
+      filter: blur(18px);
+      opacity: 0.55;
+    }
+
+    .image-bg-mask {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.28);
+    }
 
     .product-image-placeholder {
       position: absolute;

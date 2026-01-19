@@ -20,9 +20,10 @@ page {
     sans-serif;
   background-color: var(--c-bg-page);
   color: var(--c-text-primary);
-  line-height: 1.5;
-  letter-spacing: 0.02em; // 优化深色背景下的可读性
-  font-size: 28px; // Taro 默认 px 会转 rpx，28px 约为 14px
+}
+
+[class^='admin-'] {
+  color: #000;
 }
 
 // 通用工具类
