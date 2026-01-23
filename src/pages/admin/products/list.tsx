@@ -230,7 +230,7 @@ export default function AdminProductList() {
                 <View className='product-info'>
                   <Text className='product-name'>{product.name}</Text>
                   <View className='product-meta'>
-                    <Text className='product-category'>{CATEGORY_MAP[product.category] || product.category}</Text>
+                    <Text className='product-category'>{product.categoryName || CATEGORY_MAP[product.category] || product.category}</Text>
                     <Text className='product-stock'>库存: {product.stock}</Text>
                   </View>
                   <Text className='product-price'>¥{product.price}</Text>

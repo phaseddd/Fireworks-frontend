@@ -21,13 +21,14 @@ import './index.scss'
  * Story 2.2: 商品列表页面
  * Story 2.4: 商品分类筛选功能（含价格区间筛选）
  * Story 2.5: 商品搜索功能
+ * BF-1: 支持动态分类筛选（使用 categoryId）
  */
 const ProductList: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([])
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
   const [loading, setLoading] = useState(false)
-  const [category, setCategory] = useState('')  // 分类筛选状态
+  const [categoryId, setCategoryId] = useState<number | null>(null)  // 分类ID筛选状态
   const [priceRange, setPriceRange] = useState<PriceRange>({ value: '' })  // 价格区间筛选状态
   const [keyword, setKeyword] = useState('')  // 搜索关键词状态
   const [showSearchPanel, setShowSearchPanel] = useState(false)  // 是否显示搜索面板
@@ -36,14 +37,14 @@ const ProductList: React.FC = () => {
   const { history, addHistory, clearHistory } = useSearchHistory()  // 搜索历史
   const pageSize = 20
 
-  type Filters = { category: string; minPrice?: number; maxPrice?: number; keyword?: string }
+  type Filters = { categoryId: number | null; minPrice?: number; maxPrice?: number; keyword?: string }
 
   // 使用 ref 保存最新的筛选条件，避免闭包问题
-  const filtersRef = useRef<Filters>({ category: '' })
+  const filtersRef = useRef<Filters>({ categoryId: null })
   const loadingRef = useRef(false)
   const pendingRef = useRef<{ pageNum: number; refresh: boolean; filters: Filters } | null>(null)
   const initialLoadDone = useRef(false)
-  
+
   const { totalHeight: headerHeight } = useNavBarMetrics()
 
   // 加载热门搜索关键词
@@ -69,13 +70,13 @@ const ProductList: React.FC = () => {
     try {
       // 使用传入的 filters 或 ref 中的值
       const currentFilters = filters || filtersRef.current
-      const params: { page: number; size: number; sort: string; category?: string; minPrice?: number; maxPrice?: number; keyword?: string } = {
+      const params: { page: number; size: number; sort: string; categoryId?: number; minPrice?: number; maxPrice?: number; keyword?: string } = {
         page: pageNum,
         size: pageSize,
         sort: 'updatedAt,desc',
       }
-      if (currentFilters.category) {
-        params.category = currentFilters.category
+      if (currentFilters.categoryId !== null) {
+        params.categoryId = currentFilters.categoryId
       }
       if (Number.isFinite(currentFilters.minPrice)) {
         params.minPrice = currentFilters.minPrice
@@ -127,10 +128,10 @@ const ProductList: React.FC = () => {
   }, [debouncedKeyword, addHistory])
 
   // 分类变化处理
-  const handleCategoryChange = (newCategory: string) => {
-    if (newCategory === category) return
-    setCategory(newCategory)
-    filtersRef.current = { ...filtersRef.current, category: newCategory }
+  const handleCategoryChange = (newCategoryId: number | null) => {
+    if (newCategoryId === categoryId) return
+    setCategoryId(newCategoryId)
+    filtersRef.current = { ...filtersRef.current, categoryId: newCategoryId }
     setPage(1)
     if (!loadingRef.current) setProducts([])
     loadProducts(1, true, filtersRef.current)
@@ -196,7 +197,7 @@ const ProductList: React.FC = () => {
   return (
     <View className='products-page' style={{ paddingTop: `${headerHeight}px` }}>
       <PageHeader title="商品列表" showBack={false} />
-      
+
       {/* 搜索栏 - Story 2.5 */}
       <View className='search-full'>
         <SearchBar
@@ -225,7 +226,7 @@ const ProductList: React.FC = () => {
            <View className='filters-sticky' style={{ top: `${headerHeight}px` }}>
              <View className='filters-inner'>
                {/* 分类筛选栏 */}
-               <CategoryTabs value={category} onChange={handleCategoryChange} />
+               <CategoryTabs value={categoryId} onChange={handleCategoryChange} />
                {/* 价格区间筛选栏 */}
                <PriceTabs value={priceRange.value} onChange={handlePriceChange} />
              </View>

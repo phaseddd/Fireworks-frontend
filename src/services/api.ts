@@ -6,6 +6,8 @@ import type {
   AgentBindResult,
   AgentStats,
   ApiResponse,
+  Category,
+  CreateCategoryRequest,
   CreateProductRequest,
   Inquiry,
   InquiryCreateResult,
@@ -16,6 +18,7 @@ import type {
   PageResult,
   Product,
   ProductStatus,
+  UpdateCategoryRequest,
   UpdateProductRequest
 } from '../types'
 
@@ -132,7 +135,7 @@ export const api = {
   products: {
     list: (params?: { page?: number; size?: number; status?: ProductStatus; sort?: string }) =>
       request<PageResult<Product>>('/api/v1/products', { data: params }),
-    publicList: (params?: { page?: number; size?: number; sort?: string; category?: string; minPrice?: number; maxPrice?: number; keyword?: string }) =>
+    publicList: (params?: { page?: number; size?: number; sort?: string; categoryId?: number; category?: string; minPrice?: number; maxPrice?: number; keyword?: string }) =>
       request<PageResult<Product>>('/api/v1/products/public', { data: params }),
     hotKeywords: () =>
       request<string[]>('/api/v1/products/public/hot-keywords'),
@@ -178,6 +181,28 @@ export const api = {
     detail: (id: number) => request<Inquiry>(`/api/v1/inquiries/${id}`),
     shareDetail: (shareCode: string) =>
       request<InquiryShareDetail>(`/api/v1/inquiries/share/${encodeURIComponent(shareCode)}`, { silent: true }),
+  },
+
+  // 分类相关
+  categories: {
+    /** 获取所有分类（管理端） */
+    list: () => request<Category[]>('/api/v1/categories'),
+    /** 获取启用状态的分类（客户端公开接口） */
+    activeList: () => request<Category[]>('/api/v1/categories/active'),
+    /** 获取分类详情 */
+    detail: (id: number) => request<Category>(`/api/v1/categories/${id}`),
+    /** 创建分类 */
+    create: (data: CreateCategoryRequest) =>
+      request<Category>('/api/v1/categories', { method: 'POST', data }),
+    /** 更新分类 */
+    update: (id: number, data: UpdateCategoryRequest) =>
+      request<Category>(`/api/v1/categories/${id}`, { method: 'PUT', data }),
+    /** 删除分类 */
+    delete: (id: number) =>
+      request<void>(`/api/v1/categories/${id}`, { method: 'DELETE' }),
+    /** 获取分类下商品数量 */
+    productCount: (id: number) =>
+      request<number>(`/api/v1/categories/${id}/product-count`),
   },
 }
 

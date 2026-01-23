@@ -42,6 +42,9 @@ export default function AdminDashboard() {
         <Button className='menu-btn' type='primary' onClick={() => Taro.navigateTo({ url: '/pages/admin/products/list' })}>
           商品管理
         </Button>
+        <Button className='menu-btn' type='primary' onClick={() => Taro.navigateTo({ url: '/pages/admin/categories/list/index' })}>
+          分类管理
+        </Button>
         <Button className='menu-btn' type='primary' onClick={() => Taro.navigateTo({ url: '/pages/admin/agents/list/index' })}>
           代理商管理
         </Button>

@@ -1,6 +1,7 @@
 /**
  * 商品编辑页面
  * Story 1.7: 商品编辑与状态管理
+ * BF-1: 支持动态分类管理
  */
 import { View, Text, Input, Textarea } from '@tarojs/components'
 import { useDidShow, useRouter } from '@tarojs/taro'
@@ -9,27 +10,18 @@ import { useState, useEffect } from 'react'
 import { Button, Picker, Switch } from '@nutui/nutui-react-taro'
 import useAuth from '../../../../hooks/useAuth'
 import { api } from '../../../../services/api'
-import type { ProductCategory, ProductStatus, Product, UpdateProductRequest } from '../../../../types'
+import type { ProductStatus, Product, Category } from '../../../../types'
 import ProductImageUploader, {
   validateProductImages,
   type ProductImages
 } from '../../../../components/admin/ProductImageUploader'
 import './index.scss'
 
-// Category options
-const CATEGORY_OPTIONS = [
-  { value: 'GIFT', text: '礼花类' },
-  { value: 'FIREWORK', text: '烟花类' },
-  { value: 'FIRECRACKER', text: '鞭炮类' },
-  { value: 'COMBO', text: '组合类' },
-  { value: 'OTHER', text: '其他' },
-]
-
 // Form data interface
 interface FormData {
   name: string
   price: string
-  category: ProductCategory
+  categoryId: number | null
   stock: string
   description: string
   status: ProductStatus
@@ -39,6 +31,7 @@ interface FormData {
 interface FormErrors {
   name?: string
   price?: string
+  categoryId?: string
 }
 
 // Image errors interface
@@ -70,11 +63,16 @@ export default function AdminProductEdit() {
   const [loading, setLoading] = useState(true)
   const [product, setProduct] = useState<Product | null>(null)
 
+  // Category options from API
+  const [categories, setCategories] = useState<Category[]>([])
+  const [categoryOptions, setCategoryOptions] = useState<Array<{ value: number; text: string }>>([])
+  const [loadingCategories, setLoadingCategories] = useState(true)
+
   // Form state
   const [formData, setFormData] = useState<FormData>({
     name: '',
     price: '',
-    category: 'GIFT',
+    categoryId: null,
     stock: '0',
     description: '',
     status: 'ON_SHELF'
@@ -91,17 +89,40 @@ export default function AdminProductEdit() {
   })
   const [imageErrors, setImageErrors] = useState<ImageErrors>({})
 
+  // Load categories from API
+  const loadCategories = async () => {
+    setLoadingCategories(true)
+    try {
+      const result = await api.categories.list()
+      // Only show active categories
+      const activeCategories = result.filter(c => c.status === 'ACTIVE')
+      setCategories(activeCategories)
+      setCategoryOptions(activeCategories.map(c => ({ value: c.id, text: c.name })))
+    } catch (error) {
+      console.error('加载分类失败:', error)
+    } finally {
+      setLoadingCategories(false)
+    }
+  }
+
   // Page show hook - check auth
   useDidShow(() => {
     requireAuth()
   })
 
-  // Load product data
+  // Load categories on mount
   useEffect(() => {
-    if (isAuthenticated && productId) {
+    if (isAuthenticated) {
+      loadCategories()
+    }
+  }, [isAuthenticated])
+
+  // Load product data after categories are loaded
+  useEffect(() => {
+    if (isAuthenticated && productId && !loadingCategories) {
       loadProduct()
     }
-  }, [isAuthenticated, productId])
+  }, [isAuthenticated, productId, loadingCategories])
 
   const loadProduct = async () => {
     if (!productId) {
@@ -118,7 +139,7 @@ export default function AdminProductEdit() {
       setFormData({
         name: data.name,
         price: data.price.toString(),
-        category: data.category,
+        categoryId: data.categoryId || null,
         stock: data.stock.toString(),
         description: data.description || '',
         status: data.status
@@ -134,9 +155,10 @@ export default function AdminProductEdit() {
   }
 
   // Get category display text
-  const getCategoryText = (value: ProductCategory): string => {
-    const option = CATEGORY_OPTIONS.find(opt => opt.value === value)
-    return option?.text || '请选择分类'
+  const getCategoryText = (categoryId: number | null): string => {
+    if (!categoryId) return '请选择分类'
+    const category = categories.find(c => c.id === categoryId)
+    return category?.name || '请选择分类'
   }
 
   // Handle input change
@@ -150,9 +172,14 @@ export default function AdminProductEdit() {
 
   // Handle category select
   const handleCategoryConfirm = (_options: unknown[], values: Array<string | number>) => {
-    const selectedValue = values?.[0]
-    if (typeof selectedValue === 'string') {
-      setFormData(prev => ({ ...prev, category: selectedValue as ProductCategory }))
+    const rawValue = values?.[0]
+    const selectedCategoryId = typeof rawValue === 'string' ? Number(rawValue) : rawValue
+    if (typeof selectedCategoryId === 'number' && Number.isFinite(selectedCategoryId)) {
+      setFormData(prev => ({ ...prev, categoryId: selectedCategoryId }))
+      // Clear category error
+      if (errors.categoryId) {
+        setErrors(prev => ({ ...prev, categoryId: undefined }))
+      }
     }
     setPickerVisible(false)
   }
@@ -190,6 +217,12 @@ export default function AdminProductEdit() {
       isValid = false
     }
 
+    // Category validation
+    if (!formData.categoryId) {
+      newErrors.categoryId = '请选择分类'
+      isValid = false
+    }
+
     setErrors(newErrors)
 
     // Image validation
@@ -210,10 +243,15 @@ export default function AdminProductEdit() {
 
     setSubmitting(true)
     try {
-      const requestData: UpdateProductRequest = {
+      const categoryId = formData.categoryId
+      if (categoryId == null) {
+        throw new Error('请选择分类')
+      }
+
+      const requestData = {
         name: formData.name.trim(),
         price: parseFloat(formData.price),
-        category: formData.category,
+        categoryId,
         stock: parseInt(formData.stock, 10) || 0,
         description: formData.description.trim(),
         status: formData.status,
@@ -245,7 +283,7 @@ export default function AdminProductEdit() {
   }
 
   // Loading state
-  if (authLoading || loading) {
+  if (authLoading || loadingCategories || loading) {
     return (
       <View className='admin-product-edit'>
         <View className='loading-container'>
@@ -312,11 +350,17 @@ export default function AdminProductEdit() {
 
         {/* Category */}
         <View className='form-item'>
-          <Text className='label'>商品分类</Text>
-          <View className='picker-trigger' onClick={() => setPickerVisible(true)}>
-            <Text className='picker-text'>{getCategoryText(formData.category)}</Text>
+          <Text className='label'>
+            商品分类 <Text className='required'>*</Text>
+          </Text>
+          <View
+            className={`picker-trigger ${errors.categoryId ? 'picker-error' : ''}`}
+            onClick={() => setPickerVisible(true)}
+          >
+            <Text className='picker-text'>{getCategoryText(formData.categoryId)}</Text>
             <Text className='picker-arrow'>▼</Text>
           </View>
+          {errors.categoryId && <Text className='error-text'>{errors.categoryId}</Text>}
         </View>
 
         {/* Stock */}
@@ -400,7 +444,7 @@ export default function AdminProductEdit() {
       {/* Category Picker */}
       <Picker
         visible={pickerVisible}
-        options={CATEGORY_OPTIONS}
+        options={categoryOptions}
         onConfirm={handleCategoryConfirm}
         onClose={() => setPickerVisible(false)}
       />

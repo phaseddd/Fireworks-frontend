@@ -33,7 +33,12 @@ export interface Product {
   name: string
   description: string
   price: number
+  /** @deprecated 使用 categoryId 替代 */
   category: ProductCategory
+  /** 分类ID（关联 category 表） */
+  categoryId?: number
+  /** 分类名称（联查时填充） */
+  categoryName?: string
   images: string[]
   videoUrl?: string  // 燃放效果视频URL
   stock: number
@@ -43,7 +48,8 @@ export interface Product {
 }
 
 /**
- * 商品分类
+ * 商品分类（枚举值）
+ * @deprecated 已废弃，现在使用动态分类表。保留仅用于旧数据兼容。
  */
 export type ProductCategory = 'GIFT' | 'FIREWORK' | 'FIRECRACKER' | 'COMBO' | 'OTHER'
 
@@ -54,6 +60,7 @@ export type ProductStatus = 'ON_SHELF' | 'OFF_SHELF'
 
 /**
  * 商品分类中文映射
+ * @deprecated 已废弃，现在使用 product.categoryName。保留仅用于旧数据兼容。
  */
 export const categoryMap: Record<ProductCategory, string> = {
   'GIFT': '礼花类',
@@ -209,7 +216,10 @@ export interface LoginResponse {
 export interface CreateProductRequest {
   name: string
   price: number
+  /** @deprecated 使用 categoryId 替代 */
   category?: ProductCategory
+  /** 分类ID */
+  categoryId?: number
   stock?: number
   description?: string
   images?: string[]  // [外观图, 细节图, 二维码图]
@@ -222,8 +232,40 @@ export interface UpdateProductRequest {
   name: string
   price: number
   category?: ProductCategory
+  categoryId?: number
   stock?: number
   description?: string
   status?: ProductStatus
   images: string[]  // [外观图, 细节图, 二维码图]
+}
+
+/**
+ * 分类实体
+ */
+export interface Category {
+  id: number
+  name: string
+  status: CategoryStatus
+  createdAt: string
+  updatedAt: string
+}
+
+/**
+ * 分类状态
+ */
+export type CategoryStatus = 'ACTIVE' | 'DISABLED'
+
+/**
+ * 创建分类请求
+ */
+export interface CreateCategoryRequest {
+  name: string
+}
+
+/**
+ * 更新分类请求
+ */
+export interface UpdateCategoryRequest {
+  name: string
+  status?: CategoryStatus
 }

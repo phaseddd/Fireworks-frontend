@@ -234,7 +234,7 @@ export default function ProductDetail() {
         {/* 分类标签 */}
         <View className='category-tag'>
           <Text className='category-text'>
-            {categoryMap[product.category] || '其他'}
+            {product.categoryName || categoryMap[product.category] || '其他'}
           </Text>
         </View>
 
