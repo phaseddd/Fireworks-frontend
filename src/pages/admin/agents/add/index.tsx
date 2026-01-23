@@ -37,8 +37,8 @@ export default function AdminAgentAdd() {
           <Input className='input' value={name} onInput={(e) => setName(e.detail.value)} placeholder='请输入代理商名称' />
         </View>
         <View className='form-item'>
-          <Text className='label'>手机号（可选）</Text>
-          <Input className='input' value={phone} onInput={(e) => setPhone(e.detail.value)} placeholder='请输入手机号' type='number' />
+          <Text className='label'>联络备注（可选）</Text>
+          <Input className='input' value={phone} onInput={(e) => setPhone(e.detail.value)} placeholder='请输入联络备注' />
         </View>
 
         <Button type='primary' className='submit-btn' loading={loading} disabled={loading} onClick={handleSubmit}>
