@@ -130,8 +130,11 @@ export default function Index() {
             <Text className='title-cn'>烟花</Text>
           </View>
 
-          {/* Slogan */}
-          <Text className='slogan'>点亮每一个美好时刻</Text>
+          {/* 直接营销文案 */}
+          <View className='direct-slogan'>
+            <Text className='direct-line'>烟花便宜批发</Text>
+            <Text className='direct-line'>岛内送货上门</Text>
+          </View>
         </View>
 
         {/* 操作区 */}
