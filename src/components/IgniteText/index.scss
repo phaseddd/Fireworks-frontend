@@ -1,0 +1,67 @@
+.ignite-text-container {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  pointer-events: none; // 不阻挡交互
+  
+  .ignite-char {
+    display: inline-block;
+    color: transparent; // 初始透明
+    font-weight: 300;
+    letter-spacing: 2px;
+    font-family: serif; // 宋体/衬线体更有韵味
+    
+    // 动画名称：ignite-flow
+    // 持续时间：3s (从点燃到冷却稳定的过程) - 调慢了 20%
+    // 填充模式：forwards (停留在最后一帧)
+    animation: ignite-flow 3s ease-out forwards;
+    
+    // 初始状态必须隐藏，避免闪烁
+    opacity: 0;
+  }
+}
+
+@keyframes ignite-flow {
+  // 0% - 初始状态
+  0% {
+    opacity: 0;
+    color: transparent;
+    transform: scale(0.9);
+    text-shadow: none;
+    filter: blur(2px);
+  }
+
+  // 10% - 点燃瞬间：极亮，火光冲天
+  10% {
+    opacity: 1;
+    color: #fff; // 核心白热
+    transform: scale(1.1); // 热胀
+    text-shadow: 
+      0 0 4px #fff,
+      0 0 10px #ffdd55,
+      0 0 20px #ff4800,
+      0 0 40px #ff0000;
+    filter: blur(0);
+  }
+
+  // 30% - 剧烈燃烧：金黄色
+  30% {
+    opacity: 1;
+    color: #ffeebb;
+    transform: scale(1.0);
+    text-shadow: 
+      0 0 2px #fff,
+      0 0 5px #ffcc00,
+      0 0 15px #ff6600;
+  }
+
+  // 100% - 余烬稳定：淡淡的金光
+  100% {
+    opacity: 1;
+    color: rgba(255, 255, 255, 0.9);
+    transform: scale(1.0);
+    text-shadow: 
+      0 0 2px rgba(255, 200, 100, 0.3),
+      0 0 8px rgba(255, 100, 50, 0.1);
+  }
+}

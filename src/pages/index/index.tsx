@@ -5,6 +5,7 @@ import { useRef } from 'react'
 import { api } from '@/services/api'
 import { authUtils } from '../../hooks/useAuth'
 import FireworksCanvas from '../../components/FireworksCanvas'
+import IgniteText from '../../components/IgniteText'
 import PageHeader from '@/components/ui/PageHeader'
 import './index.scss'
 
@@ -107,7 +108,10 @@ export default function Index() {
       <View className='sky-container'>
         <View className='stars' />
         <View className='stars-small' />
-        <View className='moon' />
+        <View 
+          className='moon'
+          onLongPress={handleAdminLogin}
+        />
       </View>
 
       <FireworksCanvas />
@@ -120,18 +124,31 @@ export default function Index() {
 
         {/* 核心视觉区 */}
         <View className='hero-section'>
-          {/* 英文装饰字 */}
-          <Text className='subtitle-en'>NANAO FIREWORKS</Text>
-          
           {/* 主标题 - 艺术排版 */}
           <View className='title-wrapper'>
             <Text className='title-cn'>南澳</Text>
             <View className='dot' />
             <Text className='title-cn'>烟花</Text>
           </View>
+          
+          {/* 渐进式点燃文案 */}
+          <View className='ignite-slogan-area'>
+            <IgniteText 
+              text='海风与花火，都是礼物' 
+              fontSize={20} 
+              delay={500} 
+              interval={180}
+              className='slogan-line-1'
+            />
+            <IgniteText 
+              text='把南澳的夜，装进相册' 
+              fontSize={20} 
+              delay={2800} // 延后，等待第一行充分燃烧
+              interval={180} 
+              className='slogan-line-2'
+            />
+          </View>
 
-          {/* Slogan */}
-          <Text className='slogan'>点亮每一个美好时刻</Text>
         </View>
 
         {/* 操作区 */}
@@ -142,16 +159,11 @@ export default function Index() {
             onClick={handleStartBrowsing}
             hoverClass='btn-glass-hover'
           >
-            <Text className='btn-text'>进入展厅</Text>
+            <Text className='btn-text'>便宜批发|送货上门</Text>
             <View className='btn-shine' />
           </View>
 
-          {/* 底部功能链接 */}
-          <View className='link-group'>
-             <View className='link-item' onClick={handleAdminLogin}>
-               <Text className='link-text'>店主登录</Text>
-             </View>
-          </View>
+          {/* 底部功能链接 - 已移除店主登录显性入口，改为长按月亮 */}
         </View>
 
         {/* 底部版权 */}
