@@ -10,8 +10,6 @@ import GlassButton from '@/components/ui/GlassButton'
 import PageHeader from '@/components/ui/PageHeader'
 import './index.scss'
 
-const phonePattern = /^1\d{10}$/
-
 export default function InquiryCreate() {
   const { items, total } = useWishlist()
   const { getAgentCode } = useAgentCode()
@@ -32,11 +30,7 @@ export default function InquiryCreate() {
 
     const trimmedPhone = phone.trim()
     if (!trimmedPhone) {
-      Taro.showToast({ title: '请输入联系方式', icon: 'none' })
-      return
-    }
-    if (!phonePattern.test(trimmedPhone)) {
-      Taro.showToast({ title: '请输入正确的联系方式', icon: 'none' })
+      Taro.showToast({ title: '请输入回访沟通信息', icon: 'none' })
       return
     }
 
@@ -104,28 +98,28 @@ export default function InquiryCreate() {
 
       <GlassCard className='section'>
         <View className='section-header'>
-          <Text className='section-title'>联系方式</Text>
-          <Text className='section-subtitle'>用于店主联系你</Text>
+          <Text className='section-title'>回访备注</Text>
+          <Text className='section-subtitle'>方便店主回复您的询价</Text>
         </View>
 
         <View className='form'>
           <View className='form-item'>
-            <Text className='label'>联系方式 *</Text>
+            <Text className='label'>回访沟通</Text>
             <Input
               className='input'
               type='text'
-              placeholder='请输入联系方式'
+              placeholder='请输入方便联系您的信息'
               placeholderClass='input-placeholder'
               value={phone}
               onInput={(e) => setPhone(e.detail.value)}
             />
           </View>
           <View className='form-item'>
-            <Text className='label'>备用联系（可选）</Text>
+            <Text className='label'>补充说明（可选）</Text>
             <Input
               className='input'
               type='text'
-              placeholder='请输入备用联系'
+              placeholder='请输入补充说明'
               placeholderClass='input-placeholder'
               value={wechat}
               onInput={(e) => setWechat(e.detail.value)}

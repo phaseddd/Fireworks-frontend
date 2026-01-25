@@ -132,7 +132,7 @@ export default function AdminInquiryList() {
                 <View className='row'>
                   <View className='contact'>
                     <Text className='phone'>{i.phone}</Text>
-                    {i.wechat && <Text className='wechat'>备用联系：{i.wechat}</Text>}
+                    {i.wechat && <Text className='wechat'>补充说明：{i.wechat}</Text>}
                   </View>
                   <View className='count'>
                     <Text className='count-num'>{i.productCount}</Text>
