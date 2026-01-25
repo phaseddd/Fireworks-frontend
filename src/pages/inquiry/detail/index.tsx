@@ -112,7 +112,7 @@ export default function InquiryDetail() {
         <View className='section'>
           <Text className='section-title'>联系方式（脱敏）</Text>
           <Text className='contact'>{data.phoneMasked}</Text>
-          {data.wechatMasked && <Text className='contact'>微信：{data.wechatMasked}</Text>}
+          {data.wechatMasked && <Text className='contact'>备用联系：{data.wechatMasked}</Text>}
           <Text className='hint'>完整联系方式请在管理端查看</Text>
         </View>
       </View>

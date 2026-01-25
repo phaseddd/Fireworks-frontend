@@ -32,8 +32,8 @@ export default function AdminInquiryDetail() {
     <View className='admin-inquiry-detail'>
       <View className='card'>
         <Text className='title'>客户信息</Text>
-        <Text className='line'>手机号：{data.phone}</Text>
-        {data.wechat && <Text className='line'>微信：{data.wechat}</Text>}
+        <Text className='line'>联系方式：{data.phone}</Text>
+        {data.wechat && <Text className='line'>备用联系：{data.wechat}</Text>}
         {data.agentName && <Text className='line'>来源代理商：{data.agentName}</Text>}
         <Text className='line'>时间：{String(data.createdAt)}</Text>
       </View>

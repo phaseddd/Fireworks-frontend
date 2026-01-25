@@ -32,11 +32,11 @@ export default function InquiryCreate() {
 
     const trimmedPhone = phone.trim()
     if (!trimmedPhone) {
-      Taro.showToast({ title: '请输入手机号', icon: 'none' })
+      Taro.showToast({ title: '请输入联系方式', icon: 'none' })
       return
     }
     if (!phonePattern.test(trimmedPhone)) {
-      Taro.showToast({ title: '请输入正确的手机号', icon: 'none' })
+      Taro.showToast({ title: '请输入正确的联系方式', icon: 'none' })
       return
     }
 
@@ -110,22 +110,22 @@ export default function InquiryCreate() {
 
         <View className='form'>
           <View className='form-item'>
-            <Text className='label'>手机号 *</Text>
+            <Text className='label'>联系方式 *</Text>
             <Input
               className='input'
-              type='number'
-              placeholder='请输入手机号'
+              type='text'
+              placeholder='请输入联系方式'
               placeholderClass='input-placeholder'
               value={phone}
               onInput={(e) => setPhone(e.detail.value)}
             />
           </View>
           <View className='form-item'>
-            <Text className='label'>微信号（可选）</Text>
+            <Text className='label'>备用联系（可选）</Text>
             <Input
               className='input'
               type='text'
-              placeholder='请输入微信号'
+              placeholder='请输入备用联系'
               placeholderClass='input-placeholder'
               value={wechat}
               onInput={(e) => setWechat(e.detail.value)}
