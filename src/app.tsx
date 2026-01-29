@@ -38,31 +38,47 @@ function extractBindCodeFromScene(scene: string): string | null {
   return null
 }
 
+/**
+ * 处理 scene 参数：提取代理商码和绑定码
+ *
+ * agentCode: 永久有效，用于追踪客户来源
+ * bindCode: 一次性使用，用于代理商绑定微信号
+ */
+function handleScene(options: { scene?: string | number } | undefined) {
+  const rawScene = options?.scene
+  if (!rawScene) return
+
+  const scene = String(rawScene)
+
+  const agentCode = extractAgentCodeFromScene(scene)
+  if (agentCode) {
+    // 永久有效（直到再次扫码覆盖或用户清除缓存）
+    Taro.setStorageSync('agentCode', agentCode)
+  }
+
+  const bindCode = extractBindCodeFromScene(scene)
+  if (bindCode) {
+    // 临时态：用于代理商扫码绑定二维码进入时触发绑定流程
+    Taro.setStorageSync('pendingBindCode', bindCode)
+  }
+}
+
+/**
+ * 冷启动同步解析 scene（模块顶层执行）
+ *
+ * 重要：这段代码必须在 App 组件渲染之前执行，
+ * 以确保首页的 useDidShow 能检测到 pendingBindCode
+ */
+try {
+  handleScene(Taro.getLaunchOptionsSync())
+} catch {
+  // 非微信环境（如 H5 开发）可能抛出异常，静默忽略
+}
+
 function App({ children }: PropsWithChildren<any>) {
   useLaunch(() => {
     console.log('Fireworks App launched!')
 
-    const handleScene = (options: any) => {
-      const rawScene = options?.scene
-      if (!rawScene) return
-
-      const scene = String(rawScene)
-
-      const agentCode = extractAgentCodeFromScene(scene)
-      if (agentCode) {
-        // 永久有效（直到再次扫码覆盖或用户清除缓存）
-        Taro.setStorageSync('agentCode', agentCode)
-      }
-
-      const bindCode = extractBindCodeFromScene(scene)
-      if (bindCode) {
-        // 临时态：用于代理商扫码绑定二维码进入时触发绑定流程
-        Taro.setStorageSync('pendingBindCode', bindCode)
-      }
-    }
-
-    // 冷启动解析（扫码进入会携带 scene）
-    handleScene(Taro.getLaunchOptionsSync())
     // 热启动解析（从后台回到前台也可能携带 scene）
     Taro.onAppShow(handleScene)
 
