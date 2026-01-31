@@ -196,7 +196,7 @@ const ProductList: React.FC = () => {
 
   return (
     <View className='products-page' style={{ paddingTop: `${headerHeight}px` }}>
-      <PageHeader title="商品列表" showBack={false} />
+      <PageHeader title="商品列表" showBack={false} transparent={false} />
 
       {/* 搜索栏 - Story 2.5 */}
       <View className='search-full'>
@@ -237,7 +237,9 @@ const ProductList: React.FC = () => {
           ) : (
             <View className='product-grid'>
               {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <View className='product-card-col' key={product.id}>
+                  <ProductCard product={product} />
+                </View>
               ))}
             </View>
           )}

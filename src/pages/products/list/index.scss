@@ -37,9 +37,23 @@
   }
 
   .product-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 32rpx;
+    // 使用 float 布局代替 flex，彻底规避 iOS WKWebView 的 flex 兼容性问题
+    overflow: hidden; // 创建 BFC，清除浮动
+    margin-left: -16rpx;
+    margin-right: -16rpx;
+
+    // 列容器：纯 50% + float，最基础的两列布局
+    .product-card-col {
+      float: left;
+      width: 50%;
+      margin-bottom: 32rpx;
+    }
+
+    // 卡片使用 margin 产生间距，避免依赖 calc / box-sizing / padding
+    .product-card {
+      width: auto;
+      margin: 0 16rpx;
+    }
   }
 
   .loading-more {
@@ -70,8 +84,9 @@
     position: fixed;
     left: 0;
     right: 0;
-    bottom: 0;
     // top set via inline style
+    // 不设 bottom: 0，让面板根据内容自适应高度
+    // 这样面板下方的遮罩层才能响应点击事件
     z-index: 20;
     background: var(--c-bg-page);
     padding: 32rpx;

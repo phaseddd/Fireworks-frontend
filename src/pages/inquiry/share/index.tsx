@@ -64,7 +64,7 @@ export default function InquiryShare() {
 
   return (
     <View className='inquiry-share' style={{ paddingTop: `${headerHeight + 24}px` }}>
-      <PageHeader title="询价单已生成" />
+      <PageHeader title="询价单已生成" transparent={false} />
       
       <GlassCard className='card'>
         <Text className='title'>询价单已生成</Text>

@@ -63,7 +63,7 @@ export default function InquiryCreate() {
 
   return (
     <View className='inquiry-create' style={{ paddingTop: `${headerHeight + 16}px` }}>
-      <PageHeader title="生成询价单" />
+      <PageHeader title="生成询价单" transparent={false} />
       
       <GlassCard className='section'>
         <View className='section-header'>

@@ -67,7 +67,7 @@ export default function Wishlist() {
       className='wishlist-page'
       style={{ paddingTop: `${headerHeight}px`, paddingBottom: hasItems ? '240rpx' : '0' }}
     >
-      <PageHeader title="意向清单" showBack={false} />
+      <PageHeader title="意向清单" showBack={false} transparent={false} />
 
       {hasItems && (
         <View className='header-stats'>
