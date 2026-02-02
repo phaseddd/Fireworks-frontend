@@ -49,12 +49,12 @@ export default function AdminCategoryList() {
 
   // 跳转到添加分类页面
   const handleAddCategory = () => {
-    Taro.navigateTo({ url: '/pages/admin/categories/add/index' })
+    Taro.redirectTo({ url: '/pages/admin/categories/add/index' })
   }
 
   // 跳转到编辑分类页面
   const handleEditCategory = (category: Category) => {
-    Taro.navigateTo({ url: `/pages/admin/categories/edit/index?id=${category.id}` })
+    Taro.redirectTo({ url: `/pages/admin/categories/edit/index?id=${category.id}` })
   }
 
   // 显示删除确认弹窗
@@ -142,7 +142,7 @@ export default function AdminCategoryList() {
           <Button
             size='small'
             className='back-btn'
-            onClick={() => Taro.navigateBack()}
+            onClick={() => Taro.redirectTo({ url: '/pages/admin/dashboard' })}
           >
             ← 返回
           </Button>

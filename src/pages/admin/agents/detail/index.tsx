@@ -101,6 +101,12 @@ export default function AdminAgentDetail() {
   if (!agent) {
     return (
       <View className='admin-agent-detail'>
+        <View className='header'>
+          <Button size='small' className='back-btn' onClick={() => Taro.redirectTo({ url: '/pages/admin/agents/list/index' })}>
+            ← 返回
+          </Button>
+          <Text className='title'>代理商详情</Text>
+        </View>
         <View className='loading'>
           <Text>加载中...</Text>
         </View>
@@ -110,6 +116,12 @@ export default function AdminAgentDetail() {
 
   return (
     <View className='admin-agent-detail'>
+      <View className='header'>
+        <Button size='small' className='back-btn' onClick={() => Taro.redirectTo({ url: '/pages/admin/agents/list/index' })}>
+          ← 返回
+        </Button>
+        <Text className='title'>代理商详情</Text>
+      </View>
       <View className='card'>
         <Text className='code'>{agent.code}</Text>
         <Text className='name'>{agent.name}</Text>
@@ -117,7 +129,7 @@ export default function AdminAgentDetail() {
         <Text className='bind'>{agent.openidBound ? '已绑定' : '未绑定'}</Text>
 
         <View className='row'>
-          <Button size='small' className='btn' onClick={() => Taro.navigateTo({ url: `/pages/admin/agents/edit/index?code=${encodeURIComponent(agent.code)}` })}>
+          <Button size='small' className='btn' onClick={() => Taro.redirectTo({ url: `/pages/admin/agents/edit/index?code=${encodeURIComponent(agent.code)}` })}>
             编辑
           </Button>
           <Button size='small' className='btn' onClick={handleToggleStatus}>
@@ -192,18 +204,21 @@ export default function AdminAgentDetail() {
         onConfirm={() => setQrcodeDialogVisible(false)}
         onCancel={() => setQrcodeDialogVisible(false)}
       >
-        <View className='qrcode-dialog'>
-          {agent.qrcodeUrl ? (
-            <Image className='qrcode-img' src={agent.qrcodeUrl} mode='aspectFit' />
-          ) : (
-            <Text>暂无小程序码</Text>
-          )}
-          {agent.qrcodeUrl && (
-            <Button size='small' className='dialog-btn' onClick={handleSaveQr}>
-              保存到相册
-            </Button>
-          )}
-        </View>
+        <ScrollView scrollY className='dialog-scroll'>
+          <View className='qrcode-dialog'>
+            {agent.qrcodeUrl ? (
+              <Image className='qrcode-img' src={agent.qrcodeUrl} mode='aspectFit' />
+            ) : (
+              <Text>暂无小程序码</Text>
+            )}
+            <Text className='qrcode-name'>{agent.name}</Text>
+            {agent.qrcodeUrl && (
+              <Button size='small' className='dialog-btn' onClick={handleSaveQr}>
+                保存到相册
+              </Button>
+            )}
+          </View>
+        </ScrollView>
       </Dialog>
     </View>
   )

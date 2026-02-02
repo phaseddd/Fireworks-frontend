@@ -45,7 +45,7 @@ export default function AdminCategoryAdd() {
       })
       // 返回列表页
       setTimeout(() => {
-        Taro.navigateBack()
+        Taro.redirectTo({ url: '/pages/admin/categories/list/index' })
       }, 1500)
     } catch (error: any) {
       Taro.showToast({
@@ -75,7 +75,7 @@ export default function AdminCategoryAdd() {
         <Button
           size='small'
           className='back-btn'
-          onClick={() => Taro.navigateBack()}
+          onClick={() => Taro.redirectTo({ url: '/pages/admin/categories/list/index' })}
         >
           ← 返回
         </Button>

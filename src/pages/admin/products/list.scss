@@ -47,6 +47,105 @@
     }
   }
 
+  // 搜索栏（自动补全）- 适老化设计
+  .search-section {
+    padding: 12px 16px;
+    background-color: #fff;
+    border-bottom: 1px solid #e8e8e8;
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      height: 44px;
+      padding: 0 12px;
+      gap: 8px;
+      background-color: #f5f5f5;
+      border-radius: 10px;
+    }
+
+    .search-input {
+      flex: 1;
+      height: 44px;
+      font-size: 16px;
+      color: #333;
+      background: transparent;
+    }
+
+    .search-placeholder {
+      color: #999;
+      font-size: 14px;
+    }
+
+    .clear-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 14px;
+      background-color: #e8e8e8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:active {
+        opacity: 0.8;
+      }
+
+      .clear-icon {
+        font-size: 18px;
+        line-height: 18px;
+        color: #666;
+        font-weight: bold;
+      }
+    }
+
+    .suggest-panel {
+      margin-top: 10px;
+      background-color: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      border: 1px solid #f0f0f0;
+    }
+
+    .suggest-item {
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      border-bottom: 1px solid #f0f0f0;
+
+      &:active {
+        background-color: #fafafa;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .suggest-name {
+        font-size: 16px;
+        color: #000;
+        font-weight: 500;
+        line-height: 1.4;
+      }
+
+      .suggest-meta {
+        font-size: 12px;
+        color: #999;
+      }
+    }
+
+    .suggest-loading,
+    .suggest-empty {
+      padding: 14px;
+      text-align: center;
+
+      .suggest-text {
+        font-size: 14px;
+        color: #999;
+      }
+    }
+  }
+
   // 状态筛选栏
   .filter-bar {
     display: flex;

@@ -133,7 +133,7 @@ export const api = {
 
   // 商品相关
   products: {
-    list: (params?: { page?: number; size?: number; status?: ProductStatus; sort?: string }) =>
+    list: (params?: { page?: number; size?: number; status?: ProductStatus; sort?: string; keyword?: string }) =>
       request<PageResult<Product>>('/api/v1/products', { data: params }),
     publicList: (params?: { page?: number; size?: number; sort?: string; categoryId?: number; category?: string; minPrice?: number; maxPrice?: number; keyword?: string }) =>
       request<PageResult<Product>>('/api/v1/products/public', { data: params }),

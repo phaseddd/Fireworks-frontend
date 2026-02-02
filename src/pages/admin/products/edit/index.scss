@@ -16,9 +16,20 @@
   .header {
     display: flex;
     align-items: center;
+    gap: 12px;
     padding: 16px;
     background-color: #fff;
     border-bottom: 1px solid #e8e8e8;
+
+    .back-btn {
+      height: 36px;
+      padding: 0 12px;
+      font-size: 14px;
+      border-radius: 6px;
+      background-color: #fff;
+      color: #666;
+      border: 1px solid #e8e8e8;
+    }
 
     .title {
       font-size: 20px;

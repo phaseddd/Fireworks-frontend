@@ -268,7 +268,7 @@ export default function AdminProductEdit() {
 
       // Navigate back to list page after success
       setTimeout(() => {
-        Taro.navigateBack()
+        Taro.redirectTo({ url: '/pages/admin/products/list' })
       }, 1500)
     } catch (error) {
       console.error('更新商品失败:', error)
@@ -279,13 +279,19 @@ export default function AdminProductEdit() {
 
   // Handle cancel
   const handleCancel = () => {
-    Taro.navigateBack()
+    Taro.redirectTo({ url: '/pages/admin/products/list' })
   }
 
   // Loading state
   if (authLoading || loadingCategories || loading) {
     return (
       <View className='admin-product-edit'>
+        <View className='header'>
+          <Button size='small' className='back-btn' onClick={() => Taro.redirectTo({ url: '/pages/admin/products/list' })}>
+            ← 返回
+          </Button>
+          <Text className='title'>编辑商品</Text>
+        </View>
         <View className='loading-container'>
           <Text className='loading-text'>加载中...</Text>
         </View>
@@ -302,6 +308,12 @@ export default function AdminProductEdit() {
   if (!product) {
     return (
       <View className='admin-product-edit'>
+        <View className='header'>
+          <Button size='small' className='back-btn' onClick={() => Taro.redirectTo({ url: '/pages/admin/products/list' })}>
+            ← 返回
+          </Button>
+          <Text className='title'>编辑商品</Text>
+        </View>
         <View className='loading-container'>
           <Text className='loading-text'>商品不存在</Text>
         </View>
@@ -313,6 +325,9 @@ export default function AdminProductEdit() {
     <View className='admin-product-edit'>
       {/* Header */}
       <View className='header'>
+        <Button size='small' className='back-btn' onClick={() => Taro.redirectTo({ url: '/pages/admin/products/list' })}>
+          ← 返回
+        </Button>
         <Text className='title'>编辑商品</Text>
       </View>
 

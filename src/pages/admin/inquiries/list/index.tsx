@@ -97,7 +97,7 @@ export default function AdminInquiryList() {
     <View className='admin-inquiries'>
       <View className='header'>
         <View className='header-left'>
-          <Button size='small' className='back-btn' onClick={() => Taro.navigateBack()}>
+          <Button size='small' className='back-btn' onClick={() => Taro.redirectTo({ url: '/pages/admin/dashboard' })}>
             ← 返回
           </Button>
           <Text className='title'>询价记录</Text>
@@ -123,7 +123,7 @@ export default function AdminInquiryList() {
               <View
                 key={i.id}
                 className='card'
-                onClick={() => Taro.navigateTo({ url: `/pages/admin/inquiries/detail/index?id=${i.id}` })}
+                onClick={() => Taro.redirectTo({ url: `/pages/admin/inquiries/detail/index?id=${i.id}` })}
               >
                 <View className='row'>
                   <Text className='time'>{String(i.createdAt)}</Text>

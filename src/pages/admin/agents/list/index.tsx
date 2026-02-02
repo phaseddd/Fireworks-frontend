@@ -68,9 +68,9 @@ export default function AdminAgentList() {
     await loadAgents(1, true)
   }
 
-  const handleAdd = () => Taro.navigateTo({ url: '/pages/admin/agents/add/index' })
-  const handleEdit = (code: string) => Taro.navigateTo({ url: `/pages/admin/agents/edit/index?code=${encodeURIComponent(code)}` })
-  const handleDetail = (code: string) => Taro.navigateTo({ url: `/pages/admin/agents/detail/index?code=${encodeURIComponent(code)}` })
+  const handleAdd = () => Taro.redirectTo({ url: '/pages/admin/agents/add/index' })
+  const handleEdit = (code: string) => Taro.redirectTo({ url: `/pages/admin/agents/edit/index?code=${encodeURIComponent(code)}` })
+  const handleDetail = (code: string) => Taro.redirectTo({ url: `/pages/admin/agents/detail/index?code=${encodeURIComponent(code)}` })
 
   const openConfirm = (title: string, text: string, action: () => Promise<void>) => {
     setConfirmTitle(title)
@@ -187,7 +187,7 @@ export default function AdminAgentList() {
     <View className='admin-agents'>
       <View className='header'>
         <View className='header-left'>
-          <Button size='small' className='back-btn' onClick={() => Taro.navigateBack()}>
+          <Button size='small' className='back-btn' onClick={() => Taro.redirectTo({ url: '/pages/admin/dashboard' })}>
             ← 返回
           </Button>
           <Text className='title'>代理商管理</Text>
@@ -296,17 +296,19 @@ export default function AdminAgentList() {
         onConfirm={() => setQrcodeDialogVisible(false)}
         onCancel={() => setQrcodeDialogVisible(false)}
       >
-        <View className='qrcode-dialog'>
-          {qrcodeTarget?.url ? (
-            <Image className='qrcode-img' src={qrcodeTarget.url} mode='aspectFit' />
-          ) : (
-            <Text>暂无小程序码</Text>
-          )}
-          <Text className='qrcode-name'>{qrcodeTarget?.name}</Text>
-          <Button size='small' className='dialog-btn' onClick={handleSaveQr}>
-            保存到相册
-          </Button>
-        </View>
+        <ScrollView scrollY className='dialog-scroll'>
+          <View className='qrcode-dialog'>
+            {qrcodeTarget?.url ? (
+              <Image className='qrcode-img' src={qrcodeTarget.url} mode='aspectFit' />
+            ) : (
+              <Text>暂无小程序码</Text>
+            )}
+            <Text className='qrcode-name'>{qrcodeTarget?.name}</Text>
+            <Button size='small' className='dialog-btn' onClick={handleSaveQr}>
+              保存到相册
+            </Button>
+          </View>
+        </ScrollView>
       </Dialog>
     </View>
   )

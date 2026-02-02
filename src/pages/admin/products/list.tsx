@@ -1,14 +1,16 @@
-import { View, Text, Image } from '@tarojs/components'
+import { View, Text, Image, Input } from '@tarojs/components'
 import { useDidShow, useReachBottom } from '@tarojs/taro'
 import Taro from '@tarojs/taro'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button, Empty, Dialog, PullToRefresh } from '@nutui/nutui-react-taro'
 import useAuth from '../../../hooks/useAuth'
+import { useDebounce } from '../../../hooks/useDebounce'
 import { api } from '../../../services/api'
 import type { Product, ProductStatus } from '../../../types'
 import './list.scss'
 
 const PAGE_SIZE = 20
+const SUGGEST_SIZE = 8
 
 // 状态筛选选项
 const STATUS_OPTIONS: Array<{ label: string; value: ProductStatus | '' }> = [
@@ -43,22 +45,36 @@ export default function AdminProductList() {
   const [hasMore, setHasMore] = useState(true)
   const [total, setTotal] = useState(0)
 
+  // 搜索状态（自动补全）
+  const [keyword, setKeyword] = useState('')
+  const keywordQuery = keyword.trim()
+  const debouncedKeyword = useDebounce(keywordQuery, 300)
+  const [suggestVisible, setSuggestVisible] = useState(false)
+  const [suggestLoading, setSuggestLoading] = useState(false)
+  const [suggestions, setSuggestions] = useState<Product[]>([])
+  const initialLoadedRef = useRef(false)
+
   // 删除确认弹窗
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState<Product | null>(null)
 
   // 加载商品列表
-  const loadProducts = useCallback(async (pageNum: number, status: ProductStatus | '', isRefresh = false) => {
+  const loadProducts = useCallback(async (pageNum: number, status: ProductStatus | '', keywordText: string = '', isRefresh = false) => {
     if (loading) return
 
     setLoading(true)
     try {
-      const params: { page: number; size: number; status?: ProductStatus } = {
+      const params: { page: number; size: number; status?: ProductStatus; keyword?: string } = {
         page: pageNum,
         size: PAGE_SIZE,
       }
       if (status) {
         params.status = status
+      }
+      // 关键词搜索
+      const kw = String(keywordText || '').trim()
+      if (kw) {
+        params.keyword = kw
       }
 
       const result = await api.products.list(params)
@@ -82,39 +98,93 @@ export default function AdminProductList() {
   // 页面显示时加载数据
   useDidShow(() => {
     if (requireAuth()) {
-      loadProducts(1, currentStatus, true)
+      loadProducts(1, currentStatus, keywordQuery, true)
+      initialLoadedRef.current = true
     }
   })
+
+  // 关键词变化时刷新列表（防抖后触发）
+  useEffect(() => {
+    if (!initialLoadedRef.current) return
+    if (authLoading || !isAuthenticated) return
+    loadProducts(1, currentStatus, debouncedKeyword, true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedKeyword])
+
+  // 搜索建议（自动补全）
+  useEffect(() => {
+    if (!suggestVisible) return
+    if (!debouncedKeyword) {
+      setSuggestions([])
+      setSuggestLoading(false)
+      return
+    }
+
+    let cancelled = false
+    setSuggestLoading(true)
+
+    const params: { page: number; size: number; status?: ProductStatus; keyword: string } = {
+      page: 1,
+      size: SUGGEST_SIZE,
+      keyword: debouncedKeyword,
+    }
+    if (currentStatus) {
+      params.status = currentStatus
+    }
+
+    api.products.list(params)
+      .then((res) => {
+        if (cancelled) return
+        setSuggestions(res.items || [])
+      })
+      .catch((error) => {
+        if (cancelled) return
+        console.error('加载搜索建议失败:', error)
+        setSuggestions([])
+      })
+      .finally(() => {
+        if (cancelled) return
+        setSuggestLoading(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [currentStatus, debouncedKeyword, suggestVisible])
 
   const handleReachBottom = useCallback(() => {
     if (authLoading || !isAuthenticated) return
     if (loading || !hasMore) return
-    loadProducts(page + 1, currentStatus)
-  }, [authLoading, currentStatus, hasMore, isAuthenticated, loadProducts, loading, page])
+    loadProducts(page + 1, currentStatus, debouncedKeyword)
+  }, [authLoading, currentStatus, debouncedKeyword, hasMore, isAuthenticated, loadProducts, loading, page])
 
   // 触底加载更多
   useReachBottom(handleReachBottom)
 
   // 下拉刷新
   const handleRefresh = async () => {
-    await loadProducts(1, currentStatus, true)
+    await loadProducts(1, currentStatus, debouncedKeyword, true)
   }
 
   // 状态筛选切换
   const handleStatusChange = (status: ProductStatus | '') => {
+    if (status === currentStatus) return
     setCurrentStatus(status)
     setPage(1)
-    loadProducts(1, status, true)
+    setHasMore(true)
+    setSuggestVisible(false)
+    // 主动刷新列表
+    loadProducts(1, status, debouncedKeyword, true)
   }
 
   // 跳转到添加商品页面
   const handleAddProduct = () => {
-    Taro.navigateTo({ url: '/pages/admin/products/add/index' })
+    Taro.redirectTo({ url: '/pages/admin/products/add/index' })
   }
 
   // 跳转到编辑商品页面
   const handleEditProduct = (product: Product) => {
-    Taro.navigateTo({ url: `/pages/admin/products/edit/index?id=${product.id}` })
+    Taro.redirectTo({ url: `/pages/admin/products/edit/index?id=${product.id}` })
   }
 
   // 显示删除确认弹窗
@@ -134,7 +204,7 @@ export default function AdminProductList() {
         icon: 'success',
       })
       // 刷新列表
-      loadProducts(1, currentStatus, true)
+      loadProducts(1, currentStatus, debouncedKeyword, true)
     } catch (error) {
       console.error('删除失败:', error)
     } finally {
@@ -167,7 +237,7 @@ export default function AdminProductList() {
           <Button
             size='small'
             className='back-btn'
-            onClick={() => Taro.navigateBack()}
+            onClick={() => Taro.redirectTo({ url: '/pages/admin/dashboard' })}
           >
             ← 返回
           </Button>
@@ -181,6 +251,70 @@ export default function AdminProductList() {
         >
           ➕ 添加商品
         </Button>
+      </View>
+
+      {/* 搜索栏（自动补全） */}
+      <View className='search-section'>
+        <View className='search-box'>
+          <Input
+            className='search-input'
+            value={keyword}
+            placeholder='搜索商品名称'
+            placeholderClass='search-placeholder'
+            confirmType='search'
+            onInput={(e) => setKeyword(e.detail.value)}
+            onFocus={() => setSuggestVisible(true)}
+            onConfirm={() => {
+              setSuggestVisible(false)
+              loadProducts(1, currentStatus, keyword.trim(), true)
+            }}
+          />
+          {keywordQuery && (
+            <View
+              className='clear-btn'
+              onClick={() => {
+                setKeyword('')
+                setSuggestions([])
+                setSuggestVisible(false)
+                loadProducts(1, currentStatus, '', true)
+              }}
+            >
+              <Text className='clear-icon'>×</Text>
+            </View>
+          )}
+        </View>
+
+        {suggestVisible && keywordQuery && (
+          <View className='suggest-panel'>
+            {suggestLoading ? (
+              <View className='suggest-loading'>
+                <Text className='suggest-text'>搜索中...</Text>
+              </View>
+            ) : suggestions.length === 0 ? (
+              <View className='suggest-empty'>
+                <Text className='suggest-text'>暂无匹配商品</Text>
+              </View>
+            ) : (
+              suggestions.map((p) => (
+                <View
+                  key={p.id}
+                  className='suggest-item'
+                  onClick={() => {
+                    const name = String(p.name || '').trim()
+                    setKeyword(name)
+                    setSuggestVisible(false)
+                    loadProducts(1, currentStatus, name, true)
+                  }}
+                >
+                  <Text className='suggest-name'>{p.name}</Text>
+                  <Text className='suggest-meta'>
+                    {p.categoryName || CATEGORY_MAP[p.category] || p.category} · {STATUS_MAP[p.status]}
+                  </Text>
+                </View>
+              ))
+            )}
+          </View>
+        )}
       </View>
 
       {/* 状态筛选栏 */}

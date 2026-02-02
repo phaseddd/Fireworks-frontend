@@ -47,8 +47,29 @@ export default function InquiryDetail() {
   }, [data?.createdAt])
 
   const handleGoLogin = () => {
+    const url = '/pages/admin/login'
     Taro.setStorageSync('postLoginRedirect', `/pages/inquiry/detail/index?shareCode=${shareCode}`)
-    Taro.navigateTo({ url: '/pages/admin/login' })
+
+    // 尝试分包加载逻辑，避免首次进入分包出现白屏/超时
+    const loadSubPackage = (Taro as any).loadSubPackage
+    if (typeof loadSubPackage === 'function') {
+      Taro.showLoading({ title: '加载中...' })
+      loadSubPackage({
+        name: 'pages/admin',
+        success: () => {
+          Taro.hideLoading()
+          // 使用 reLaunch 清栈进入管理端，避免导航栏出现返回箭头
+          Taro.reLaunch({ url })
+        },
+        fail: () => {
+          Taro.hideLoading()
+          Taro.reLaunch({ url })
+        }
+      })
+      return
+    }
+
+    Taro.reLaunch({ url })
   }
 
   if (loading) {

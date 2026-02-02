@@ -1,7 +1,7 @@
 import { View, Text, Image } from '@tarojs/components'
-import { useRouter } from '@tarojs/taro'
+import Taro, { useRouter } from '@tarojs/taro'
 import { useEffect, useState } from 'react'
-import { Empty } from '@nutui/nutui-react-taro'
+import { Button, Empty } from '@nutui/nutui-react-taro'
 import useAuth from '@/hooks/useAuth'
 import { api } from '@/services/api'
 import type { Inquiry } from '@/types'
@@ -23,6 +23,16 @@ export default function AdminInquiryDetail() {
   if (!data) {
     return (
       <View className='admin-inquiry-detail'>
+        <View className='header'>
+          <Button
+            size='small'
+            className='back-btn'
+            onClick={() => Taro.redirectTo({ url: '/pages/admin/inquiries/list/index' })}
+          >
+            ← 返回
+          </Button>
+          <Text className='title'>询价详情</Text>
+        </View>
         <Empty description='加载中...' />
       </View>
     )
@@ -30,6 +40,17 @@ export default function AdminInquiryDetail() {
 
   return (
     <View className='admin-inquiry-detail'>
+      <View className='header'>
+        <Button
+          size='small'
+          className='back-btn'
+          onClick={() => Taro.redirectTo({ url: '/pages/admin/inquiries/list/index' })}
+        >
+          ← 返回
+        </Button>
+        <Text className='title'>询价详情</Text>
+      </View>
+
       <View className='card'>
         <Text className='title'>客户信息</Text>
         <Text className='line'>回访沟通：{data.phone}</Text>

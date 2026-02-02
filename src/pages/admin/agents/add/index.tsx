@@ -23,7 +23,7 @@ export default function AdminAgentAdd() {
     try {
       await api.agents.create({ name: name.trim(), phone: phone.trim() || undefined })
       Taro.showToast({ title: '创建成功', icon: 'success' })
-      setTimeout(() => Taro.navigateBack(), 800)
+      setTimeout(() => Taro.redirectTo({ url: '/pages/admin/agents/list/index' }), 800)
     } finally {
       setLoading(false)
     }
@@ -31,6 +31,12 @@ export default function AdminAgentAdd() {
 
   return (
     <View className='admin-agent-form'>
+      <View className='header'>
+        <Button size='small' className='back-btn' onClick={() => Taro.redirectTo({ url: '/pages/admin/agents/list/index' })}>
+          ← 返回
+        </Button>
+        <Text className='title'>添加代理商</Text>
+      </View>
       <View className='card'>
         <View className='form-item'>
           <Text className='label'>名称 *</Text>

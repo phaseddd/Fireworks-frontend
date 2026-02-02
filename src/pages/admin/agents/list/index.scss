@@ -137,7 +137,9 @@
   }
 
   .dialog-content {
-    padding: 8px 0;
+    padding: 8px 0 16px;
+    padding-bottom: calc(16px + constant(safe-area-inset-bottom));
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
 
     .bind-code {
       display: block;
@@ -161,24 +163,30 @@
   }
 
   .dialog-scroll {
-    max-height: 60vh;
+    height: 55vh;
+    box-sizing: border-box;
   }
 
   .qrcode-dialog {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 8px 0;
+    padding: 8px 0 16px;
+    padding-bottom: calc(16px + constant(safe-area-inset-bottom));
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
 
     .qrcode-img {
-      width: 520rpx;
-      height: 520rpx;
+      width: 400rpx;
+      height: 400rpx;
       margin-bottom: 10px;
+      background: #fff;
+      border-radius: 12px;
     }
 
     .qrcode-name {
       color: #666;
       font-size: 14px;
+      margin-bottom: 8px;
     }
 
     .dialog-btn {

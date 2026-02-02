@@ -28,7 +28,7 @@ export default function AdminDashboard() {
   return (
     <View className='admin-dashboard'>
       <View className='top-bar'>
-        <Button className='back-btn' onClick={() => Taro.navigateBack()}>
+        <Button className='back-btn' onClick={() => Taro.switchTab({ url: '/pages/index/index' })}>
           ← 返回首页
         </Button>
       </View>
@@ -39,16 +39,16 @@ export default function AdminDashboard() {
       </View>
 
       <View className='menu'>
-        <Button className='menu-btn' type='primary' onClick={() => Taro.navigateTo({ url: '/pages/admin/products/list' })}>
+        <Button className='menu-btn' type='primary' onClick={() => Taro.redirectTo({ url: '/pages/admin/products/list' })}>
           商品管理
         </Button>
-        <Button className='menu-btn' type='primary' onClick={() => Taro.navigateTo({ url: '/pages/admin/categories/list/index' })}>
+        <Button className='menu-btn' type='primary' onClick={() => Taro.redirectTo({ url: '/pages/admin/categories/list/index' })}>
           分类管理
         </Button>
-        <Button className='menu-btn' type='primary' onClick={() => Taro.navigateTo({ url: '/pages/admin/agents/list/index' })}>
+        <Button className='menu-btn' type='primary' onClick={() => Taro.redirectTo({ url: '/pages/admin/agents/list/index' })}>
           代理商管理
         </Button>
-        <Button className='menu-btn' type='primary' onClick={() => Taro.navigateTo({ url: '/pages/admin/inquiries/list/index' })}>
+        <Button className='menu-btn' type='primary' onClick={() => Taro.redirectTo({ url: '/pages/admin/inquiries/list/index' })}>
           询价记录
         </Button>
       </View>

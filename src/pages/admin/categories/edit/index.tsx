@@ -29,7 +29,7 @@ export default function AdminCategoryEdit() {
       })
       // 自动返回上一页，避免页面卡在空状态
       setTimeout(() => {
-        Taro.navigateBack()
+        Taro.redirectTo({ url: '/pages/admin/categories/list/index' })
       }, 1500)
       return
     }
@@ -88,7 +88,7 @@ export default function AdminCategoryEdit() {
       })
       // 返回列表页
       setTimeout(() => {
-        Taro.navigateBack()
+        Taro.redirectTo({ url: '/pages/admin/categories/list/index' })
       }, 1500)
     } catch (error: any) {
       Taro.showToast({
@@ -122,7 +122,7 @@ export default function AdminCategoryEdit() {
       <View className='admin-category-form'>
         <View className='error-container'>
           <Text className='error-text'>分类不存在</Text>
-          <Button onClick={() => Taro.navigateBack()}>返回</Button>
+          <Button onClick={() => Taro.redirectTo({ url: '/pages/admin/categories/list/index' })}>返回</Button>
         </View>
       </View>
     )
@@ -135,7 +135,7 @@ export default function AdminCategoryEdit() {
         <Button
           size='small'
           className='back-btn'
-          onClick={() => Taro.navigateBack()}
+          onClick={() => Taro.redirectTo({ url: '/pages/admin/categories/list/index' })}
         >
           ← 返回
         </Button>

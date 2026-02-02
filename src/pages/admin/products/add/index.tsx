@@ -212,7 +212,7 @@ export default function AdminProductAdd() {
 
       // Navigate back to list page after success
       setTimeout(() => {
-        Taro.navigateBack()
+        Taro.redirectTo({ url: '/pages/admin/products/list' })
       }, 1500)
     } catch (error) {
       console.error('创建商品失败:', error)
@@ -225,6 +225,12 @@ export default function AdminProductAdd() {
   if (authLoading || loadingCategories) {
     return (
       <View className='admin-product-add'>
+        <View className='header'>
+          <Button size='small' className='back-btn' onClick={() => Taro.redirectTo({ url: '/pages/admin/products/list' })}>
+            ← 返回
+          </Button>
+          <Text className='title'>添加商品</Text>
+        </View>
         <View className='loading-container'>
           <Text className='loading-text'>加载中...</Text>
         </View>
@@ -241,6 +247,9 @@ export default function AdminProductAdd() {
     <View className='admin-product-add'>
       {/* Header */}
       <View className='header'>
+        <Button size='small' className='back-btn' onClick={() => Taro.redirectTo({ url: '/pages/admin/products/list' })}>
+          ← 返回
+        </Button>
         <Text className='title'>添加商品</Text>
       </View>
 

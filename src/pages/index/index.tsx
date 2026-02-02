@@ -79,14 +79,15 @@ export default function Index() {
         name: 'pages/admin',
         success: () => {
           Taro.hideLoading()
-          Taro.navigateTo({
+          // 使用 reLaunch 清栈进入管理端，避免导航栏出现返回箭头
+          Taro.reLaunch({
             url,
             complete: () => { navigatingRef.current = false }
           })
         },
         fail: () => {
           Taro.hideLoading()
-          Taro.navigateTo({
+          Taro.reLaunch({
              url,
              complete: () => { navigatingRef.current = false }
           })
@@ -95,7 +96,8 @@ export default function Index() {
       return
     }
 
-    Taro.navigateTo({
+    // 使用 reLaunch 清栈进入管理端，避免导航栏出现返回箭头
+    Taro.reLaunch({
       url,
       complete: () => { navigatingRef.current = false }
     })
