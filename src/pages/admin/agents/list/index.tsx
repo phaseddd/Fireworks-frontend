@@ -1,9 +1,10 @@
-import { View, Text, Image, ScrollView } from '@tarojs/components'
+import { View, Text, Image, ScrollView, PageMeta } from '@tarojs/components'
 import Taro, { useDidShow, useReachBottom } from '@tarojs/taro'
 import { useCallback, useMemo, useState } from 'react'
 import { Button, Dialog, Empty, PullToRefresh } from '@nutui/nutui-react-taro'
 import useAuth from '@/hooks/useAuth'
 import { api } from '@/services/api'
+import { saveImageToAlbum } from '@/utils/saveImageToAlbum'
 import type { Agent, AgentStatus } from '@/types'
 import './index.scss'
 
@@ -33,6 +34,9 @@ export default function AdminAgentList() {
 
   const [qrcodeDialogVisible, setQrcodeDialogVisible] = useState(false)
   const [qrcodeTarget, setQrcodeTarget] = useState<{ url: string; name: string } | null>(null)
+
+  // Track if any dialog is open for PageMeta overflow control
+  const isAnyDialogOpen = confirmVisible || bindDialogVisible || qrcodeDialogVisible
 
   const loadAgents = useCallback(async (pageNum: number, refresh = false) => {
     if (loading) return
@@ -137,28 +141,6 @@ export default function AdminAgentList() {
     })
   }
 
-  const saveImageToAlbum = async (url: string) => {
-    try {
-      const res = await Taro.downloadFile({ url })
-      await Taro.saveImageToPhotosAlbum({ filePath: (res as any).tempFilePath })
-      Taro.showToast({ title: '已保存到相册', icon: 'success' })
-    } catch (e: any) {
-      const msg = e?.errMsg || ''
-      if (msg.includes('deny')) {
-        Taro.showModal({
-          title: '提示',
-          content: '需要您授权保存图片到相册',
-          confirmText: '去授权',
-          success: (r) => {
-            if (r.confirm) Taro.openSetting()
-          },
-        })
-      } else {
-        Taro.showToast({ title: '保存失败', icon: 'none' })
-      }
-    }
-  }
-
   const handleSaveQr = async () => {
     if (!qrcodeTarget?.url) return
     await saveImageToAlbum(qrcodeTarget.url)
@@ -184,7 +166,9 @@ export default function AdminAgentList() {
   if (!isAuthenticated) return <View />
 
   return (
-    <View className='admin-agents'>
+    <>
+      <PageMeta pageStyle={isAnyDialogOpen ? 'overflow: hidden;' : ''} />
+      <View className='admin-agents'>
       <View className='header'>
         <View className='header-left'>
           <Button size='small' className='back-btn' onClick={() => Taro.redirectTo({ url: '/pages/admin/dashboard' })}>
@@ -252,6 +236,7 @@ export default function AdminAgentList() {
       <Dialog
         title={confirmTitle}
         visible={confirmVisible}
+        lockScroll={false}
         onConfirm={async () => {
           setConfirmVisible(false)
           const fn = confirmAction
@@ -268,6 +253,7 @@ export default function AdminAgentList() {
       <Dialog
         title='一次性绑定码'
         visible={bindDialogVisible}
+        lockScroll={false}
         onConfirm={() => setBindDialogVisible(false)}
         onCancel={() => setBindDialogVisible(false)}
       >
@@ -293,6 +279,7 @@ export default function AdminAgentList() {
       <Dialog
         title='代理商小程序码'
         visible={qrcodeDialogVisible}
+        lockScroll={false}
         onConfirm={() => setQrcodeDialogVisible(false)}
         onCancel={() => setQrcodeDialogVisible(false)}
       >
@@ -310,6 +297,7 @@ export default function AdminAgentList() {
           </View>
         </ScrollView>
       </Dialog>
-    </View>
+      </View>
+    </>
   )
 }
