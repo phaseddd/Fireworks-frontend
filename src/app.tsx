@@ -24,14 +24,22 @@ function ensureDomGlobals() {
 
 ensureDomGlobals()
 
+function safeDecodeURIComponent(str: string): string {
+  try {
+    return decodeURIComponent(str)
+  } catch {
+    return str
+  }
+}
+
 function extractAgentCodeFromScene(scene: string): string | null {
-  const decoded = decodeURIComponent(scene)
+  const decoded = safeDecodeURIComponent(scene)
   const match = decoded.match(/(?:^|&)a=([A-Z]\d{3})(?:&|$)/)
   return match?.[1] || null
 }
 
 function extractBindCodeFromScene(scene: string): string | null {
-  const decoded = decodeURIComponent(scene || '')
+  const decoded = safeDecodeURIComponent(scene || '')
   const match = decoded.match(/(?:^|&)b=([^&]+)(?:&|$)/)
   if (match?.[1]) return match[1]
   if (/^FW-AGENT-[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{6}$/.test(decoded)) return decoded
@@ -41,14 +49,18 @@ function extractBindCodeFromScene(scene: string): string | null {
 /**
  * 处理 scene 参数：提取代理商码和绑定码
  *
+ * 重要：App 级别（onLaunch/onShow/getLaunchOptionsSync）中，
+ *   options.scene 是数字场景值（如 1047 = 扫描小程序码），
+ *   options.query.scene 才是 wxacode.getUnlimited 传入的自定义 scene 字符串。
+ *
  * agentCode: 永久有效，用于追踪客户来源
  * bindCode: 一次性使用，用于代理商绑定微信号
  */
-function handleScene(options: { scene?: string | number } | undefined) {
-  const rawScene = options?.scene
+function handleScene(options: Record<string, any> | undefined) {
+  const rawScene = options?.query?.scene
   if (!rawScene) return
 
-  const scene = String(rawScene)
+  const scene = safeDecodeURIComponent(String(rawScene))
 
   const agentCode = extractAgentCodeFromScene(scene)
   if (agentCode) {

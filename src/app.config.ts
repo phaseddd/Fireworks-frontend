@@ -7,7 +7,6 @@ export default defineAppConfig({
     'pages/inquiry/create/index',  // 生成询价单
     'pages/inquiry/share/index',   // 询价生成成功
     'pages/inquiry/detail/index',  // 询价分享详情
-    'pages/agent/bind/index',      // 代理商绑定
   ],
   // 管理端分包
   subPackages: [
