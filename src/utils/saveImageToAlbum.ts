@@ -4,7 +4,7 @@ import Taro from '@tarojs/taro'
  * Download an image and save it to the user's photo album.
  *
  * Supports three URL protocols:
- *  - `cloud://`  → WeChat cloud storage (uses Taro.cloud.downloadFile)
+ *  - `cloud://`  → WeChat cloud storage (uses getImageInfo for framework-level resolution)
  *  - `wxfile://` / `http://tmpfiles.*` → local temp file (use directly)
  *  - `http(s)://` → standard HTTP download (uses Taro.downloadFile)
  */
@@ -16,8 +16,11 @@ export async function saveImageToAlbum(url: string): Promise<void> {
 
     if (url.startsWith('cloud://')) {
       // WeChat cloud storage file
-      const res = await Taro.cloud.downloadFile({ fileID: url })
-      tempFilePath = res.tempFilePath
+      // Use getImageInfo instead of cloud.downloadFile — it resolves cloud:// URLs
+      // at the framework level (same mechanism as <Image> component), so it works
+      // reliably on real devices without depending on wx.cloud.init().
+      const info = await Taro.getImageInfo({ src: url })
+      tempFilePath = info.path
     } else if (url.startsWith('wxfile://') || url.startsWith('http://tmp')) {
       // Already a local temp file path
       tempFilePath = url
